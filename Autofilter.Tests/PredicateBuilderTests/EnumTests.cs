@@ -15,8 +15,8 @@ public class EnumTests
     {
         get
         {
-            yield return new object[] { TestEnum.One, "One", SearchOperator.Equals, true };
-            yield return new object[] { TestEnum.One, "Two", SearchOperator.Equals, false };
+            yield return new object[] { default(TestEnum), default(TestEnum).ToString(), SearchOperator.Equals, true };
+            yield return new object[] { TestEnum.One, TestEnum.Two.ToString(), SearchOperator.Equals, false };
         }
     }
 
@@ -25,8 +25,11 @@ public class EnumTests
         get
         {
             yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { null, "", SearchOperator.Equals, true };
-            yield return new object?[] { null, "One", SearchOperator.Equals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Equals, true };
+            yield return new object?[] { null, default(TestEnum).ToString(), SearchOperator.Equals, false };
+            yield return new object?[] { null, TestEnum.One.ToString(), SearchOperator.Equals, false };
+            yield return new object?[] { default(TestEnum), null, SearchOperator.Equals, false };
+            yield return new object?[] { TestEnum.One, null, SearchOperator.Equals, false };
         }
     }
 

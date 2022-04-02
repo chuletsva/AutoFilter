@@ -11,6 +11,27 @@ namespace Autofilter.Tests.PredicateBuilderTests;
 
 public class StringTests
 {
+    public static IEnumerable<object?[]> StringTestCases
+    {
+        get
+        {
+            yield return new object?[] { default(string), default(string), SearchOperator.Equals, true };
+            yield return new object?[] { Guid.Empty.ToString(), Guid.Empty.ToString(), SearchOperator.Equals, true };
+            yield return new object?[] { string.Empty, string.Empty, SearchOperator.Equals, true };
+            yield return new object?[] { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), SearchOperator.Equals, false };
+
+            yield return new object?[] { " ", string.Empty, SearchOperator.Equals, false };
+            yield return new object?[] { string.Empty, " ", SearchOperator.Equals, false };
+
+            yield return new object?[] { null, null, SearchOperator.Equals, true };
+            yield return new object?[] { null, default(string), SearchOperator.Equals, true };
+            yield return new object?[] { null, string.Empty, SearchOperator.Equals, false };
+            yield return new object?[] { null, Guid.Empty.ToString(), SearchOperator.Equals, false };
+            yield return new object?[] { default(string), null, SearchOperator.Equals, true };
+            yield return new object?[] { Guid.Empty.ToString(), null, SearchOperator.Equals, false };
+        }
+    }
+
     [Theory]
     [MemberData(nameof(StringTestCases))]
     public void ShouldHandleString(
@@ -32,25 +53,5 @@ public class StringTests
         Func<PropTypesTestClass, bool> predicate = expression.Compile();
 
         predicate(obj).Should().Be(result);
-    }
-
-    public static IEnumerable<object?[]> StringTestCases
-    {
-        get
-        {
-            yield return new object?[] { Guid.Empty.ToString(), Guid.Empty.ToString(), SearchOperator.Equals, true };
-            yield return new object?[] { string.Empty, string.Empty, SearchOperator.Equals, true };
-
-            yield return new object?[] { "  ", string.Empty, SearchOperator.Equals, false };
-            yield return new object?[] { string.Empty, "  ", SearchOperator.Equals, false };
-
-            yield return new object?[] { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), SearchOperator.Equals, false };
-
-            yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { string.Empty, null, SearchOperator.Equals, false };
-            yield return new object?[] { null, string.Empty, SearchOperator.Equals, false };
-            yield return new object?[] { Guid.NewGuid().ToString(), null, SearchOperator.Equals, false };
-            yield return new object?[] { null, Guid.NewGuid().ToString(), SearchOperator.Equals, false };
-        }
     }
 }

@@ -27,7 +27,11 @@ public class BoolTests
         get
         {
             yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { null, "", SearchOperator.Equals, true };
+            yield return new object?[] { null, string.Empty, SearchOperator.Equals, true };
+            yield return new object?[] { null, "true", SearchOperator.Equals, false };
+            yield return new object?[] { null, "false", SearchOperator.Equals, false };
+            yield return new object?[] { true, null, SearchOperator.Equals, false };
+            yield return new object?[] { false, null, SearchOperator.Equals, false };
         }
     }
 

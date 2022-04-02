@@ -4,6 +4,16 @@ namespace Autofilter.Helpers;
 
 static class ValueConverter
 {
+    private static readonly HashSet<Type> FloatingPointTypes = new()
+    {
+        typeof(float),
+        typeof(float?),
+        typeof(double),
+        typeof(double?),
+        typeof(decimal),
+        typeof(decimal?),
+    };
+
     public static object? ConvertValueToType(string? value, Type type)
     {
         if (value is null) return value;
@@ -15,14 +25,4 @@ static class ValueConverter
 
         return converter.ConvertFromInvariantString(value);
     }
-
-    private static readonly HashSet<Type> FloatingPointTypes = new()
-    {
-        typeof(float),
-        typeof(float?),
-        typeof(double),
-        typeof(double?),
-        typeof(decimal),
-        typeof(decimal?),
-    };
 }

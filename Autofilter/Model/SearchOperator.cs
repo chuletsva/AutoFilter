@@ -1,4 +1,6 @@
-﻿namespace Autofilter.Model;
+﻿using System.Linq.Expressions;
+
+namespace Autofilter.Model;
 
 // Guid
 // Long
@@ -12,22 +14,43 @@
 // Bool
 // Byte
 // Enum
-// string
+// String
 
 // Nullable
 
 public enum SearchOperator
 {
+    /* All */
+
     Equals = 1,
-    NotEquals, 
-    //Greater,
+    //NotEquals,
+
+    /* Long Int Short Decimal Double Float DateTime Char Byte */
+
+    Greater,
     //Less,
     //GreaterOrEqual,
     //LessOrEqual,
 
-    //Exists,
+    /* Nullable String */
+
+    Exists,
     //NotExists,
+
+    /* String */
+
     //StartsWith,
     //Contains,
     //NotContains
 }
+
+//class C
+//{
+//    private string? e = null;
+//    private  string? e1 = null;
+
+//    void E()
+//    {
+//        Expression<Func<C, bool>> a = x => e <= e1;
+//    }
+//}

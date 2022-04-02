@@ -19,7 +19,7 @@ class SingleNode<T> : INode
 
     public Expression BuildExpression()
     {
-        if (!FastTypeInfo<T>.TryGetProperty(_rule.PropertyName, out var property))
+        if (!Reflection.TryGetProperty<T>(_rule.PropertyName, out var property))
             throw new Exception($"Property '{_rule.PropertyName}' of '{typeof(T).Name}' doesn't exist");
 
         MemberExpression propExpr = Expression.Property(_parameterExpr, property);
@@ -39,15 +39,13 @@ class SingleNode<T> : INode
         return _rule.SearchOperator switch
         {
             SearchOperator.Equals => Expression.Equal(propExpr, valueExpr),
-            SearchOperator.NotEquals => Expression.NotEqual(propExpr, valueExpr),
-            //SearchOperator.Greater => Expression.GreaterThan(propExpr, valueExpr),
-            //SearchOperator.Less => Expression.LessThan(propExpr, valueExpr),
-            //SearchOperator.GreaterOrEqual => Expression.GreaterThanOrEqual(propExpr, valueExpr),
-            //SearchOperator.LessOrEqual => Expression.LessThanOrEqual(propExpr, valueExpr),
-            //SearchOperator.StartsWith => Expression.Equal(propExpr, valueExpr)
-            //SearchOperator.Contains => Expression.Call(),
-            //SearchOperator.NotContains => Expression.Equal(propExpr, valueExpr),
+            SearchOperator.Greater when Reflection.IsComparableType(property.PropertyType) 
+                => Expression.GreaterThan(propExpr, valueExpr),
+            SearchOperator.Exists when Reflection.IsNullableType(property.PropertyType)
+                => Expression.NotEqual(propExpr, Expression.Constant(null)),
             _ => throw new ArgumentOutOfRangeException(nameof(_rule.SearchOperator))
         };
     }
+
+    /* Long Int Short Decimal Double Float DateTime Char Byte Enum */
 }

@@ -12,15 +12,21 @@ namespace Autofilter.Tests.PredicateBuilderTests;
 
 public class DateTimeTests
 {
-    public static IEnumerable<object[]> DateTimeTestCases
+    public static IEnumerable<object?[]> DateTimeTestCases
     {
         get
         {
-            DateTime now = DateTime.Now.Date;
-            yield return new object[] { now, now.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
+            yield return new object[] { default(DateTime), default(DateTime).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
+            yield return new object[] { DateTime.Now.Date, DateTime.Now.Date.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { DateTime.MinValue.Date, DateTime.MinValue.Date.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { DateTime.MaxValue.Date, DateTime.MaxValue.Date.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { DateTime.MinValue.Date, DateTime.MaxValue.Date.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
+
+            yield return new object[] { DateTime.MaxValue.Date, DateTime.MinValue.Date.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true };
+            yield return new object[] { default(DateTime), default(DateTime).ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { DateTime.Now.Date, DateTime.Now.Date.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { DateTime.MinValue.Date, DateTime.MinValue.Date.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { DateTime.MaxValue.Date, DateTime.MaxValue.Date.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
         }
     }
 
@@ -29,8 +35,18 @@ public class DateTimeTests
         get
         {
             yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { null, "", SearchOperator.Equals, true };
-            yield return new object?[] { null, " ", SearchOperator.Equals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Equals, true };
+            yield return new object?[] { null, default(DateTime).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
+            yield return new object?[] { null, DateTime.Now.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
+            yield return new object?[] { default(DateTime), null, SearchOperator.Equals, false };
+            yield return new object?[] { DateTime.MaxValue, null, SearchOperator.Equals, false };
+
+            yield return new object?[] { null, null, SearchOperator.Greater, false };
+            yield return new object?[] { null, default(DateTime).ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Greater, false };
+            yield return new object?[] { null, DateTime.Now.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object?[] { default(DateTime), null, SearchOperator.Greater, false };
+            yield return new object?[] { DateTime.MaxValue, null, SearchOperator.Greater, false };
         }
     }
 

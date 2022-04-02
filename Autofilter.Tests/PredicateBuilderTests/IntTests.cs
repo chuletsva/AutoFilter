@@ -15,10 +15,16 @@ public class IntTests
     {
         get
         {
-            yield return new object[] { 0, "0", SearchOperator.Equals, true };
+            yield return new object[] { default(int), default(int).ToString(), SearchOperator.Equals, true };
             yield return new object[] { int.MinValue, int.MinValue.ToString(), SearchOperator.Equals, true };
             yield return new object[] { int.MaxValue, int.MaxValue.ToString(), SearchOperator.Equals, true };
             yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.Equals, false };
+
+            yield return new object[] { int.MaxValue, int.MinValue.ToString(), SearchOperator.Greater, true };
+            yield return new object[] { default(int), default(int).ToString(), SearchOperator.Greater, false };
+            yield return new object[] { int.MinValue, int.MinValue.ToString(), SearchOperator.Greater, false };
+            yield return new object[] { int.MaxValue, int.MaxValue.ToString(), SearchOperator.Greater, false };
+            yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.Greater, false };
         }
     }
 
@@ -27,7 +33,18 @@ public class IntTests
         get
         {
             yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { null, "", SearchOperator.Equals, true };
+            yield return new object?[] { null, string.Empty, SearchOperator.Equals, true };
+            yield return new object?[] { null, default(int).ToString(), SearchOperator.Equals, false };
+            yield return new object?[] { null, int.MaxValue.ToString(), SearchOperator.Equals, false };
+            yield return new object?[] { default(int), null, SearchOperator.Equals, false };
+            yield return new object?[] { int.MaxValue, null, SearchOperator.Equals, false };
+
+            yield return new object?[] { null, null, SearchOperator.Greater, false };
+            yield return new object?[] { null, default(int).ToString(), SearchOperator.Greater, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Greater, false };
+            yield return new object?[] { null, int.MaxValue.ToString(), SearchOperator.Greater, false };
+            yield return new object?[] { default(int), null, SearchOperator.Greater, false };
+            yield return new object?[] { int.MaxValue, null, SearchOperator.Greater, false };
         }
     }
 

@@ -16,18 +16,26 @@ public class FloatTests
     {
         get
         {
-            yield return new object[] { 0F, "0", SearchOperator.Equals, true };
-            yield return new object[] { 1F, "1", SearchOperator.Equals, true };
-            yield return new object[] { -1F, "-1", SearchOperator.Equals, true };
+            yield return new object[] { default(float), default(float).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { float.MinValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { float.MaxValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { float.NegativeInfinity, float.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { float.PositiveInfinity, float.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { float.Epsilon, float.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { float.MinValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
-
             yield return new object[] { 1F, "1.0", SearchOperator.Equals, true };
             yield return new object[] { 1F, "1,0", SearchOperator.Equals, true };
+
+            yield return new object[] { float.MaxValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true };
+            yield return new object[] { float.PositiveInfinity, float.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true };
+            yield return new object[] { default(float), default(float).ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { float.MinValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { float.MaxValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { float.NegativeInfinity, float.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { float.PositiveInfinity, float.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { float.Epsilon, float.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object[] { 1.1F, "1.0", SearchOperator.Greater, true };
+            yield return new object[] { 1.1F, "1,0", SearchOperator.Greater, true };
         }
     }
 
@@ -36,7 +44,18 @@ public class FloatTests
         get
         {
             yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { null, "", SearchOperator.Equals, true };
+            yield return new object?[] { null, string.Empty, SearchOperator.Equals, true };
+            yield return new object?[] { null, default(float).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
+            yield return new object?[] { null, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
+            yield return new object?[] { default(float), null, SearchOperator.Equals, false };
+            yield return new object?[] { float.MaxValue, null, SearchOperator.Equals, false };
+
+            yield return new object?[] { null, null, SearchOperator.Greater, false };
+            yield return new object?[] { null, default(float).ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Greater, false };
+            yield return new object?[] { null, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
+            yield return new object?[] { default(float), null, SearchOperator.Greater, false };
+            yield return new object?[] { float.MaxValue, null, SearchOperator.Greater, false };
         }
     }
 

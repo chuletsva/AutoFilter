@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq.Expressions;
 using Autofilter.Helpers;
 using Autofilter.Model;
@@ -27,9 +28,11 @@ public class GuidTests
         get
         {
             yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { null, "", SearchOperator.Equals, true };
-            yield return new object?[] { Guid.Empty, null, SearchOperator.Equals, false };
-            yield return new object?[] { null, Guid.Empty.ToString(), SearchOperator.Equals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Equals, true };
+            yield return new object?[] { null, default(Guid).ToString(), SearchOperator.Equals, false };
+            yield return new object?[] { null, Guid.NewGuid().ToString(), SearchOperator.Equals, false };
+            yield return new object?[] { default(Guid), null, SearchOperator.Equals, false };
+            yield return new object?[] { Guid.NewGuid(), null, SearchOperator.Equals, false };
         }
     }
 
