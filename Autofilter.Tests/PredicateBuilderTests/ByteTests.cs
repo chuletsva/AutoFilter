@@ -45,6 +45,14 @@ public class ByteTests
             yield return new object?[] { null, byte.MaxValue.ToString(), SearchOperator.Greater, false };
             yield return new object?[] { default(byte), null, SearchOperator.Greater, false };
             yield return new object?[] { byte.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { byte.MaxValue, null, SearchOperator.Exists, true };
+            yield return new object?[] { default(byte), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { byte.MaxValue, null, SearchOperator.NotExists, false };
+            yield return new object?[] { default(byte), null, SearchOperator.NotExists, false };
         }
     }
 

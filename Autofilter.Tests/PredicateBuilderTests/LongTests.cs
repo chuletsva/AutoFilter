@@ -46,6 +46,14 @@ public class LongTests
             yield return new object?[] { null, long.MaxValue.ToString(), SearchOperator.Greater, false };
             yield return new object?[] { default(long), null, SearchOperator.Greater, false };
             yield return new object?[] { long.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { long.MaxValue, null, SearchOperator.Exists, true };
+            yield return new object?[] { default(long), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { long.MaxValue, null, SearchOperator.NotExists, false };
+            yield return new object?[] { default(long), null, SearchOperator.NotExists, false };
         }
     }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq.Expressions;
 using Autofilter.Helpers;
 using Autofilter.Model;
@@ -33,6 +32,14 @@ public class GuidTests
             yield return new object?[] { null, Guid.NewGuid().ToString(), SearchOperator.Equals, false };
             yield return new object?[] { default(Guid), null, SearchOperator.Equals, false };
             yield return new object?[] { Guid.NewGuid(), null, SearchOperator.Equals, false };
+
+            yield return new object?[] { Guid.NewGuid(), null, SearchOperator.Exists, true };
+            yield return new object?[] { default(Guid), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { Guid.NewGuid(), null, SearchOperator.NotExists, false };
+            yield return new object?[] { default(Guid), null, SearchOperator.NotExists, false };
         }
     }
 

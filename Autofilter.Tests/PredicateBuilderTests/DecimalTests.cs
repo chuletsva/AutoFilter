@@ -56,6 +56,14 @@ public class DecimalTests
             yield return new object?[] { null, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object?[] { default(decimal), null, SearchOperator.Greater, false };
             yield return new object?[] { decimal.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { decimal.MaxValue, null, SearchOperator.Exists, true };
+            yield return new object?[] { default(decimal), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { decimal.MaxValue, null, SearchOperator.NotExists, false };
+            yield return new object?[] { default(decimal), null, SearchOperator.NotExists, false };
         }
     }
 

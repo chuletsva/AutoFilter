@@ -56,6 +56,14 @@ public class FloatTests
             yield return new object?[] { null, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object?[] { default(float), null, SearchOperator.Greater, false };
             yield return new object?[] { float.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { float.MaxValue, null, SearchOperator.Exists, true };
+            yield return new object?[] { default(float), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { float.MaxValue, null, SearchOperator.NotExists, false };
+            yield return new object?[] { default(float), null, SearchOperator.NotExists, false };
         }
     }
 

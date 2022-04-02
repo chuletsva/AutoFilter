@@ -11,11 +11,10 @@ namespace Autofilter.Tests.PredicateBuilderTests;
 
 public class StringTests
 {
-    public static IEnumerable<object?[]> StringTestCases
+    public static IEnumerable<object?[]> TestCases
     {
         get
         {
-            yield return new object?[] { default(string), default(string), SearchOperator.Equals, true };
             yield return new object?[] { Guid.Empty.ToString(), Guid.Empty.ToString(), SearchOperator.Equals, true };
             yield return new object?[] { string.Empty, string.Empty, SearchOperator.Equals, true };
             yield return new object?[] { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), SearchOperator.Equals, false };
@@ -29,11 +28,43 @@ public class StringTests
             yield return new object?[] { null, Guid.Empty.ToString(), SearchOperator.Equals, false };
             yield return new object?[] { default(string), null, SearchOperator.Equals, true };
             yield return new object?[] { Guid.Empty.ToString(), null, SearchOperator.Equals, false };
+
+            yield return new object?[] { string.Empty, null, SearchOperator.Exists, true };
+            yield return new object?[] { Guid.Empty.ToString(), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { Guid.Empty.ToString(), null, SearchOperator.NotExists, false };
+
+            yield return new object?[] { "ab", "a", SearchOperator.StartsWith, true };
+            yield return new object?[] { "ab", "b", SearchOperator.StartsWith, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.StartsWith, false };
+            yield return new object?[] { string.Empty, null, SearchOperator.StartsWith, false };
+            yield return new object?[] { null, null, SearchOperator.StartsWith, false };
+
+            yield return new object?[] { "ab", "b", SearchOperator.EndsWith, true };
+            yield return new object?[] { "ab", "a", SearchOperator.EndsWith, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.EndsWith, false };
+            yield return new object?[] { string.Empty, null, SearchOperator.EndsWith, false };
+            yield return new object?[] { null, null, SearchOperator.EndsWith, false };
+
+            yield return new object?[] { "a", "a", SearchOperator.Contains, true };
+            yield return new object?[] { "abc", "b", SearchOperator.Contains, true };
+            yield return new object?[] { "a", "b", SearchOperator.Contains, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Contains, false };
+            yield return new object?[] { string.Empty, null, SearchOperator.Contains, false };
+            yield return new object?[] { null, null, SearchOperator.Contains, false };
+
+            yield return new object?[] { "abc", "d", SearchOperator.NotContains, true };
+            yield return new object?[] { "abc", "b", SearchOperator.NotContains, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotContains, false };
+            yield return new object?[] { string.Empty, null, SearchOperator.NotContains, false };
+            yield return new object?[] { null, null, SearchOperator.NotContains, false };
         }
     }
 
     [Theory]
-    [MemberData(nameof(StringTestCases))]
+    [MemberData(nameof(TestCases))]
     public void ShouldHandleString(
         string? propValue, string? ruleValue, 
         SearchOperator operation, bool result)

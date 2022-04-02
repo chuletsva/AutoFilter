@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace Autofilter.Helpers;
 
@@ -11,18 +12,17 @@ static class Reflection
         typeof(byte), typeof(char), typeof(DateTime)
     };
 
+    private static readonly ConcurrentDictionary<Type, IReadOnlyDictionary<string, PropertyInfo>> Properties = new();
+
     public static bool IsComparableType(Type type)
         => ComparableTypes.Contains(Nullable.GetUnderlyingType(type) ?? type);
 
     public static bool IsNullableType(Type type)
-        => Nullable.GetUnderlyingType(type) is not null;
+        => type.IsClass || Nullable.GetUnderlyingType(type) is not null;
 
-    public static bool TryGetProperty<T>(string propertyName, out PropertyInfo property)
-        => TypeInfo<T>.Properties.TryGetValue(propertyName, out property);
-
-    private static class TypeInfo<T>
+    public static bool TryGetProperty(Type type, string propertyName, out PropertyInfo property)
     {
-        public static readonly IReadOnlyDictionary<string, PropertyInfo> Properties =
-            typeof(T).GetProperties().ToDictionary(x => x.Name);
+        return Properties.GetOrAdd(type, t => t.GetProperties().ToDictionary(p => p.Name))
+            .TryGetValue(propertyName, out property);
     }
 }

@@ -2,25 +2,6 @@
 
 namespace Autofilter.Tests.FakeData;
 
-// Guid
-// Long
-// Int
-// Short
-// Decimal
-// Double
-// Float
-// DateTime
-// Char
-// Bool
-// Byte
-// Enum
-// string
-
-// Nullable
-
-// object
-// dynamic
-
 class PropTypesTestClass
 {
     public Guid Guid { get; init; }

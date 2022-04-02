@@ -56,6 +56,14 @@ public class DoubleTests
             yield return new object?[] { null, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object?[] { default(double), null, SearchOperator.Greater, false };
             yield return new object?[] { double.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { double.MaxValue, null, SearchOperator.Exists, true };
+            yield return new object?[] { default(double), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { double.MaxValue, null, SearchOperator.NotExists, false };
+            yield return new object?[] { default(double), null, SearchOperator.NotExists, false };
         }
     }
 

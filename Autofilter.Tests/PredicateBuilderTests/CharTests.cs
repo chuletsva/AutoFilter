@@ -44,6 +44,14 @@ public class CharTests
             yield return new object?[] { null, char.MaxValue.ToString(), SearchOperator.Greater, false };
             yield return new object?[] { default(char), null, SearchOperator.Greater, false };
             yield return new object?[] { char.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { char.MaxValue, null, SearchOperator.Exists, true };
+            yield return new object?[] { default(byte), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { char.MaxValue, null, SearchOperator.NotExists, false };
+            yield return new object?[] { default(char), null, SearchOperator.NotExists, false };
         }
     }
 

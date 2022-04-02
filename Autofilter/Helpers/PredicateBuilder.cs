@@ -18,13 +18,13 @@ static class PredicateBuilder
 
         ParameterExpression paramExpr = Expression.Parameter(typeof(T), "x");
 
-        Expression operandsExpr = BuildGroupNode<T>(parentGroup, operands, groups, paramExpr)
+        Expression operandsExpr = BuildGroupNode(parentGroup, operands, groups, paramExpr)
             .BuildExpression();
 
         return Expression.Lambda<Func<T, bool>>(operandsExpr, paramExpr);
     }
 
-    private static INode BuildGroupNode<T>(
+    private static INode BuildGroupNode(
         GroupRule parentGroup, SearchRule[] operands,
         GroupRule[]? groups, ParameterExpression paramExpr)
     {
@@ -61,17 +61,12 @@ static class PredicateBuilder
             if (j < highLevelGroups.Count && highLevelGroups[j].Start == i)
             {
                 GroupRule group = highLevelGroups[j++];
-                nodes.Add(BuildGroupNode<T>(group, operands, groups, paramExpr));
+                nodes.Add(BuildGroupNode(group, operands, groups, paramExpr));
                 i = group.End;
             }
-            else nodes.Add(BuildSingleNode<T>(operands[i], paramExpr));
+            else nodes.Add(new SingleNode(operands[i], paramExpr));
         }
 
         return new GroupNode(nodes, operands[parentGroup.Start].ComposeOperator);
-    }
-
-    private static INode BuildSingleNode<T>(SearchRule rule, ParameterExpression paramExpr)
-    {
-        return new SingleNode<T>(rule, paramExpr);
     }
 }

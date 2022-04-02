@@ -4,25 +4,25 @@ using Autofilter.Model;
 
 namespace Autofilter.Nodes;
 
-class SingleNode<T> : INode
+class SingleNode : INode
 {
     private readonly SearchRule _rule;
-    private readonly ParameterExpression _parameterExpr;
+    private readonly ParameterExpression _paramExpr;
 
-    public SingleNode(SearchRule rule, ParameterExpression parameterExpr)
+    public SingleNode(SearchRule rule, ParameterExpression paramExpr)
     {
         _rule = rule;
-        _parameterExpr = parameterExpr;
+        _paramExpr = paramExpr;
     }
 
     public ComposeOperator? Compose => _rule.ComposeOperator;
 
     public Expression BuildExpression()
     {
-        if (!Reflection.TryGetProperty<T>(_rule.PropertyName, out var property))
-            throw new Exception($"Property '{_rule.PropertyName}' of '{typeof(T).Name}' doesn't exist");
+        if (!Reflection.TryGetProperty(_paramExpr.Type, _rule.PropertyName, out var property))
+            throw new Exception($"Property '{_rule.PropertyName}' of '{_paramExpr.Type.Name}' doesn't exist");
 
-        MemberExpression propExpr = Expression.Property(_parameterExpr, property);
+        MemberExpression propExpr = Expression.Property(_paramExpr, property);
 
         Expression valueExpr;
 
@@ -39,12 +39,51 @@ class SingleNode<T> : INode
         return _rule.SearchOperator switch
         {
             SearchOperator.Equals => Expression.Equal(propExpr, valueExpr),
+
             SearchOperator.Greater when Reflection.IsComparableType(property.PropertyType) 
                 => Expression.GreaterThan(propExpr, valueExpr),
+
             SearchOperator.Exists when Reflection.IsNullableType(property.PropertyType)
                 => Expression.NotEqual(propExpr, Expression.Constant(null)),
+
+            SearchOperator.NotExists when Reflection.IsNullableType(property.PropertyType)
+                => Expression.Equal(propExpr, Expression.Constant(null)),
+
+            SearchOperator.StartsWith when property.PropertyType == typeof(string)
+                => BuildStringMethodCall(propExpr, "StartsWith", valueExpr),
+
+            SearchOperator.EndsWith when property.PropertyType == typeof(string)
+                => BuildStringMethodCall(propExpr, "EndsWith", valueExpr),
+
+            SearchOperator.Contains when property.PropertyType == typeof(string)
+                => BuildStringMethodCall(propExpr, "Contains", valueExpr),
+
+            SearchOperator.NotContains when property.PropertyType == typeof(string)
+                => BuildNotContainsCall(propExpr, valueExpr),
+
             _ => throw new ArgumentOutOfRangeException(nameof(_rule.SearchOperator))
         };
+    }
+
+    private static Expression BuildStringMethodCall(
+        Expression property, string methodName, Expression value)
+    {
+        // property != null && value != null && property.Method(value)
+        return Expression.AndAlso(
+            Expression.AndAlso(
+                Expression.NotEqual(property, Expression.Constant(null)),
+                Expression.NotEqual(value, Expression.Constant(null))),
+            Expression.Call(property, methodName, null, value));
+    }
+
+    private static Expression BuildNotContainsCall(
+        Expression property, Expression value)
+    {
+        return Expression.AndAlso(
+            Expression.AndAlso(
+                Expression.NotEqual(property, Expression.Constant(null)),
+                Expression.NotEqual(value, Expression.Constant(null))),
+            Expression.Not(Expression.Call(property, "Contains", null, value)));
     }
 
     /* Long Int Short Decimal Double Float DateTime Char Byte Enum */

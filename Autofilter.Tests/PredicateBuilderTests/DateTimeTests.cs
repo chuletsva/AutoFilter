@@ -47,6 +47,14 @@ public class DateTimeTests
             yield return new object?[] { null, DateTime.Now.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object?[] { default(DateTime), null, SearchOperator.Greater, false };
             yield return new object?[] { DateTime.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { DateTime.Now, null, SearchOperator.Exists, true };
+            yield return new object?[] { default(DateTime), null, SearchOperator.Exists, true };
+            yield return new object?[] { null, null, SearchOperator.Exists, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotExists, true };
+            yield return new object?[] { DateTime.Now, null, SearchOperator.NotExists, false };
+            yield return new object?[] { default(DateTime), null, SearchOperator.NotExists, false };
         }
     }
 

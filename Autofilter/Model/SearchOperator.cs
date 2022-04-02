@@ -35,13 +35,14 @@ public enum SearchOperator
     /* Nullable String */
 
     Exists,
-    //NotExists,
+    NotExists,
 
     /* String */
 
-    //StartsWith,
-    //Contains,
-    //NotContains
+    StartsWith,
+    EndsWith,
+    Contains,
+    NotContains
 }
 
 //class C
