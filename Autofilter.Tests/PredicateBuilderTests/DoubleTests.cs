@@ -23,10 +23,12 @@ public class DoubleTests
             yield return new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true };
             yield return new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
+            yield return new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
             yield return new object[] { 1D, "1.0", SearchOperator.Equals, true };
             yield return new object[] { 1D, "1,0", SearchOperator.Equals, true };
 
             yield return new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true };
+            yield return new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object[] { double.PositiveInfinity, double.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true };
             yield return new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object[] { double.MinValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
@@ -36,6 +38,46 @@ public class DoubleTests
             yield return new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object[] { 1.1D, "1.0", SearchOperator.Greater, true };
             yield return new object[] { 1.1D, "1,0", SearchOperator.Greater, true };
+
+            yield return new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, false };
+            yield return new object[] { double.PositiveInfinity, double.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { double.MinValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { double.MaxValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { double.NegativeInfinity, double.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { 1.1D, "1.0", SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { 1.1D, "1,0", SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { 1D, "1.0", SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { 1D, "1,0", SearchOperator.GreaterOrEqual, true };
+
+            yield return new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, true };
+            yield return new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object[] { double.NegativeInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, true };
+            yield return new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object[] { double.MinValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object[] { double.MaxValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object[] { double.NegativeInfinity, double.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object[] { 1.0D, "1.1", SearchOperator.Less, true };
+            yield return new object[] { 1.0D, "1,1", SearchOperator.Less, true };
+
+            yield return new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true };
+            yield return new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, false };
+            yield return new object[] { double.NegativeInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true };
+            yield return new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true };
+            yield return new object[] { double.MinValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true };
+            yield return new object[] { double.MaxValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true };
+            yield return new object[] { double.NegativeInfinity, double.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true };
+            yield return new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true };
+            yield return new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true };
+            yield return new object[] { 1.0D, "1.1", SearchOperator.LessOrEqual, true };
+            yield return new object[] { 1.0D, "1,1", SearchOperator.LessOrEqual, true };
+            yield return new object[] { 1D, "1.0", SearchOperator.LessOrEqual, true };
+            yield return new object[] { 1D, "1,0", SearchOperator.LessOrEqual, true };
         }
     }
 
@@ -56,6 +98,27 @@ public class DoubleTests
             yield return new object?[] { null, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object?[] { default(double), null, SearchOperator.Greater, false };
             yield return new object?[] { double.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { null, null, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { default(double), null, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { double.MinValue, null, SearchOperator.GreaterOrEqual, false };
+
+            yield return new object?[] { null, null, SearchOperator.Less, false };
+            yield return new object?[] { null, default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Less, false };
+            yield return new object?[] { null, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false };
+            yield return new object?[] { default(double), null, SearchOperator.Less, false };
+            yield return new object?[] { double.MaxValue, null, SearchOperator.Less, false };
+
+            yield return new object?[] { null, null, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, false };
+            yield return new object?[] { default(double), null, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { double.MaxValue, null, SearchOperator.LessOrEqual, false };
 
             yield return new object?[] { double.MaxValue, null, SearchOperator.Exists, true };
             yield return new object?[] { default(double), null, SearchOperator.Exists, true };

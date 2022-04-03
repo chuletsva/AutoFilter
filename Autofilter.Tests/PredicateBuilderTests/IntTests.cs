@@ -15,16 +15,35 @@ public class IntTests
     {
         get
         {
+            yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.Equals, false };
+            yield return new object[] { int.MaxValue, int.MinValue.ToString(), SearchOperator.Equals, false };
             yield return new object[] { default(int), default(int).ToString(), SearchOperator.Equals, true };
             yield return new object[] { int.MinValue, int.MinValue.ToString(), SearchOperator.Equals, true };
             yield return new object[] { int.MaxValue, int.MaxValue.ToString(), SearchOperator.Equals, true };
-            yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.Equals, false };
 
             yield return new object[] { int.MaxValue, int.MinValue.ToString(), SearchOperator.Greater, true };
+            yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.Greater, false };
             yield return new object[] { default(int), default(int).ToString(), SearchOperator.Greater, false };
             yield return new object[] { int.MinValue, int.MinValue.ToString(), SearchOperator.Greater, false };
             yield return new object[] { int.MaxValue, int.MaxValue.ToString(), SearchOperator.Greater, false };
-            yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.Greater, false };
+
+            yield return new object[] { int.MaxValue, int.MinValue.ToString(), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.GreaterOrEqual, false };
+            yield return new object[] { default(int), default(int).ToString(), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { int.MinValue, int.MinValue.ToString(), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { int.MaxValue, int.MaxValue.ToString(), SearchOperator.GreaterOrEqual, true };
+
+            yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.Less, true };
+            yield return new object[] { int.MaxValue, int.MinValue.ToString(), SearchOperator.Less, false };
+            yield return new object[] { default(int), default(int).ToString(), SearchOperator.Less, false };
+            yield return new object[] { int.MinValue, int.MinValue.ToString(), SearchOperator.Less, false };
+            yield return new object[] { int.MaxValue, int.MaxValue.ToString(), SearchOperator.Less, false };
+
+            yield return new object[] { int.MinValue, int.MaxValue.ToString(), SearchOperator.LessOrEqual, true };
+            yield return new object[] { int.MaxValue, int.MinValue.ToString(), SearchOperator.LessOrEqual, false };
+            yield return new object[] { default(int), default(int).ToString(), SearchOperator.LessOrEqual, true };
+            yield return new object[] { int.MinValue, int.MinValue.ToString(), SearchOperator.LessOrEqual, true };
+            yield return new object[] { int.MaxValue, int.MaxValue.ToString(), SearchOperator.LessOrEqual, true };
         }
     }
 
@@ -42,9 +61,30 @@ public class IntTests
             yield return new object?[] { null, null, SearchOperator.Greater, false };
             yield return new object?[] { null, default(int).ToString(), SearchOperator.Greater, false };
             yield return new object?[] { null, string.Empty, SearchOperator.Greater, false };
-            yield return new object?[] { null, int.MaxValue.ToString(), SearchOperator.Greater, false };
+            yield return new object?[] { null, int.MinValue.ToString(), SearchOperator.Greater, false };
             yield return new object?[] { default(int), null, SearchOperator.Greater, false };
             yield return new object?[] { int.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { null, null, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, default(int).ToString(), SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, int.MinValue.ToString(), SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { default(int), null, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { int.MaxValue, null, SearchOperator.GreaterOrEqual, false };
+
+            yield return new object?[] { null, null, SearchOperator.Less, false };
+            yield return new object?[] { null, default(int).ToString(), SearchOperator.Less, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Less, false };
+            yield return new object?[] { null, int.MaxValue.ToString(), SearchOperator.Less, false };
+            yield return new object?[] { default(int), null, SearchOperator.Less, false };
+            yield return new object?[] { int.MinValue, null, SearchOperator.Less, false };
+
+            yield return new object?[] { null, null, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, default(int).ToString(), SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, int.MaxValue.ToString(), SearchOperator.LessOrEqual, false };
+            yield return new object?[] { default(int), null, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { int.MinValue, null, SearchOperator.LessOrEqual, false };
 
             yield return new object?[] { int.MaxValue, null, SearchOperator.Exists, true };
             yield return new object?[] { default(int), null, SearchOperator.Exists, true };

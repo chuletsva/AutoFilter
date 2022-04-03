@@ -43,6 +43,15 @@ class SingleNode : INode
             SearchOperator.Greater when Reflection.IsComparableType(property.PropertyType) 
                 => Expression.GreaterThan(propExpr, valueExpr),
 
+            SearchOperator.GreaterOrEqual when Reflection.IsComparableType(property.PropertyType) 
+                => Expression.GreaterThanOrEqual(propExpr, valueExpr),
+
+            SearchOperator.Less when Reflection.IsComparableType(property.PropertyType)
+                => Expression.LessThan(propExpr, valueExpr),
+
+            SearchOperator.LessOrEqual when Reflection.IsComparableType(property.PropertyType)
+                => Expression.LessThanOrEqual(propExpr, valueExpr),
+
             SearchOperator.Exists when Reflection.IsNullableType(property.PropertyType)
                 => Expression.NotEqual(propExpr, Expression.Constant(null)),
 

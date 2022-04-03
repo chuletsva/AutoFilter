@@ -15,17 +15,35 @@ public class LongTests
     {
         get
         {
+            yield return new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.Equals, false };
+            yield return new object[] { long.MaxValue, long.MinValue.ToString(), SearchOperator.Equals, false };
             yield return new object[] { default(long), default(long).ToString(), SearchOperator.Equals, true };
             yield return new object[] { long.MinValue, long.MinValue.ToString(), SearchOperator.Equals, true };
             yield return new object[] { long.MaxValue, long.MaxValue.ToString(), SearchOperator.Equals, true };
-            yield return new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.Equals, false };
 
             yield return new object[] { long.MaxValue, long.MinValue.ToString(), SearchOperator.Greater, true };
+            yield return new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.Greater, false };
             yield return new object[] { default(long), default(long).ToString(), SearchOperator.Greater, false };
             yield return new object[] { long.MinValue, long.MinValue.ToString(), SearchOperator.Greater, false };
             yield return new object[] { long.MaxValue, long.MaxValue.ToString(), SearchOperator.Greater, false };
-            yield return new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.Greater, false };
 
+            yield return new object[] { long.MaxValue, long.MinValue.ToString(), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.GreaterOrEqual, false };
+            yield return new object[] { default(long), default(long).ToString(), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { long.MinValue, long.MinValue.ToString(), SearchOperator.GreaterOrEqual, true };
+            yield return new object[] { long.MaxValue, long.MaxValue.ToString(), SearchOperator.GreaterOrEqual, true };
+
+            yield return new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.Less, true };
+            yield return new object[] { long.MaxValue, long.MinValue.ToString(), SearchOperator.Less, false };
+            yield return new object[] { default(long), default(long).ToString(), SearchOperator.Less, false };
+            yield return new object[] { long.MinValue, long.MinValue.ToString(), SearchOperator.Less, false };
+            yield return new object[] { long.MaxValue, long.MaxValue.ToString(), SearchOperator.Less, false };
+
+            yield return new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.LessOrEqual, true };
+            yield return new object[] { long.MaxValue, long.MinValue.ToString(), SearchOperator.LessOrEqual, false };
+            yield return new object[] { default(long), default(long).ToString(), SearchOperator.LessOrEqual, true };
+            yield return new object[] { long.MinValue, long.MinValue.ToString(), SearchOperator.LessOrEqual, true };
+            yield return new object[] { long.MaxValue, long.MaxValue.ToString(), SearchOperator.LessOrEqual, true };
         }
     }
 
@@ -43,9 +61,30 @@ public class LongTests
             yield return new object?[] { null, null, SearchOperator.Greater, false };
             yield return new object?[] { null, default(long).ToString(), SearchOperator.Greater, false };
             yield return new object?[] { null, string.Empty, SearchOperator.Greater, false };
-            yield return new object?[] { null, long.MaxValue.ToString(), SearchOperator.Greater, false };
+            yield return new object?[] { null, long.MinValue.ToString(), SearchOperator.Greater, false };
             yield return new object?[] { default(long), null, SearchOperator.Greater, false };
             yield return new object?[] { long.MaxValue, null, SearchOperator.Greater, false };
+
+            yield return new object?[] { null, null, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, default(long).ToString(), SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { null, long.MinValue.ToString(), SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { default(long), null, SearchOperator.GreaterOrEqual, false };
+            yield return new object?[] { long.MaxValue, null, SearchOperator.GreaterOrEqual, false };
+
+            yield return new object?[] { null, null, SearchOperator.Less, false };
+            yield return new object?[] { null, default(long).ToString(), SearchOperator.Less, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.Less, false };
+            yield return new object?[] { null, long.MaxValue.ToString(), SearchOperator.Less, false };
+            yield return new object?[] { default(long), null, SearchOperator.Less, false };
+            yield return new object?[] { long.MinValue, null, SearchOperator.Less, false };
+
+            yield return new object?[] { null, null, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, default(long).ToString(), SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { null, long.MaxValue.ToString(), SearchOperator.LessOrEqual, false };
+            yield return new object?[] { default(long), null, SearchOperator.LessOrEqual, false };
+            yield return new object?[] { long.MinValue, null, SearchOperator.LessOrEqual, false };
 
             yield return new object?[] { long.MaxValue, null, SearchOperator.Exists, true };
             yield return new object?[] { default(long), null, SearchOperator.Exists, true };
