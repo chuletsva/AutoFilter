@@ -15,6 +15,7 @@ public class StringTests
     {
         get
         {
+            // Equals
             yield return new object?[] { Guid.Empty.ToString(), Guid.Empty.ToString(), SearchOperator.Equals, true };
             yield return new object?[] { string.Empty, string.Empty, SearchOperator.Equals, true };
             yield return new object?[] { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), SearchOperator.Equals, false };
@@ -27,8 +28,24 @@ public class StringTests
             yield return new object?[] { null, string.Empty, SearchOperator.Equals, false };
             yield return new object?[] { null, Guid.Empty.ToString(), SearchOperator.Equals, false };
             yield return new object?[] { default(string), null, SearchOperator.Equals, true };
-            yield return new object?[] { Guid.Empty.ToString(), null, SearchOperator.Equals, false };
+            yield return new object?[] { Guid.Empty.ToString(), null, SearchOperator.Equals, false };   
+            
+            // NotEquals
+            yield return new object?[] { Guid.Empty.ToString(), Guid.Empty.ToString(), SearchOperator.NotEquals, false };
+            yield return new object?[] { string.Empty, string.Empty, SearchOperator.NotEquals, false };
+            yield return new object?[] { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), SearchOperator.NotEquals, true };
 
+            yield return new object?[] { " ", string.Empty, SearchOperator.NotEquals, true };
+            yield return new object?[] { string.Empty, " ", SearchOperator.NotEquals, true };
+
+            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, default(string), SearchOperator.NotEquals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, true };
+            yield return new object?[] { null, Guid.Empty.ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { default(string), null, SearchOperator.NotEquals, false };
+            yield return new object?[] { Guid.Empty.ToString(), null, SearchOperator.NotEquals, true };
+
+            // Other
             yield return new object?[] { string.Empty, null, SearchOperator.Exists, true };
             yield return new object?[] { Guid.Empty.ToString(), null, SearchOperator.Exists, true };
             yield return new object?[] { null, null, SearchOperator.Exists, false };

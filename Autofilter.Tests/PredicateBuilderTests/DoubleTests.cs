@@ -27,6 +27,17 @@ public class DoubleTests
             yield return new object[] { 1D, "1.0", SearchOperator.Equals, true };
             yield return new object[] { 1D, "1,0", SearchOperator.Equals, true };
 
+            yield return new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { double.MinValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { double.MaxValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { double.NegativeInfinity, double.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true };
+            yield return new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true };
+            yield return new object[] { 1D, "1.0", SearchOperator.NotEquals, false };
+            yield return new object[] { 1D, "1,0", SearchOperator.NotEquals, false };
+
             yield return new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true };
             yield return new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object[] { double.PositiveInfinity, double.NegativeInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true };
@@ -90,7 +101,14 @@ public class DoubleTests
             yield return new object?[] { null, default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
             yield return new object?[] { null, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
             yield return new object?[] { default(double), null, SearchOperator.Equals, false };
-            yield return new object?[] { double.MaxValue, null, SearchOperator.Equals, false };
+            yield return new object?[] { double.MaxValue, null, SearchOperator.Equals, false };            
+            
+            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true };
+            yield return new object?[] { null, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true };
+            yield return new object?[] { default(double), null, SearchOperator.NotEquals, true };
+            yield return new object?[] { double.MaxValue, null, SearchOperator.NotEquals, true };
 
             yield return new object?[] { null, null, SearchOperator.Greater, false };
             yield return new object?[] { null, default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };

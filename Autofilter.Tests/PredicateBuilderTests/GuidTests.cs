@@ -16,9 +16,14 @@ public class GuidTests
         get
         {
             Guid guid = Guid.NewGuid();
+
             yield return new object[] { guid, guid.ToString(), SearchOperator.Equals, true };
             yield return new object[] { Guid.Empty, Guid.Empty.ToString(), SearchOperator.Equals, true };
             yield return new object[] { Guid.NewGuid(), Guid.NewGuid().ToString(), SearchOperator.Equals, false };
+
+            yield return new object[] { guid, guid.ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { Guid.Empty, Guid.Empty.ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { Guid.NewGuid(), Guid.NewGuid().ToString(), SearchOperator.NotEquals, true };
         }
     }
 
@@ -31,7 +36,14 @@ public class GuidTests
             yield return new object?[] { null, default(Guid).ToString(), SearchOperator.Equals, false };
             yield return new object?[] { null, Guid.NewGuid().ToString(), SearchOperator.Equals, false };
             yield return new object?[] { default(Guid), null, SearchOperator.Equals, false };
-            yield return new object?[] { Guid.NewGuid(), null, SearchOperator.Equals, false };
+            yield return new object?[] { Guid.NewGuid(), null, SearchOperator.Equals, false };  
+            
+            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, default(Guid).ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { null, Guid.NewGuid().ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { default(Guid), null, SearchOperator.NotEquals, true };
+            yield return new object?[] { Guid.NewGuid(), null, SearchOperator.NotEquals, true };
 
             yield return new object?[] { Guid.NewGuid(), null, SearchOperator.Exists, true };
             yield return new object?[] { default(Guid), null, SearchOperator.Exists, true };

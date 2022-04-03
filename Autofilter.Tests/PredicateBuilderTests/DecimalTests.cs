@@ -27,6 +27,17 @@ public class DecimalTests
             yield return new object[] { 1M, "1.0", SearchOperator.Equals, true };
             yield return new object[] { 1M, "1,0", SearchOperator.Equals, true };
 
+            yield return new object[] { default(decimal), default(decimal).ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { decimal.Zero, decimal.Zero.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { decimal.One, decimal.One.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { decimal.MinusOne, decimal.MinusOne.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { decimal.MinValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { decimal.MaxValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false };
+            yield return new object[] { decimal.MinValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true };
+            yield return new object[] { decimal.MaxValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true };
+            yield return new object[] { 1M, "1.0", SearchOperator.NotEquals, false };
+            yield return new object[] { 1M, "1,0", SearchOperator.NotEquals, false };
+
             yield return new object[] { decimal.MaxValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true };
             yield return new object[] { decimal.MinValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
             yield return new object[] { default(decimal), default(decimal).ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };
@@ -87,6 +98,13 @@ public class DecimalTests
             yield return new object?[] { null, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false };
             yield return new object?[] { default(decimal), null, SearchOperator.Equals, false };
             yield return new object?[] { decimal.MaxValue, null, SearchOperator.Equals, false };
+            
+            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, default(decimal).ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true };
+            yield return new object?[] { null, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true };
+            yield return new object?[] { default(decimal), null, SearchOperator.NotEquals, true };
+            yield return new object?[] { decimal.MaxValue, null, SearchOperator.NotEquals, true };
 
             yield return new object?[] { null, null, SearchOperator.Greater, false };
             yield return new object?[] { null, default(decimal).ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false };

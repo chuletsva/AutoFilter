@@ -20,7 +20,7 @@ class SingleNode : INode
     public Expression BuildExpression()
     {
         if (!Reflection.TryGetProperty(_paramExpr.Type, _rule.PropertyName, out var property))
-            throw new Exception($"Property '{_rule.PropertyName}' of '{_paramExpr.Type.Name}' doesn't exist");
+            throw new Exception($"Property '{_rule.PropertyName}' of type '{_paramExpr.Type.Name}' doesn't exist");
 
         MemberExpression propExpr = Expression.Property(_paramExpr, property);
 
@@ -39,6 +39,8 @@ class SingleNode : INode
         return _rule.SearchOperator switch
         {
             SearchOperator.Equals => Expression.Equal(propExpr, valueExpr),
+
+            SearchOperator.NotEquals => Expression.NotEqual(propExpr, valueExpr),
 
             SearchOperator.Greater when Reflection.IsComparableType(property.PropertyType) 
                 => Expression.GreaterThan(propExpr, valueExpr),
@@ -88,12 +90,11 @@ class SingleNode : INode
     private static Expression BuildNotContainsCall(
         Expression property, Expression value)
     {
+        // property != null && value != null && !property.Contains(value)
         return Expression.AndAlso(
             Expression.AndAlso(
                 Expression.NotEqual(property, Expression.Constant(null)),
                 Expression.NotEqual(value, Expression.Constant(null))),
             Expression.Not(Expression.Call(property, "Contains", null, value)));
     }
-
-    /* Long Int Short Decimal Double Float DateTime Char Byte Enum */
 }

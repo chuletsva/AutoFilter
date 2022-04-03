@@ -19,6 +19,11 @@ public class BoolTests
             yield return new object[] { false, "false", SearchOperator.Equals, true };
             yield return new object[] { true, "false", SearchOperator.Equals, false };
             yield return new object[] { false, "true", SearchOperator.Equals, false };
+
+            yield return new object[] { true, "true", SearchOperator.NotEquals, false };
+            yield return new object[] { false, "false", SearchOperator.NotEquals, false };
+            yield return new object[] { true, "false", SearchOperator.NotEquals, true };
+            yield return new object[] { false, "true", SearchOperator.NotEquals, true };
         }
     }
 
@@ -32,6 +37,13 @@ public class BoolTests
             yield return new object?[] { null, "false", SearchOperator.Equals, false };
             yield return new object?[] { true, null, SearchOperator.Equals, false };
             yield return new object?[] { false, null, SearchOperator.Equals, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, "true", SearchOperator.NotEquals, true };
+            yield return new object?[] { null, "false", SearchOperator.NotEquals, true };
+            yield return new object?[] { true, null, SearchOperator.NotEquals, true };
+            yield return new object?[] { false, null, SearchOperator.NotEquals, true };
 
             yield return new object?[] { true, null, SearchOperator.Exists, true };
             yield return new object?[] { false, null, SearchOperator.Exists, true };

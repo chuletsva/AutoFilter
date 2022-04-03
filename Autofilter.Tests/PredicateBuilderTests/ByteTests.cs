@@ -21,6 +21,12 @@ public class ByteTests
             yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Equals, false };
             yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Equals, false };
 
+            yield return new object[] { default(byte), default(byte).ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.NotEquals, true };
+            yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.NotEquals, true };
+
             yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Greater, true };
             yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Greater, false };
             yield return new object[] { default(byte), default(byte).ToString(), SearchOperator.Greater, false };
@@ -57,6 +63,13 @@ public class ByteTests
             yield return new object?[] { null, byte.MaxValue.ToString(), SearchOperator.Equals, false };
             yield return new object?[] { default(byte), null, SearchOperator.Equals, false };
             yield return new object?[] { byte.MaxValue, null, SearchOperator.Equals, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, default(byte).ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { null, byte.MaxValue.ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { default(byte), null, SearchOperator.NotEquals, true };
+            yield return new object?[] { byte.MaxValue, null, SearchOperator.NotEquals, true };
 
             yield return new object?[] { null, null, SearchOperator.Greater, false };
             yield return new object?[] { null, default(byte).ToString(), SearchOperator.Greater, false };

@@ -21,6 +21,12 @@ public class CharTests
             yield return new object[] { char.MinValue, char.MaxValue.ToString(), SearchOperator.Equals, false };
             yield return new object[] { char.MaxValue, char.MinValue.ToString(), SearchOperator.Equals, false };
 
+            yield return new object[] { default(char), default(char).ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { char.MinValue, char.MinValue.ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { char.MaxValue, char.MaxValue.ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { char.MinValue, char.MaxValue.ToString(), SearchOperator.NotEquals, true };
+            yield return new object[] { char.MaxValue, char.MinValue.ToString(), SearchOperator.NotEquals, true };
+
             yield return new object[] { char.MaxValue, char.MinValue.ToString(), SearchOperator.Greater, true };
             yield return new object[] { char.MinValue, char.MaxValue.ToString(), SearchOperator.Greater, false };
             yield return new object[] { default(char), default(char).ToString(), SearchOperator.Greater, false };
@@ -57,6 +63,13 @@ public class CharTests
             yield return new object?[] { null, char.MaxValue.ToString(), SearchOperator.Equals, false };
             yield return new object?[] { default(char), null, SearchOperator.Equals, false };
             yield return new object?[] { char.MaxValue, null, SearchOperator.Equals, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, default(char).ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { null, char.MaxValue.ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { default(char), null, SearchOperator.NotEquals, true };
+            yield return new object?[] { char.MaxValue, null, SearchOperator.NotEquals, true };
 
             yield return new object?[] { null, null, SearchOperator.Greater, false };
             yield return new object?[] { null, default(char).ToString(), SearchOperator.Greater, false };

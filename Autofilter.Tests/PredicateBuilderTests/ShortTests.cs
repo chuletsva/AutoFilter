@@ -21,6 +21,12 @@ public class ShortTests
             yield return new object[] { short.MinValue, short.MinValue.ToString(), SearchOperator.Equals, true };
             yield return new object[] { short.MaxValue, short.MaxValue.ToString(), SearchOperator.Equals, true };
 
+            yield return new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.NotEquals, true };
+            yield return new object[] { short.MaxValue, short.MinValue.ToString(), SearchOperator.NotEquals, true };
+            yield return new object[] { default(short), default(short).ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { short.MinValue, short.MinValue.ToString(), SearchOperator.NotEquals, false };
+            yield return new object[] { short.MaxValue, short.MaxValue.ToString(), SearchOperator.NotEquals, false };
+
             yield return new object[] { short.MaxValue, short.MinValue.ToString(), SearchOperator.Greater, true };
             yield return new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.Greater, false };
             yield return new object[] { default(short), default(short).ToString(), SearchOperator.Greater, false };
@@ -57,6 +63,13 @@ public class ShortTests
             yield return new object?[] { null, short.MaxValue.ToString(), SearchOperator.Equals, false };
             yield return new object?[] { default(short), null, SearchOperator.Equals, false };
             yield return new object?[] { short.MaxValue, null, SearchOperator.Equals, false };
+
+            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
+            yield return new object?[] { null, default(short).ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { null, short.MaxValue.ToString(), SearchOperator.NotEquals, true };
+            yield return new object?[] { default(short), null, SearchOperator.NotEquals, true };
+            yield return new object?[] { short.MaxValue, null, SearchOperator.NotEquals, true };
 
             yield return new object?[] { null, null, SearchOperator.Greater, false };
             yield return new object?[] { null, default(short).ToString(), SearchOperator.Greater, false };
