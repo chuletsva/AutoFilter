@@ -32,7 +32,7 @@ static class PredicateBuilder
 
         if (groups is { Length: > 0 })
         {
-            bool[] visited = new bool[operands.Length];
+            bool[] isInGroup = new bool[operands.Length];
 
             var childGroups = groups
                 .Where(x =>
@@ -44,9 +44,9 @@ static class PredicateBuilder
 
             foreach (GroupRule group in childGroups)
             {
-                if (visited[group.Start]) continue;
+                if (isInGroup[group.Start]) continue;
                 highLevelGroups.Add(group);
-                Array.Fill(visited, true, group.Start, group.End - group.Start + 1);
+                Array.Fill(isInGroup, true, group.Start, group.End - group.Start + 1);
             }
 
             highLevelGroups.Sort((x, y) => x.Start.CompareTo(y.Start));

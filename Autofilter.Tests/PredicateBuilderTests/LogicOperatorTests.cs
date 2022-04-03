@@ -10,52 +10,58 @@ namespace Autofilter.Tests.PredicateBuilderTests;
 
 public class LogicOperatorTests
 {
-    class Product
+    class TestClass
     {
-        public Guid Id { get; set; }
-        public int InStock { get; set; }
-        public bool IsForSale { get; set; }
+        public bool FirstOperand { get; set; }
+        public bool SecondOperand { get; set; }
+    }
+
+    public static IEnumerable<object[]> TestCases
+    {
+        get
+        {
+            yield return new object[] { "true", "true", LogicOperator.And, true };
+            yield return new object[] { "true", "false", LogicOperator.And, false };
+            yield return new object[] { "false", "true", LogicOperator.And, false };
+            yield return new object[] { "false", "false", LogicOperator.And, false };
+
+            yield return new object[] { "true", "true", LogicOperator.Or, true };
+            yield return new object[] { "true", "false", LogicOperator.Or, true };
+            yield return new object[] { "false", "true", LogicOperator.Or, true };
+            yield return new object[] { "false", "false", LogicOperator.Or, false };
+        }
     }
 
     [Theory]
-    [MemberData(nameof(AndTestCases))]
-    public void ShouldHandleOperatorAnd(string id, string isForSale, bool result)
+    [MemberData(nameof(TestCases))]
+    public void ShouldHandleOperator(
+        string firstOperand, string secondOperand, 
+        LogicOperator logicOperator, bool result)
     {
-        Product product = new() { Id = Guid.Empty, IsForSale = true };
-
-        // x => x.Id == id && x.IsForSale == isForSale
+        TestClass obj = new() { FirstOperand = true, SecondOperand = true };
 
         SearchRule[] operands = 
         {
             new
             (
-                PropertyName: nameof(product.Id),
-                Value: id,
+                PropertyName: nameof(obj.FirstOperand),
+                Value: firstOperand,
                 SearchOperator: SearchOperator.Equals
             ),
             new
             (
-                PropertyName: nameof(product.IsForSale),
-                Value: isForSale,
+                PropertyName: nameof(obj.SecondOperand),
+                Value: secondOperand,
                 SearchOperator: SearchOperator.Equals,
-                LogicOperator: LogicOperator.And
+                LogicOperator: logicOperator
             ),
         };
 
-        Expression<Func<Product, bool>> expression = PredicateBuilder.BuildPredicate<Product>(operands);
+        Expression<Func<TestClass, bool>> expression = 
+            PredicateBuilder.BuildPredicate<TestClass>(operands);
 
-        Func<Product, bool> predicate = expression.Compile();
+        Func<TestClass, bool> predicate = expression.Compile();
 
-        predicate(product).Should().Be(result);
-    }
-
-    public static IEnumerable<object[]> AndTestCases
-    {
-        get
-        {
-            yield return new object[] { Guid.Empty.ToString(), "true", true };
-            yield return new object[] { Guid.Empty.ToString(), "false", false };
-            yield return new object[] { Guid.NewGuid().ToString(), "true", false };
-        }
+        predicate(obj).Should().Be(result);
     }
 }
