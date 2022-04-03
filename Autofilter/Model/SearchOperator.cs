@@ -8,8 +8,8 @@ public enum SearchOperator
 
     // Long Int Short Decimal Double Float DateTime Char Byte
     Greater,
-    Less,
     GreaterOrEqual,
+    Less,
     LessOrEqual,
 
     // Nullable String

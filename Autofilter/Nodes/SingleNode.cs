@@ -15,7 +15,7 @@ class SingleNode : INode
         _paramExpr = paramExpr;
     }
 
-    public ComposeOperator? Compose => _rule.ComposeOperator;
+    public LogicOperator? Logic => _rule.LogicOperator;
 
     public Expression BuildExpression()
     {
@@ -26,11 +26,37 @@ class SingleNode : INode
 
         object? value = ValueConverter.ConvertValueToType(_rule.Value, property.PropertyType);
 
-        Expression valueExpr = Expression.Constant(value, property.PropertyType);
+        Expression valueExpr;
+        try { valueExpr = Expression.Constant(value, property.PropertyType); }
+        catch
+        {
+            string valueAlias = value switch
+            {
+                null => "null",
+                _ when string.IsNullOrWhiteSpace(_rule.Value) => "empty string",
+                _ => $"'{_rule.Value}'"
+            };
+
+            throw new Exception($"Property '{_rule.PropertyName}' with type '{property.PropertyType.Name}' is not comparable with {valueAlias}");
+        }
 
         return _rule.SearchOperator switch
         {
+            SearchOperator.Equals when property.PropertyType == typeof(bool) => value switch
+            {
+                true => propExpr,
+                false => Expression.Not(propExpr),
+                _ => throw new ArgumentOutOfRangeException(nameof(value))
+            },
+
             SearchOperator.Equals => Expression.Equal(propExpr, valueExpr),
+
+            SearchOperator.NotEquals when property.PropertyType == typeof(bool) => value switch
+            {
+                true => Expression.Not(propExpr),
+                false => propExpr,
+                _ => throw new ArgumentOutOfRangeException(nameof(value))
+            },
 
             SearchOperator.NotEquals => Expression.NotEqual(propExpr, valueExpr),
 
@@ -64,7 +90,7 @@ class SingleNode : INode
             SearchOperator.NotContains when property.PropertyType == typeof(string)
                 => BuildNotContainsCall(propExpr, valueExpr),
 
-            _ => throw new Exception($"Operation '{_rule.SearchOperator}' not supported for type '{property.PropertyType.Name}'")
+            _ => throw new Exception($"Operation '{_rule.SearchOperator}' is not supported for type '{property.PropertyType.Name}'")
         };
     }
 

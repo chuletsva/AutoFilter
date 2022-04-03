@@ -7,7 +7,7 @@ using Autofilter.Tests.FakeData;
 using FluentAssertions;
 using Xunit;
 
-namespace Autofilter.Tests.PredicateBuilderTests;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class BoolTests
 {
@@ -100,5 +100,41 @@ public class BoolTests
         Func<PropTypesTestClass, bool> predicate = expression.Compile();
 
         predicate(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [InlineData(null, "null")]
+    public void ShouldThrow_WhenPassedNotComparableValue(string? value, string valueAlias)
+    {
+        SearchRule rule = new
+        (
+            PropertyName: nameof(PropTypesTestClass.Bool),
+            Value: value,
+            SearchOperator: SearchOperator.Equals
+        );
+
+        Action act = () => PredicateBuilder.BuildPredicate<PropTypesTestClass>(new[] { rule });
+
+        string expectedMessage = $"Property '{nameof(PropTypesTestClass.Bool)}' with type '{nameof(Boolean)}' is not comparable with {valueAlias}";
+
+        act.Should().Throw<Exception>().WithMessage(expectedMessage);
+    }
+
+    [Theory]
+    [InlineData("")]
+    public void ShouldThrow_WhenPassedNotConvertableValue(string value)
+    {
+        SearchRule rule = new
+        (
+            PropertyName: nameof(PropTypesTestClass.Bool),
+            Value: value,
+            SearchOperator: SearchOperator.Equals
+        );
+
+        Action act = () => PredicateBuilder.BuildPredicate<PropTypesTestClass>(new[] { rule });
+
+        act.Should().Throw<Exception>()
+            .WithMessage($"Cannot convert value '{value}' to type '{nameof(Boolean)}'")
+            .WithInnerException<Exception>();
     }
 }

@@ -5,6 +5,6 @@ namespace Autofilter.Nodes;
 
 interface INode
 {
-    ComposeOperator? Compose { get; }
+    LogicOperator? Logic { get; }
     Expression BuildExpression();
 }

@@ -7,22 +7,22 @@ class GroupNode : INode
 {
     private readonly IEnumerable<INode> _children;
 
-    public GroupNode(IEnumerable<INode> children, ComposeOperator? compose)
+    public GroupNode(IEnumerable<INode> children, LogicOperator? logic)
     {
-        (_children, Compose) = (children, compose);
+        (_children, Logic) = (children, logic);
     }
 
-    public ComposeOperator? Compose { get; }
+    public LogicOperator? Logic { get; }
 
     public Expression BuildExpression()
     {
         return _children.Skip(1).Aggregate(
-            seed: _children.First().BuildExpression(),
-            (Expression expr, INode node) => node.Compose switch
+            _children.First().BuildExpression(), 
+            (current, node) => node.Logic switch
             {
-                ComposeOperator.And => Expression.AndAlso(expr, node.BuildExpression()),
-                ComposeOperator.Or => Expression.OrElse(expr, node.BuildExpression()),
-                _ => throw new ArgumentOutOfRangeException(nameof(node.Compose))
+                LogicOperator.And => Expression.AndAlso(current, node.BuildExpression()),
+                LogicOperator.Or => Expression.OrElse(current, node.BuildExpression()),
+                _ => throw new ArgumentOutOfRangeException(nameof(node.Logic))
             });
     }
 }

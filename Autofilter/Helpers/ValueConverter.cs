@@ -26,7 +26,7 @@ static class ValueConverter
         }
         catch (Exception ex)
         {
-            throw new Exception($"Cannot convert value '{value}' to type '{type}'", ex);
+            throw new Exception($"Cannot convert value '{value}' to type '{type.Name}'", ex);
         }
     }
 }

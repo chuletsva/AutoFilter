@@ -67,6 +67,6 @@ static class PredicateBuilder
             else nodes.Add(new SingleNode(operands[i], paramExpr));
         }
 
-        return new GroupNode(nodes, operands[parentGroup.Start].ComposeOperator);
+        return new GroupNode(nodes, operands[parentGroup.Start].LogicOperator);
     }
 }

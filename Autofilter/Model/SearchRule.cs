@@ -3,4 +3,4 @@
 public sealed record SearchRule(
     string PropertyName, string? Value, 
     SearchOperator SearchOperator,
-    ComposeOperator? ComposeOperator = default);
+    LogicOperator? LogicOperator = default);

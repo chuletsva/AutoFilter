@@ -8,7 +8,7 @@ using Autofilter.Tests.FakeData;
 using FluentAssertions;
 using Xunit;
 
-namespace Autofilter.Tests.PredicateBuilderTests;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class FloatTests
 {
