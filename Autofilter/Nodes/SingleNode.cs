@@ -24,17 +24,9 @@ class SingleNode : INode
 
         MemberExpression propExpr = Expression.Property(_paramExpr, property);
 
-        Expression valueExpr;
+        object? value = ValueConverter.ConvertValueToType(_rule.Value, property.PropertyType);
 
-        try
-        {
-            object? value = ValueConverter.ConvertValueToType(_rule.Value, property.PropertyType);
-            valueExpr = Expression.Constant(value, property.PropertyType);
-        }
-        catch
-        {
-            throw new Exception($"Cannot convert {_rule.Value} to type '{property.PropertyType}'");
-        }
+        Expression valueExpr = Expression.Constant(value, property.PropertyType);
 
         return _rule.SearchOperator switch
         {
@@ -72,7 +64,7 @@ class SingleNode : INode
             SearchOperator.NotContains when property.PropertyType == typeof(string)
                 => BuildNotContainsCall(propExpr, valueExpr),
 
-            _ => throw new ArgumentOutOfRangeException(nameof(_rule.SearchOperator))
+            _ => throw new Exception($"Operation '{_rule.SearchOperator}' not supported for type '{property.PropertyType.Name}'")
         };
     }
 

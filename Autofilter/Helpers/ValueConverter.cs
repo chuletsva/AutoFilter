@@ -15,11 +15,18 @@ static class ValueConverter
     {
         if (value is null) return value;
 
-        TypeConverter converter = TypeDescriptor.GetConverter(type);
+        try
+        {
+            TypeConverter converter = TypeDescriptor.GetConverter(type);
 
-        if (FloatingPointTypes.Contains(type))
-            value = value.Replace(",", ".");
+            if (FloatingPointTypes.Contains(type))
+                value = value.Replace(",", ".");
 
-        return converter.ConvertFromInvariantString(value);
+            return converter.ConvertFromInvariantString(value);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Cannot convert value '{value}' to type '{type}'", ex);
+        }
     }
 }
