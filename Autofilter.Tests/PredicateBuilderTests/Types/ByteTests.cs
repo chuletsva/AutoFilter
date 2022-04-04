@@ -11,103 +11,97 @@ namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class ByteTests
 {
-    public static IEnumerable<object[]> ByteTestCases
+    public static IEnumerable<object[]> ByteTestCases => new[]
     {
-        get
-        {
-            yield return new object[] { default(byte), default(byte).ToString(), SearchOperator.Equals, true };
-            yield return new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Equals, true };
-            yield return new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Equals, true };
-            yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Equals, false };
-            yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Equals, false };
+        new object[] { default(byte), default(byte).ToString(), SearchOperator.Equals, true },
+        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Equals, true },
+        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Equals, true },
+        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Equals, false },
+        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Equals, false },
 
-            yield return new object[] { default(byte), default(byte).ToString(), SearchOperator.NotEquals, false };
-            yield return new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.NotEquals, false };
-            yield return new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.NotEquals, false };
-            yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.NotEquals, true };
-            yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.NotEquals, true };
+        new object[] { default(byte), default(byte).ToString(), SearchOperator.NotEquals, false },
+        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.NotEquals, false },
+        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.NotEquals, false },
+        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.NotEquals, true },
+        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.NotEquals, true },
 
-            yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Greater, true };
-            yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Greater, false };
-            yield return new object[] { default(byte), default(byte).ToString(), SearchOperator.Greater, false };
-            yield return new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Greater, false };
-            yield return new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Greater, false };
+        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Greater, true },
+        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Greater, false },
+        new object[] { default(byte), default(byte).ToString(), SearchOperator.Greater, false },
+        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Greater, false },
+        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Greater, false },
 
-            yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, true };
-            yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.GreaterOrEqual, false };
-            yield return new object[] { default(byte), default(byte).ToString(), SearchOperator.GreaterOrEqual, true };
-            yield return new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, true };
-            yield return new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.GreaterOrEqual, true };
+        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, true },
+        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.GreaterOrEqual, false },
+        new object[] { default(byte), default(byte).ToString(), SearchOperator.GreaterOrEqual, true },
+        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, true },
+        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.GreaterOrEqual, true },
 
-            yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Less, true };
-            yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Less, false };
-            yield return new object[] { default(byte), default(byte).ToString(), SearchOperator.Less, false };
-            yield return new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Less, false };
-            yield return new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Less, false };
+        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Less, true },
+        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Less, false },
+        new object[] { default(byte), default(byte).ToString(), SearchOperator.Less, false },
+        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Less, false },
+        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Less, false },
 
-            yield return new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, true };
-            yield return new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.LessOrEqual, false };
-            yield return new object[] { default(byte), default(byte).ToString(), SearchOperator.LessOrEqual, true };
-            yield return new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.LessOrEqual, true };
-            yield return new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, true };
-        }
-    }
+        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, true },
+        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.LessOrEqual, false },
+        new object[] { default(byte), default(byte).ToString(), SearchOperator.LessOrEqual, true },
+        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.LessOrEqual, true },
+        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, true },
+    };
 
-    public static IEnumerable<object?[]> NullableByteTestCases
+    public static IEnumerable<object?[]> NullableByteTestCases => new[]
     {
-        get
-        {
-            yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { null, string.Empty, SearchOperator.Equals, true };
-            yield return new object?[] { null, default(byte).ToString(), SearchOperator.Equals, false };
-            yield return new object?[] { null, byte.MaxValue.ToString(), SearchOperator.Equals, false };
-            yield return new object?[] { default(byte), null, SearchOperator.Equals, false };
-            yield return new object?[] { byte.MaxValue, null, SearchOperator.Equals, false };
+        new object?[] { null, null, SearchOperator.Equals, true },
+        new object?[] { null, string.Empty, SearchOperator.Equals, true },
+        new object?[] { null, default(byte).ToString(), SearchOperator.Equals, false },
+        new object?[] { null, byte.MaxValue.ToString(), SearchOperator.Equals, false },
+        new object?[] { default(byte), null, SearchOperator.Equals, false },
+        new object?[] { byte.MaxValue, null, SearchOperator.Equals, false },
 
-            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
-            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
-            yield return new object?[] { null, default(byte).ToString(), SearchOperator.NotEquals, true };
-            yield return new object?[] { null, byte.MaxValue.ToString(), SearchOperator.NotEquals, true };
-            yield return new object?[] { default(byte), null, SearchOperator.NotEquals, true };
-            yield return new object?[] { byte.MaxValue, null, SearchOperator.NotEquals, true };
+        new object?[] { null, null, SearchOperator.NotEquals, false },
+        new object?[] { null, string.Empty, SearchOperator.NotEquals, false },
+        new object?[] { null, default(byte).ToString(), SearchOperator.NotEquals, true },
+        new object?[] { null, byte.MaxValue.ToString(), SearchOperator.NotEquals, true },
+        new object?[] { default(byte), null, SearchOperator.NotEquals, true },
+        new object?[] { byte.MaxValue, null, SearchOperator.NotEquals, true },
 
-            yield return new object?[] { null, null, SearchOperator.Greater, false };
-            yield return new object?[] { null, default(byte).ToString(), SearchOperator.Greater, false };
-            yield return new object?[] { null, string.Empty, SearchOperator.Greater, false };
-            yield return new object?[] { null, byte.MinValue.ToString(), SearchOperator.Greater, false };
-            yield return new object?[] { default(byte), null, SearchOperator.Greater, false };
-            yield return new object?[] { byte.MaxValue, null, SearchOperator.Greater, false };
+        new object?[] { null, null, SearchOperator.Greater, false },
+        new object?[] { null, default(byte).ToString(), SearchOperator.Greater, false },
+        new object?[] { null, string.Empty, SearchOperator.Greater, false },
+        new object?[] { null, byte.MinValue.ToString(), SearchOperator.Greater, false },
+        new object?[] { default(byte), null, SearchOperator.Greater, false },
+        new object?[] { byte.MaxValue, null, SearchOperator.Greater, false },
 
-            yield return new object?[] { null, null, SearchOperator.GreaterOrEqual, false };
-            yield return new object?[] { null, default(byte).ToString(), SearchOperator.GreaterOrEqual, false };
-            yield return new object?[] { null, string.Empty, SearchOperator.GreaterOrEqual, false };
-            yield return new object?[] { null, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, false };
-            yield return new object?[] { default(byte), null, SearchOperator.GreaterOrEqual, false };
-            yield return new object?[] { byte.MaxValue, null, SearchOperator.GreaterOrEqual, false };
+        new object?[] { null, null, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, default(byte).ToString(), SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, string.Empty, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, false },
+        new object?[] { default(byte), null, SearchOperator.GreaterOrEqual, false },
+        new object?[] { byte.MaxValue, null, SearchOperator.GreaterOrEqual, false },
 
-            yield return new object?[] { null, null, SearchOperator.Less, false };
-            yield return new object?[] { null, default(byte).ToString(), SearchOperator.Less, false };
-            yield return new object?[] { null, string.Empty, SearchOperator.Less, false };
-            yield return new object?[] { null, byte.MaxValue.ToString(), SearchOperator.Less, false };
-            yield return new object?[] { default(byte), null, SearchOperator.Less, false };
-            yield return new object?[] { byte.MinValue, null, SearchOperator.Less, false };
+        new object?[] { null, null, SearchOperator.Less, false },
+        new object?[] { null, default(byte).ToString(), SearchOperator.Less, false },
+        new object?[] { null, string.Empty, SearchOperator.Less, false },
+        new object?[] { null, byte.MaxValue.ToString(), SearchOperator.Less, false },
+        new object?[] { default(byte), null, SearchOperator.Less, false },
+        new object?[] { byte.MinValue, null, SearchOperator.Less, false },
 
-            yield return new object?[] { null, null, SearchOperator.LessOrEqual, false };
-            yield return new object?[] { null, default(byte).ToString(), SearchOperator.LessOrEqual, false };
-            yield return new object?[] { null, string.Empty, SearchOperator.LessOrEqual, false };
-            yield return new object?[] { null, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, false };
-            yield return new object?[] { default(byte), null, SearchOperator.LessOrEqual, false };
-            yield return new object?[] { byte.MinValue, null, SearchOperator.LessOrEqual, false };
+        new object?[] { null, null, SearchOperator.LessOrEqual, false },
+        new object?[] { null, default(byte).ToString(), SearchOperator.LessOrEqual, false },
+        new object?[] { null, string.Empty, SearchOperator.LessOrEqual, false },
+        new object?[] { null, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, false },
+        new object?[] { default(byte), null, SearchOperator.LessOrEqual, false },
+        new object?[] { byte.MinValue, null, SearchOperator.LessOrEqual, false },
 
-            yield return new object?[] { byte.MaxValue, null, SearchOperator.Exists, true };
-            yield return new object?[] { default(byte), null, SearchOperator.Exists, true };
-            yield return new object?[] { null, null, SearchOperator.Exists, false };
+        new object?[] { byte.MaxValue, null, SearchOperator.Exists, true },
+        new object?[] { default(byte), null, SearchOperator.Exists, true },
+        new object?[] { null, null, SearchOperator.Exists, false },
 
-            yield return new object?[] { null, null, SearchOperator.NotExists, true };
-            yield return new object?[] { byte.MaxValue, null, SearchOperator.NotExists, false };
-            yield return new object?[] { default(byte), null, SearchOperator.NotExists, false };
-        }
-    }
+        new object?[] { null, null, SearchOperator.NotExists, true },
+        new object?[] { byte.MaxValue, null, SearchOperator.NotExists, false },
+        new object?[] { default(byte), null, SearchOperator.NotExists, false },
+    };
 
     [Theory]
     [MemberData(nameof(ByteTestCases))]
