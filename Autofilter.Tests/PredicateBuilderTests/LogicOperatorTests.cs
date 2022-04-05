@@ -78,13 +78,12 @@ public class LogicOperatorTests
 
         // and and and and and 
         new object[] { "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", true },
-        new object[] { "true", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", false },
-        new object[] { "false", LogicOperator.And, "true", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", false },
-        new object[] { "false", LogicOperator.And, "false", LogicOperator.And, "true", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", false },
-        new object[] { "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "true", LogicOperator.And, "false", LogicOperator.And, "false", false },
-        new object[] { "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "true", LogicOperator.And, "false", false },
-        new object[] { "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "true", false },
-        new object[] { "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", LogicOperator.And, "false", false },
+        new object[] { "false", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", false },
+        new object[] { "true", LogicOperator.And, "false", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", false },
+        new object[] { "true", LogicOperator.And, "true", LogicOperator.And, "false", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", false },
+        new object[] { "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "false", LogicOperator.And, "true", LogicOperator.And, "true", false },
+        new object[] { "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "false", LogicOperator.And, "true", false },
+        new object[] { "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "true", LogicOperator.And, "false", false },
 
         #endregion
 
@@ -211,7 +210,7 @@ public class LogicOperatorTests
 
     [Theory]
     [MemberData(nameof(TwoOperandsTestCases))]
-    public void ShouldHandleTwoOperands(
+    public void TwoOperands(
         string v1, LogicOperator op, string v2, bool result)
     {
         Expression<Func<TestClass, bool>> expression = 
@@ -227,7 +226,7 @@ public class LogicOperatorTests
 
     [Theory]
     [MemberData(nameof(ThreeOperandsTestCases))]
-    public void ShouldHandleThreeOperands(
+    public void ThreeOperands(
         string v1, LogicOperator op1, 
         string v2, LogicOperator op2, 
         string v3, bool result)
@@ -246,7 +245,7 @@ public class LogicOperatorTests
 
     [Theory]
     [MemberData(nameof(SixOperandsTestCases))]
-    public void ShouldHandleSixOperands(
+    public void SixOperands(
         string v1, LogicOperator op1, 
         string v2, LogicOperator op2,
         string v3, LogicOperator op3, 
