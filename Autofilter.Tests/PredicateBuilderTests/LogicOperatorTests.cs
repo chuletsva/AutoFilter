@@ -72,10 +72,6 @@ public class LogicOperatorTests
         new object[] { "false", LogicOperator.Or, "false", LogicOperator.Or, "false", false },
     };
 
-    //Expression<Func<TestClass, bool>> t3 = x => x.FirstOperand || x.SecondOperand && x.ThirdOperand && x.ThirdOperand || x.ThirdOperand && x.ThirdOperand || x.ThirdOperand;
-    //Expression<Func<TestClass, bool>> t4 = x => x.FirstOperand && x.SecondOperand || x.ThirdOperand && x.ThirdOperand;
-    //Expression<Func<TestClass, bool>> t5 = x => x.FirstOperand && x.SecondOperand || x.ThirdOperand && x.ThirdOperand || x.ThirdOperand && x.ThirdOperand;
-    //Expression<Func<TestClass, bool>> t6 = x => x.FirstOperand && x.SecondOperand && x.ThirdOperand || x.ThirdOperand || x.ThirdOperand && x.ThirdOperand;
     public static IEnumerable<object[]> SixOperandsTestCases => new[]
     {
         #region 0 or
@@ -215,7 +211,7 @@ public class LogicOperatorTests
 
     [Theory]
     [MemberData(nameof(TwoOperandsTestCases))]
-    public void ShouldHandleOperator_WhenTwoOperands(
+    public void ShouldHandleTwoOperands(
         string v1, LogicOperator op, string v2, bool result)
     {
         Expression<Func<TestClass, bool>> expression = 
@@ -231,8 +227,10 @@ public class LogicOperatorTests
 
     [Theory]
     [MemberData(nameof(ThreeOperandsTestCases))]
-    public void ShouldHandleOperator_WhenThreeOperands(
-        string v1, LogicOperator op1, string v2, LogicOperator op2, string v3, bool result)
+    public void ShouldHandleThreeOperands(
+        string v1, LogicOperator op1, 
+        string v2, LogicOperator op2, 
+        string v3, bool result)
     {
         Expression<Func<TestClass, bool>> expression = 
             PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
@@ -248,7 +246,7 @@ public class LogicOperatorTests
 
     [Theory]
     [MemberData(nameof(SixOperandsTestCases))]
-    public void ShouldHandleOperator_WhenSixOperands(
+    public void ShouldHandleSixOperands(
         string v1, LogicOperator op1, 
         string v2, LogicOperator op2,
         string v3, LogicOperator op3, 

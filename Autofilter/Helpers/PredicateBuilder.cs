@@ -34,13 +34,23 @@ static class PredicateBuilder
         {
             bool[] isInGroup = new bool[operands.Length];
 
+            // todo: order by start, then by level
+
+            //var childGroups = groups
+            //    .Where(x =>
+            //        x.Start >= parentGroup.Start &&
+            //        x.End <= parentGroup.End &&
+            //        x.Level < parentGroup.Level)
+            //    .OrderByDescending(x => x.Level)
+            //    .ToArray();
+
             var childGroups = groups
                 .Where(x =>
                     x.Start >= parentGroup.Start &&
                     x.End <= parentGroup.End &&
                     x.Level < parentGroup.Level)
-                .OrderByDescending(x => x.Level)
-                .ToArray();
+                .OrderBy(x => x.Start)
+                .ThenByDescending(x => x.Level);
 
             foreach (GroupRule group in childGroups)
             {
@@ -49,7 +59,7 @@ static class PredicateBuilder
                 Array.Fill(isInGroup, true, group.Start, group.End - group.Start + 1);
             }
 
-            highLevelGroups.Sort((x, y) => x.Start.CompareTo(y.Start));
+            //highLevelGroups.Sort((x, y) => x.Start.CompareTo(y.Start));
         }
 
         List<INode> nodes = new();

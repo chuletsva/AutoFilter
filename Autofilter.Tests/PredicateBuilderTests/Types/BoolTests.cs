@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Autofilter.Helpers;
 using Autofilter.Model;
-using Autofilter.Tests.FakeData;
 using FluentAssertions;
 using Xunit;
 
@@ -11,6 +10,12 @@ namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class BoolTests
 {
+    class TestClass
+    {
+        public bool Bool { get; set; }
+        public bool? NullableBool { get; set; }
+    }
+
     public static IEnumerable<object[]> BoolTestCases
     {
         get
@@ -61,7 +66,7 @@ public class BoolTests
         bool propValue, string ruleValue, 
         SearchOperator operation, bool result)
     {
-        PropTypesTestClass obj = new() { Bool = propValue };
+        TestClass obj = new() { Bool = propValue };
 
         SearchRule rule = new
         (
@@ -70,10 +75,10 @@ public class BoolTests
             SearchOperator: operation
         );
 
-        Expression<Func<PropTypesTestClass, bool>> expression =
-            PredicateBuilder.BuildPredicate<PropTypesTestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> expression =
+            PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
-        Func<PropTypesTestClass, bool> predicate = expression.Compile();
+        Func<TestClass, bool> predicate = expression.Compile();
 
         predicate(obj).Should().Be(result);
     }
@@ -85,7 +90,7 @@ public class BoolTests
         bool? propValue, string? ruleValue, 
         SearchOperator operation, bool result)
     {
-        PropTypesTestClass obj = new() { NullableBool = propValue };
+        TestClass obj = new() { NullableBool = propValue };
 
         SearchRule rule = new
         (
@@ -94,10 +99,10 @@ public class BoolTests
             SearchOperator: operation
         );
 
-        Expression<Func<PropTypesTestClass, bool>> expression =
-            PredicateBuilder.BuildPredicate<PropTypesTestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> expression =
+            PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
-        Func<PropTypesTestClass, bool> predicate = expression.Compile();
+        Func<TestClass, bool> predicate = expression.Compile();
 
         predicate(obj).Should().Be(result);
     }
@@ -108,14 +113,14 @@ public class BoolTests
     {
         SearchRule rule = new
         (
-            PropertyName: nameof(PropTypesTestClass.Bool),
+            PropertyName: nameof(TestClass.Bool),
             Value: value,
             SearchOperator: SearchOperator.Equals
         );
 
-        Action act = () => PredicateBuilder.BuildPredicate<PropTypesTestClass>(new[] { rule });
+        Action act = () => PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
-        string expectedMessage = $"Property '{nameof(PropTypesTestClass.Bool)}' with type '{nameof(Boolean)}' is not comparable with {valueAlias}";
+        string expectedMessage = $"Property '{nameof(TestClass.Bool)}' with type '{nameof(Boolean)}' is not comparable with {valueAlias}";
 
         act.Should().Throw<Exception>().WithMessage(expectedMessage);
     }
@@ -126,12 +131,12 @@ public class BoolTests
     {
         SearchRule rule = new
         (
-            PropertyName: nameof(PropTypesTestClass.Bool),
+            PropertyName: nameof(TestClass.Bool),
             Value: value,
             SearchOperator: SearchOperator.Equals
         );
 
-        Action act = () => PredicateBuilder.BuildPredicate<PropTypesTestClass>(new[] { rule });
+        Action act = () => PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
         act.Should().Throw<Exception>()
             .WithMessage($"Cannot convert value '{value}' to type '{nameof(Boolean)}'")

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Autofilter.Helpers;
 using Autofilter.Model;
-using Autofilter.Tests.FakeData;
 using FluentAssertions;
 using Xunit;
 
@@ -11,6 +10,12 @@ namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class ByteTests
 {
+    class TestClass
+    {
+        public byte Byte { get; set; }
+        public byte? NullableByte { get; set; }
+    }
+
     public static IEnumerable<object[]> ByteTestCases => new[]
     {
         new object[] { default(byte), default(byte).ToString(), SearchOperator.Equals, true },
@@ -109,7 +114,7 @@ public class ByteTests
         byte propValue, string ruleValue, 
         SearchOperator operation, bool result)
     {
-        PropTypesTestClass obj = new() { Byte = propValue };
+        TestClass obj = new() { Byte = propValue };
 
         SearchRule rule = new
         (
@@ -118,10 +123,10 @@ public class ByteTests
             SearchOperator: operation
         );
 
-        Expression<Func<PropTypesTestClass, bool>> expression =
-            PredicateBuilder.BuildPredicate<PropTypesTestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> expression =
+            PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
-        Func<PropTypesTestClass, bool> predicate = expression.Compile();
+        Func<TestClass, bool> predicate = expression.Compile();
 
         predicate(obj).Should().Be(result);
     }
@@ -133,7 +138,7 @@ public class ByteTests
         byte? propValue, string? ruleValue, 
         SearchOperator operation, bool result)
     {
-        PropTypesTestClass obj = new() { NullableByte = propValue };
+        TestClass obj = new() { NullableByte = propValue };
 
         SearchRule rule = new
         (
@@ -142,10 +147,10 @@ public class ByteTests
             SearchOperator: operation
         );
 
-        Expression<Func<PropTypesTestClass, bool>> expression =
-            PredicateBuilder.BuildPredicate<PropTypesTestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> expression =
+            PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
-        Func<PropTypesTestClass, bool> predicate = expression.Compile();
+        Func<TestClass, bool> predicate = expression.Compile();
 
         predicate(obj).Should().Be(result);
     }
