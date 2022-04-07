@@ -1,6 +1,6 @@
 # Autofilter
 
-Autofilter simplify filtering data, using well known technology Expression Trees. 
+Autofilter simplify data filtering using well known technology Expression Trees. 
 Reduces amount of code needed for manually writing filtering logic on backend side, allowing this work to be done on frontend
 
 Inspired by Max Arshinov's [article](https://habr.com/ru/company/jugru/blog/423891/) 
