@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using Autofilter.Model;
 using FluentAssertions;
 using Xunit;
+using static Autofilter.Helpers.PredicateBuilder;
 
 namespace Autofilter.Tests.PredicateBuilder.Types;
 
@@ -121,12 +122,11 @@ public class ShortTests
             SearchOperator: operation
         );
 
-        Expression<Func<TestClass, bool>> expression =
-            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> predicate = expression.Compile();
+        Func<TestClass, bool> func = expression.Compile();
 
-        predicate(obj).Should().Be(result);
+        func(obj).Should().Be(result);
     }
 
     [Theory]
@@ -144,11 +144,10 @@ public class ShortTests
             SearchOperator: operation
         );
 
-        Expression<Func<TestClass, bool>> expression =
-            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> predicate = expression.Compile();
+        Func<TestClass, bool> func = expression.Compile();
 
-        predicate(obj).Should().Be(result);
+        func(obj).Should().Be(result);
     }
 }

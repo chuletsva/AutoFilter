@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using Autofilter.Model;
 using FluentAssertions;
 using Xunit;
+using static Autofilter.Helpers.PredicateBuilder;
 
 namespace Autofilter.Tests.PredicateBuilder;
 
@@ -211,31 +212,35 @@ public class LogicOperatorTests
     [MemberData(nameof(TwoOperandsTestCases))]
     public void TwoOperands(string v1, LogicOperator op, string v2, bool result)
     {
-        Expression<Func<TestClass, bool>> expression = 
-            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
-                new(nameof(TestClass.V1), v1, SearchOperator.Equals),
-                new(nameof(TestClass.V2), v2, SearchOperator.Equals, op)
-            });
+        SearchRule[] search = 
+        {
+            new(nameof(TestClass.V1), v1, SearchOperator.Equals),
+            new(nameof(TestClass.V2), v2, SearchOperator.Equals, op)
+        };
 
-        Func<TestClass, bool> predicate = expression.Compile();
+        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search);
 
-        predicate(new()).Should().Be(result);
+        Func<TestClass, bool> func = expression.Compile();
+
+        func(new()).Should().Be(result);
     }
 
     [Theory]
     [MemberData(nameof(ThreeOperandsTestCases))]
     public void ThreeOperands(string v1, LogicOperator op1, string v2, LogicOperator op2, string v3, bool result)
     {
-        Expression<Func<TestClass, bool>> expression = 
-            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
-                new(nameof(TestClass.V1), v1, SearchOperator.Equals),
-                new(nameof(TestClass.V2), v2, SearchOperator.Equals, op1),
-                new(nameof(TestClass.V3), v3, SearchOperator.Equals, op2),
-            });
+        SearchRule[] search = 
+        {
+            new(nameof(TestClass.V1), v1, SearchOperator.Equals),
+            new(nameof(TestClass.V2), v2, SearchOperator.Equals, op1),
+            new(nameof(TestClass.V3), v3, SearchOperator.Equals, op2),
+        };
 
-        Func<TestClass, bool> predicate = expression.Compile();
+        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search);
 
-        predicate(new()).Should().Be(result);
+        Func<TestClass, bool> func = expression.Compile();
+
+        func(new()).Should().Be(result);
     }
 
     [Theory]
@@ -248,18 +253,20 @@ public class LogicOperatorTests
         string v5, LogicOperator op5,
         string v6, bool result)
     {
-        Expression<Func<TestClass, bool>> expression = 
-            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
-                new(nameof(TestClass.V1), v1, SearchOperator.Equals),
-                new(nameof(TestClass.V2), v2, SearchOperator.Equals, op1),
-                new(nameof(TestClass.V3), v3, SearchOperator.Equals, op2),
-                new(nameof(TestClass.V4), v4, SearchOperator.Equals, op3),
-                new(nameof(TestClass.V5), v5, SearchOperator.Equals, op4),
-                new(nameof(TestClass.V6), v6, SearchOperator.Equals, op5),
-            });
+        SearchRule[] search = 
+        {
+            new(nameof(TestClass.V1), v1, SearchOperator.Equals),
+            new(nameof(TestClass.V2), v2, SearchOperator.Equals, op1),
+            new(nameof(TestClass.V3), v3, SearchOperator.Equals, op2),
+            new(nameof(TestClass.V4), v4, SearchOperator.Equals, op3),
+            new(nameof(TestClass.V5), v5, SearchOperator.Equals, op4),
+            new(nameof(TestClass.V6), v6, SearchOperator.Equals, op5),
+        };
 
-        Func<TestClass, bool> predicate = expression.Compile();
+        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search);
 
-        predicate(new()).Should().Be(result);
+        Func<TestClass, bool> func = expression.Compile();
+
+        func(new()).Should().Be(result);
     }
 }

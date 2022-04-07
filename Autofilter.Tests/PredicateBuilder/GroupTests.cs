@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Autofilter.Model;
 using FluentAssertions;
 using Xunit;
+using static Autofilter.Helpers.PredicateBuilder;
 
 namespace Autofilter.Tests.PredicateBuilder;
 
@@ -44,12 +45,11 @@ public class GroupTests
 
             GroupRule[] groups = { new(Start: 0, End: search.Length - 1, Level: 1) };
 
-            Expression<Func<TestClass, bool>> expression =
-                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
 
-            Func<TestClass, bool> predicate = expression.Compile();
+            Func<TestClass, bool> func = expression.Compile();
 
-            predicate(new()).Should().Be(result);
+            func(new()).Should().Be(result);
         }
 
         // * and (* or * or *) and *
@@ -72,12 +72,11 @@ public class GroupTests
 
             GroupRule[] groups = { new(Start: 1, End: 3, Level: 1) };
 
-            Expression<Func<TestClass, bool>> expression =
-                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
 
-            Func<TestClass, bool> predicate = expression.Compile();
+            Func<TestClass, bool> func = expression.Compile();
 
-            predicate(new()).Should().Be(result);
+            func(new()).Should().Be(result);
         }
 
         // (* and * or *) and *
@@ -100,12 +99,11 @@ public class GroupTests
 
             GroupRule[] groups = { new(Start: 0, End: 2, Level: 1) };
 
-            Expression<Func<TestClass, bool>> expression =
-                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
 
-            Func<TestClass, bool> predicate = expression.Compile();
+            Func<TestClass, bool> func = expression.Compile();
 
-            predicate(new()).Should().Be(result);
+            func(new()).Should().Be(result);
         }
 
         // * and (* and * or *)
@@ -127,12 +125,11 @@ public class GroupTests
 
             GroupRule[] groups = { new(Start: 1, End: 3, Level: 1) };
 
-            Expression<Func<TestClass, bool>> expression =
-                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
 
-            Func<TestClass, bool> predicate = expression.Compile();
+            Func<TestClass, bool> func = expression.Compile();
 
-            predicate(new()).Should().Be(result);
+            func(new()).Should().Be(result);
         }
 
         // (* or * and *) and (* and * or *)
@@ -162,12 +159,11 @@ public class GroupTests
                 new(Start: 3, End: 5, Level: 1)
             };
 
-            Expression<Func<TestClass, bool>> expression =
-                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
 
-            Func<TestClass, bool> predicate = expression.Compile();
+            Func<TestClass, bool> func = expression.Compile();
 
-            predicate(new()).Should().Be(result);
+            func(new()).Should().Be(result);
         }
 
         // * and (* or * and *) or (* and * or *) and *
@@ -201,12 +197,11 @@ public class GroupTests
                 new(Start: 4, End: 6, Level: 1)
             };
 
-            Expression<Func<TestClass, bool>> expression =
-                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
 
-            Func<TestClass, bool> predicate = expression.Compile();
+            Func<TestClass, bool> func = expression.Compile();
 
-            predicate(new()).Should().Be(result);
+            func(new()).Should().Be(result);
         }
     }
 
@@ -250,12 +245,11 @@ public class GroupTests
                 new(Start: 3, End: 10, Level: 2)
             };
 
-            Expression<Func<TestClass, bool>> expression =
-                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
 
-            Func<TestClass, bool> predicate = expression.Compile();
+            Func<TestClass, bool> func = expression.Compile();
 
-            predicate(new()).Should().Be(result);
+            func(new()).Should().Be(result);
         }
     }
 }
