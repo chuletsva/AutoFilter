@@ -50,12 +50,14 @@ Apply filter to queryable
 queryable.ApplyFilter(filter);
 ```
 
-Under the hood our filter transforms into call
+Under the hood filter transforms into call
 ```c#
 queryable.Where(x => x.Name.StartsWith("Sni") && x.IsForSale);
 ```
 
 ## Examples
+
+#### Filtering
 
 Using parentheses
 
@@ -113,7 +115,7 @@ Filter filter = new()
 };
 ```
 
-Sorting
+#### Sorting
 
 ```c#
 queryable.OrderBy(x => x.ExpireDate).ThenByDescending(x => x.InStock)
@@ -129,7 +131,7 @@ Filter filter = new()
 };
 ```
 
-Paging
+#### Paging
 
 ```c#
 queryable.Skip(5).Take(1);
