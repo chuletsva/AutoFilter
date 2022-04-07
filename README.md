@@ -60,7 +60,7 @@ queryable.Where(x => x.Name.StartsWith("Sni") && x.InStock);
 Using parentheses
 
 ```c#
-queryable.Where(x => ((x.Name.StartsWith("Sni") && x.ExpireDate >= "07.04.2022") || (x.Name.Contains("Mars") && x.IsForSale)) && x.IsInStock)
+queryable.Where(x => ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= "07.04.2022") && x.InStock)
 ```
 ```c#
 Filter filter = new()
@@ -71,7 +71,14 @@ Filter filter = new()
         (
             PropertyName: "Name",
             SearchOperator: SearchOperator.StartsWith,
-            Value: "Sni"
+            Value: "Snickers"
+        ),
+        new SearchRule
+        (
+            PropertyName: "Name",
+            SearchOperator: SearchOperator.Contains,
+            Value: "Mars",
+            LogicOperator: LogicOperator.Or
         ),
         new SearchRule
         (
@@ -83,20 +90,6 @@ Filter filter = new()
         new SearchRule
         (
             PropertyName: "InStock",
-            SearchOperator: SearchOperator.Contains,
-            Value: "Mars",
-            LogicOperator: LogicOperator.Or
-        ),
-        new SearchRule
-        (
-            PropertyName: "IsForSale",
-            SearchOperator: SearchOperator.Equals,
-            Value: "true",
-            LogicOperator: LogicOperator.And
-        ),
-        new SearchRule
-        (
-            PropertyName: "IsInStock",
             SearchOperator: SearchOperator.Equals,
             Value: "true",
             LogicOperator: LogicOperator.And
@@ -112,16 +105,10 @@ Filter filter = new()
         ),
         new GroupRule
         (
-            Start: 2,
-            End: 3,
-            Level: 1
-        ),
-        new GroupRule
-        (
             Start: 0,
-            End: 3,
+            End: 2,
             Level: 2
-        ),
+        )
     }
 };
 ```
