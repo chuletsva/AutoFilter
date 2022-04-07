@@ -60,7 +60,7 @@ queryable.Where(x => x.Name.StartsWith("Sni") && x.InStock);
 Using parentheses
 
 ```c#
-queryable.Where(x => ((x.Name.StartsWith("Sni") && x.ExpireDate >= 07.04.2022) || (x.Name.Contains("Mars") && x.IsForSale)) && x.IsInStock)
+queryable.Where(x => ((x.Name.StartsWith("Sni") && x.ExpireDate >= "07.04.2022") || (x.Name.Contains("Mars") && x.IsForSale)) && x.IsInStock)
 ```
 ```c#
 Filter filter = new()
