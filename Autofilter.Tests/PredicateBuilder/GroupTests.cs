@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Autofilter.Helpers;
 using Autofilter.Model;
 using FluentAssertions;
 using Xunit;
 
-namespace Autofilter.Tests.PredicateBuilderTests;
+namespace Autofilter.Tests.PredicateBuilder;
 
 public class GroupTests
 {
@@ -19,9 +18,15 @@ public class GroupTests
         public bool V6 => true;
         public bool V7 => true;
         public bool V8 => true;
+        public bool V9 => true;
+        public bool V10 => true;
+        public bool V11 => true;
+        public bool V12 => true;
+        public bool V13 => true;
+        public bool V14 => true;
     }
 
-    public class OneLevel
+    public class SimpleScenarios
     {
         // (* or * and *)
         [Theory]
@@ -40,7 +45,7 @@ public class GroupTests
             GroupRule[] groups = { new(Start: 0, End: search.Length - 1, Level: 1) };
 
             Expression<Func<TestClass, bool>> expression =
-                PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
 
             Func<TestClass, bool> predicate = expression.Compile();
 
@@ -68,7 +73,7 @@ public class GroupTests
             GroupRule[] groups = { new(Start: 1, End: 3, Level: 1) };
 
             Expression<Func<TestClass, bool>> expression =
-                PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
 
             Func<TestClass, bool> predicate = expression.Compile();
 
@@ -96,7 +101,7 @@ public class GroupTests
             GroupRule[] groups = { new(Start: 0, End: 2, Level: 1) };
 
             Expression<Func<TestClass, bool>> expression =
-                PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
 
             Func<TestClass, bool> predicate = expression.Compile();
 
@@ -123,7 +128,7 @@ public class GroupTests
             GroupRule[] groups = { new(Start: 1, End: 3, Level: 1) };
 
             Expression<Func<TestClass, bool>> expression =
-                PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
 
             Func<TestClass, bool> predicate = expression.Compile();
 
@@ -158,7 +163,7 @@ public class GroupTests
             };
 
             Expression<Func<TestClass, bool>> expression =
-                PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
 
             Func<TestClass, bool> predicate = expression.Compile();
 
@@ -197,7 +202,7 @@ public class GroupTests
             };
 
             Expression<Func<TestClass, bool>> expression =
-                PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
 
             Func<TestClass, bool> predicate = expression.Compile();
 
@@ -205,12 +210,52 @@ public class GroupTests
         }
     }
 
-    public class TwoLevels
+    public class ComplexScenarions
     {
-        [Fact]
-        public void WhenGroupCoversAllOperands()
+        // (* and * or *) and (* or (* and * or *) and (* or * and *) or *) and (* or * and *)
+        [Theory]
+        [InlineData("true", "true", "false", "true", "false", "false", "false", "false", "false", "false", "false", "true", "false", "false", true)]
+        [InlineData("false", "false", "true", "false", "true", "true", "false", "false", "true", "true", "false", "false", "true", "true", true)]
+        public void FiveGroups_IncludeBorders(
+            string v1, string v2, string v3, 
+            string v4, string v5, string v6, 
+            string v7, string v8, string v9,
+            string v10, string v11, string v12,
+            string v13, string v14, bool result)
         {
+            SearchRule[] search = 
+            {
+                new(nameof(TestClass.V1), v1, SearchOperator.Equals),
+                new(nameof(TestClass.V2), v2, SearchOperator.Equals, LogicOperator.And),
+                new(nameof(TestClass.V3), v3, SearchOperator.Equals, LogicOperator.Or),
+                new(nameof(TestClass.V4), v4, SearchOperator.Equals, LogicOperator.And),
+                new(nameof(TestClass.V5), v5, SearchOperator.Equals, LogicOperator.Or),
+                new(nameof(TestClass.V6), v6, SearchOperator.Equals, LogicOperator.And),
+                new(nameof(TestClass.V7), v7, SearchOperator.Equals, LogicOperator.Or),
+                new(nameof(TestClass.V8), v8, SearchOperator.Equals, LogicOperator.And),
+                new(nameof(TestClass.V9), v9, SearchOperator.Equals, LogicOperator.Or),
+                new(nameof(TestClass.V10), v10, SearchOperator.Equals, LogicOperator.And),
+                new(nameof(TestClass.V11), v11, SearchOperator.Equals, LogicOperator.Or),
+                new(nameof(TestClass.V12), v12, SearchOperator.Equals, LogicOperator.And),
+                new(nameof(TestClass.V13), v13, SearchOperator.Equals, LogicOperator.Or),
+                new(nameof(TestClass.V14), v14, SearchOperator.Equals, LogicOperator.And),
+            };
 
+            GroupRule[] groups =
+            {
+                new(Start: 0, End: 2, Level: 1),
+                new(Start: 4, End: 6, Level: 1),
+                new(Start: 7, End: 9, Level: 1),
+                new(Start: 11, End: 13, Level: 1),
+                new(Start: 3, End: 10, Level: 2)
+            };
+
+            Expression<Func<TestClass, bool>> expression =
+                Helpers.PredicateBuilder.BuildPredicate<TestClass>(search, groups);
+
+            Func<TestClass, bool> predicate = expression.Compile();
+
+            predicate(new()).Should().Be(result);
         }
     }
 }

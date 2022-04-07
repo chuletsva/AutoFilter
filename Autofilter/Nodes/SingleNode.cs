@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 using Autofilter.Helpers;
 using Autofilter.Model;
 
@@ -19,8 +20,7 @@ class SingleNode : INode
 
     public Expression BuildExpression()
     {
-        if (!Reflection.TryGetProperty(_paramExpr.Type, _rule.PropertyName, out var property))
-            throw new Exception($"Property '{_rule.PropertyName}' of type '{_paramExpr.Type.Name}' doesn't exist");
+        PropertyInfo property = Reflection.GetProperty(_paramExpr.Type, _rule.PropertyName);
 
         MemberExpression propExpr = Expression.Property(_paramExpr, property);
 

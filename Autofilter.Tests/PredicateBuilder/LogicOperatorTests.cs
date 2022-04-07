@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Autofilter.Helpers;
 using Autofilter.Model;
 using FluentAssertions;
 using Xunit;
 
-namespace Autofilter.Tests.PredicateBuilderTests;
+namespace Autofilter.Tests.PredicateBuilder;
 
 public class LogicOperatorTests
 {
@@ -210,11 +209,10 @@ public class LogicOperatorTests
 
     [Theory]
     [MemberData(nameof(TwoOperandsTestCases))]
-    public void TwoOperands(
-        string v1, LogicOperator op, string v2, bool result)
+    public void TwoOperands(string v1, LogicOperator op, string v2, bool result)
     {
         Expression<Func<TestClass, bool>> expression = 
-            PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
+            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
                 new(nameof(TestClass.V1), v1, SearchOperator.Equals),
                 new(nameof(TestClass.V2), v2, SearchOperator.Equals, op)
             });
@@ -226,13 +224,10 @@ public class LogicOperatorTests
 
     [Theory]
     [MemberData(nameof(ThreeOperandsTestCases))]
-    public void ThreeOperands(
-        string v1, LogicOperator op1, 
-        string v2, LogicOperator op2, 
-        string v3, bool result)
+    public void ThreeOperands(string v1, LogicOperator op1, string v2, LogicOperator op2, string v3, bool result)
     {
         Expression<Func<TestClass, bool>> expression = 
-            PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
+            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
                 new(nameof(TestClass.V1), v1, SearchOperator.Equals),
                 new(nameof(TestClass.V2), v2, SearchOperator.Equals, op1),
                 new(nameof(TestClass.V3), v3, SearchOperator.Equals, op2),
@@ -254,7 +249,7 @@ public class LogicOperatorTests
         string v6, bool result)
     {
         Expression<Func<TestClass, bool>> expression = 
-            PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
+            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new SearchRule[]{
                 new(nameof(TestClass.V1), v1, SearchOperator.Equals),
                 new(nameof(TestClass.V2), v2, SearchOperator.Equals, op1),
                 new(nameof(TestClass.V3), v3, SearchOperator.Equals, op2),

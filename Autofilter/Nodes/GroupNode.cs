@@ -20,32 +20,28 @@ class GroupNode : INode
 
         for (int i = 1; i < _children.Count; i++)
         {
-            if (_children[i].Logic == LogicOperator.Or)
+            switch (_children[i].Logic)
             {
-                int j = i;
+                case LogicOperator.Or:
+                    int j = i;
 
-                Expression andExpr = _children[i].BuildExpression();
+                    Expression andExpr = _children[i].BuildExpression();
 
-                while (j + 1 < _children.Count && _children[j + 1].Logic == LogicOperator.And)
-                    andExpr = Expression.AndAlso(andExpr, _children[++j].BuildExpression());
+                    while (j + 1 < _children.Count && _children[j + 1].Logic == LogicOperator.And)
+                        andExpr = Expression.AndAlso(andExpr, _children[++j].BuildExpression());
 
-                result = Expression.OrElse(result, andExpr);
+                    result = Expression.OrElse(result, andExpr);
 
-                i = j;
+                    i = j;
+                    break;
+                case LogicOperator.And:
+                    result = Expression.AndAlso(result, _children[i].BuildExpression());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else if (_children[i].Logic == LogicOperator.And)
-                result = Expression.AndAlso(result, _children[i].BuildExpression());
-            else
-                throw new Exception();
         }
 
         return result;
-
-        //return _children.Skip(1).Aggregate(_children[0].BuildExpression(), (cur, node) => node.Logic switch
-        //{
-        //    LogicOperator.And => Expression.And(cur, node.BuildExpression()),
-        //    LogicOperator.Or => Expression.Or(cur, node.BuildExpression()),
-        //    _ => throw new Exception()
-        //});
     }
 }

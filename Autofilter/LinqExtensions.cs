@@ -2,6 +2,7 @@
 using Autofilter.Processors;
 
 [assembly: InternalsVisibleTo("Autofilter.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 namespace Autofilter;
 

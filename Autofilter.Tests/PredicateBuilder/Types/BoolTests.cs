@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Autofilter.Helpers;
 using Autofilter.Model;
 using FluentAssertions;
 using Xunit;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.PredicateBuilder.Types;
 
 public class BoolTests
 {
@@ -76,7 +75,7 @@ public class BoolTests
         );
 
         Expression<Func<TestClass, bool>> expression =
-            PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
+            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
         Func<TestClass, bool> predicate = expression.Compile();
 
@@ -100,7 +99,7 @@ public class BoolTests
         );
 
         Expression<Func<TestClass, bool>> expression =
-            PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
+            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
         Func<TestClass, bool> predicate = expression.Compile();
 
@@ -118,7 +117,7 @@ public class BoolTests
             SearchOperator: SearchOperator.Equals
         );
 
-        Action act = () => PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
+        Action act = () => Helpers.PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
         string expectedMessage = $"Property '{nameof(TestClass.Bool)}' with type '{nameof(Boolean)}' is not comparable with {valueAlias}";
 
@@ -136,7 +135,7 @@ public class BoolTests
             SearchOperator: SearchOperator.Equals
         );
 
-        Action act = () => PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
+        Action act = () => Helpers.PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
         act.Should().Throw<Exception>()
             .WithMessage($"Cannot convert value '{value}' to type '{nameof(Boolean)}'")

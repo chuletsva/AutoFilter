@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Autofilter.Helpers;
 using Autofilter.Model;
 using FluentAssertions;
 using Xunit;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.PredicateBuilder.Types;
 
 public class ByteTests
 {
@@ -124,7 +123,7 @@ public class ByteTests
         );
 
         Expression<Func<TestClass, bool>> expression =
-            PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
+            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
         Func<TestClass, bool> predicate = expression.Compile();
 
@@ -148,7 +147,7 @@ public class ByteTests
         );
 
         Expression<Func<TestClass, bool>> expression =
-            PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
+            Helpers.PredicateBuilder.BuildPredicate<TestClass>(new[] { rule });
 
         Func<TestClass, bool> predicate = expression.Compile();
 

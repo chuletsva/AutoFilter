@@ -20,9 +20,12 @@ static class Reflection
     public static bool IsNullableType(Type type)
         => type.IsClass || Nullable.GetUnderlyingType(type) is not null;
 
-    public static bool TryGetProperty(Type type, string propertyName, out PropertyInfo property)
+    public static PropertyInfo GetProperty(Type type, string propertyName)
     {
-        return Properties.GetOrAdd(type, t => t.GetProperties().ToDictionary(p => p.Name))
-            .TryGetValue(propertyName, out property);
+        var properties = Properties.GetOrAdd(type, t => t.GetProperties().ToDictionary(p => p.Name));
+        if (!properties.TryGetValue(propertyName, out var property))
+            throw new Exception($"Property '{propertyName}' of type '{type.Name}' doesn't exist");
+
+        return property;
     }
 }
