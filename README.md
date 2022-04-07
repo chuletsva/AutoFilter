@@ -59,10 +59,10 @@ queryable.Where(x => x.Name.StartsWith("Sni") && x.InStock);
 
 Using parentheses
 
-'''c#
+```c#
 queryable.Where(x => ((x.Name.StartsWith("Sni") && x.ExpireDate >= 07.04.2022) || (x.Name.Contains("Mars") && x.IsForSale)) && x.IsInStock)
-'''
-'''c#
+```
+```c#
 Filter filter = new()
 {
     Search = new[]
@@ -126,5 +126,5 @@ Filter filter = new()
 };
 ```
 
-'''c#
-'''
+```c#
+```
