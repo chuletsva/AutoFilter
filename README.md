@@ -30,14 +30,14 @@ Filter filter = new()
         new SearchRule
         (
             PropertyName: "Name",
+            SearchOperator: SearchOperator.StartsWith,
             Value: "Sni",
-            SearchOperator: SearchOperator.StartsWith
         ),
         new SearchRule
         (
-            PropertyName: "InStock",
-            Value: "true",
+            PropertyName: "IsForSale",
             SearchOperator: SearchOperator.Equals,
+            Value: "true",
             LogicOperator: LogicOperator.And
         ),
     }
@@ -52,7 +52,7 @@ queryable.ApplyFilter(filter);
 
 Under the hood our filter transforms into call
 ```c#
-queryable.Where(x => x.Name.StartsWith("Sni") && x.InStock);
+queryable.Where(x => x.Name.StartsWith("Sni") && x.IsForSale);
 ```
 
 ## Examples
@@ -60,7 +60,7 @@ queryable.Where(x => x.Name.StartsWith("Sni") && x.InStock);
 Using parentheses
 
 ```c#
-queryable.Where(x => ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= "07.04.2022") && x.InStock)
+queryable.Where(x => ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= "07.04.2022") && x.IsForSale)
 ```
 ```c#
 Filter filter = new()
@@ -89,7 +89,7 @@ Filter filter = new()
         ),
         new SearchRule
         (
-            PropertyName: "InStock",
+            PropertyName: "IsForSale",
             SearchOperator: SearchOperator.Equals,
             Value: "true",
             LogicOperator: LogicOperator.And
@@ -113,5 +113,31 @@ Filter filter = new()
 };
 ```
 
+Sorting
+
 ```c#
+queryable.OrderBy(x => x.ExpireDate).ThenByDescending(x => x.InStock)
+```
+```c#
+Filter filter = new()
+{
+    Sorting = new []
+    {
+        new SortingRule(PropertyName: "ExpireDate"),
+        new SortingRule(PropertyName: "InStock", IsDescending: true)
+    }
+};
+```
+
+Paging
+
+```c#
+queryable.Skip(5).Take(1);
+```
+
+```c#
+Filter filter = new()
+{
+    Pagination = new PaginationRule(Skip: 5, Top: 1)
+};
 ```
