@@ -16,49 +16,43 @@ public class BoolTests
         public bool? NullableBool { get; set; }
     }
 
-    public static IEnumerable<object[]> BoolTestCases
+    public static IEnumerable<object[]> BoolTestCases => new[]
     {
-        get
-        {
-            yield return new object[] { true, "true", SearchOperator.Equals, true };
-            yield return new object[] { false, "false", SearchOperator.Equals, true };
-            yield return new object[] { true, "false", SearchOperator.Equals, false };
-            yield return new object[] { false, "true", SearchOperator.Equals, false };
+        new object[] { true, "true", SearchOperator.Equals, true },
+        new object[] { false, "false", SearchOperator.Equals, true },
+        new object[] { true, "false", SearchOperator.Equals, false },
+        new object[] { false, "true", SearchOperator.Equals, false },
 
-            yield return new object[] { true, "true", SearchOperator.NotEquals, false };
-            yield return new object[] { false, "false", SearchOperator.NotEquals, false };
-            yield return new object[] { true, "false", SearchOperator.NotEquals, true };
-            yield return new object[] { false, "true", SearchOperator.NotEquals, true };
-        }
-    }
+        new object[] { true, "true", SearchOperator.NotEquals, false },
+        new object[] { false, "false", SearchOperator.NotEquals, false },
+        new object[] { true, "false", SearchOperator.NotEquals, true },
+        new object[] { false, "true", SearchOperator.NotEquals, true },
+    };
 
-    public static IEnumerable<object?[]> NullableBoolTestCases
+    public static IEnumerable<object?[]> NullableBoolTestCases => new[]
     {
-        get
-        {
-            yield return new object?[] { null, null, SearchOperator.Equals, true };
-            yield return new object?[] { null, string.Empty, SearchOperator.Equals, true };
-            yield return new object?[] { null, "true", SearchOperator.Equals, false };
-            yield return new object?[] { null, "false", SearchOperator.Equals, false };
-            yield return new object?[] { true, null, SearchOperator.Equals, false };
-            yield return new object?[] { false, null, SearchOperator.Equals, false };
+        new object?[] { null, null, SearchOperator.Equals, true },
+        new object?[] { null, string.Empty, SearchOperator.Equals, true },
+        new object?[] { null, "true", SearchOperator.Equals, false },
+        new object?[] { null, "false", SearchOperator.Equals, false },
+        new object?[] { true, null, SearchOperator.Equals, false },
+        new object?[] { false, null, SearchOperator.Equals, false },
 
-            yield return new object?[] { null, null, SearchOperator.NotEquals, false };
-            yield return new object?[] { null, string.Empty, SearchOperator.NotEquals, false };
-            yield return new object?[] { null, "true", SearchOperator.NotEquals, true };
-            yield return new object?[] { null, "false", SearchOperator.NotEquals, true };
-            yield return new object?[] { true, null, SearchOperator.NotEquals, true };
-            yield return new object?[] { false, null, SearchOperator.NotEquals, true };
+        new object?[] { null, null, SearchOperator.NotEquals, false },
+        new object?[] { null, string.Empty, SearchOperator.NotEquals, false },
+        new object?[] { null, "true", SearchOperator.NotEquals, true },
+        new object?[] { null, "false", SearchOperator.NotEquals, true },
+        new object?[] { true, null, SearchOperator.NotEquals, true },
+        new object?[] { false, null, SearchOperator.NotEquals, true },
 
-            yield return new object?[] { true, null, SearchOperator.Exists, true };
-            yield return new object?[] { false, null, SearchOperator.Exists, true };
-            yield return new object?[] { null, null, SearchOperator.Exists, false };
+        new object?[] { true, null, SearchOperator.Exists, true },
+        new object?[] { false, null, SearchOperator.Exists, true },
+        new object?[] { null, null, SearchOperator.Exists, false },
 
-            yield return new object?[] { null, null, SearchOperator.NotExists, true };
-            yield return new object?[] { true, null, SearchOperator.NotExists, false };
-            yield return new object?[] { false, null, SearchOperator.NotExists, false };
-        }
-    }
+        new object?[] { null, null, SearchOperator.NotExists, true },
+        new object?[] { true, null, SearchOperator.NotExists, false },
+        new object?[] { false, null, SearchOperator.NotExists, false },
+    };
 
     [Theory]
     [MemberData(nameof(BoolTestCases))]
