@@ -1,7 +1,7 @@
 # Autofilter
 
-Autofilter simplify data filtering using well known technology Expression Trees. 
-Reduces amount of code needed for manually writing filtering logic on backend side, allowing this work to be done on frontend
+Autofilter simplifies data filtering using well known technology Expression Trees. 
+Reduces amount of code needed for manual writing filtering logic on backend side, allowing this work to be done on frontend
 
 Inspired by Max Arshinov's [article](https://habr.com/ru/company/jugru/blog/423891/) 
 
@@ -146,6 +146,6 @@ Filter filter = new()
 
 ## Operations vs Types compatibility
 
-![](https://github.com/ART4S/Autofilter/blob/master/Resources/Compatibility1.png)
-![](https://github.com/ART4S/Autofilter/blob/master/Resources/Compatibility2.png)
-![](https://github.com/ART4S/Autofilter/blob/master/Resources/Compatibility3.png)
+![Compatibility1](https://user-images.githubusercontent.com/24371700/162436461-09717eaa-23d4-4693-af71-eed40aab02ee.png) 
+![Compatibility2](https://user-images.githubusercontent.com/24371700/162436470-3e3db5e0-ab62-4add-bdb1-91664017a4e6.png)
+![Compatibility3](https://user-images.githubusercontent.com/24371700/162436496-2d995028-8e68-48f1-8c67-5698792a5527.png)
