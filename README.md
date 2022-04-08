@@ -30,15 +30,15 @@ Filter filter = new()
         new SearchRule
         (
             PropertyName: "Name",
-            SearchOperator: SearchOperator.StartsWith,
-            Value: "Sni",
+            SearchOperator: SearchOperator.Contains,
+            Value: "Snickers",
         ),
         new SearchRule
         (
+            LogicOperator: LogicOperator.And,
             PropertyName: "IsForSale",
             SearchOperator: SearchOperator.Equals,
-            Value: "true",
-            LogicOperator: LogicOperator.And
+            Value: "true"
         ),
     }
 };
@@ -52,7 +52,7 @@ queryable.ApplyFilter(filter);
 
 Under the hood filter transforms into call
 ```c#
-queryable.Where(x => x.Name.StartsWith("Sni") && x.IsForSale);
+queryable.Where(x => x.Name.Contains("Snickers") && x.IsForSale);
 ```
 
 ## Examples
@@ -77,24 +77,24 @@ Filter filter = new()
         ),
         new SearchRule
         (
+            LogicOperator: LogicOperator.Or,
             PropertyName: "Name",
             SearchOperator: SearchOperator.Contains,
             Value: "Mars",
-            LogicOperator: LogicOperator.Or
         ),
         new SearchRule
         (
+            LogicOperator: LogicOperator.And,
             PropertyName: "ExpireDate",
             SearchOperator: SearchOperator.GreaterOrEqual,
-            Value: "07.04.2022",
-            LogicOperator: LogicOperator.And
+            Value: "07.04.2022"
         ),
         new SearchRule
         (
+            LogicOperator: LogicOperator.And,
             PropertyName: "IsForSale",
             SearchOperator: SearchOperator.Equals,
-            Value: "true",
-            LogicOperator: LogicOperator.And
+            Value: "true"
         ),
     },
     Groups = new[]
@@ -143,3 +143,9 @@ Filter filter = new()
     Pagination = new PaginationRule(Skip: 5, Top: 1)
 };
 ```
+
+## Types vs. Operation compatibility
+
+(https://github.com/ART4S/Autofilter/blob/master/Resources/Compatibility1.png)
+(https://github.com/ART4S/Autofilter/blob/master/Resources/Compatibility2.png)
+(https://github.com/ART4S/Autofilter/blob/master/Resources/Compatibility3.png)
