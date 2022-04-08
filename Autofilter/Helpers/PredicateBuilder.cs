@@ -18,10 +18,10 @@ static class PredicateBuilder
 
         ParameterExpression paramExpr = Expression.Parameter(typeof(T), "x");
 
-        Expression operandsExpr = BuildGroupNode(parentGroup, operands, groups, paramExpr)
+        Expression bodyExpr = BuildGroupNode(parentGroup, operands, groups, paramExpr)
             .BuildExpression();
 
-        return Expression.Lambda<Func<T, bool>>(operandsExpr, paramExpr);
+        return Expression.Lambda<Func<T, bool>>(bodyExpr, paramExpr);
     }
 
     private static INode BuildGroupNode(
