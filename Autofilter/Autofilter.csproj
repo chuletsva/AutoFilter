@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,25 +6,24 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId>ART4S.$(AssemblyName)</PackageId>
-    <Authors>ART4S</Authors>
+    <Authors>Vyacheslav Chulets</Authors>
     <Company />
     <Product />
     <Description>Simplify data filtering using Expression Trees</Description>
     <PackageProjectUrl></PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/ART4S/Autofilter</RepositoryUrl>
-    <PackageTags>Filtering; Linq; Expression Trees</PackageTags>
+    <PackageTags>filter; linq; queryable; expressions; expression trees;</PackageTags>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageLicenseFile>E:\Repos\Autofilter\LICENSE</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-
+	<ItemGroup>
+		<EmbeddedResource Include="..\LICENSE" Pack="true" PackagePath="\" />
+	</ItemGroup>
 </Project>
