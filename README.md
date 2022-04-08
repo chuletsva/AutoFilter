@@ -144,7 +144,7 @@ Filter filter = new()
 };
 ```
 
-## Operation vs Types compatibility
+## Operations vs Types compatibility
 
 ![](https://github.com/ART4S/Autofilter/blob/master/Resources/Compatibility1.png)
 ![](https://github.com/ART4S/Autofilter/blob/master/Resources/Compatibility2.png)
