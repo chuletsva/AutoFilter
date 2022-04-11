@@ -1,3 +1,4 @@
+[![Nuget](https://img.shields.io/nuget/v/ART4S.Autofilter)](https://www.nuget.org/packages/ART4S.Autofilter/)
 # Autofilter
 
 Autofilter simplifies data filtering using well known technology Expression Trees. 
