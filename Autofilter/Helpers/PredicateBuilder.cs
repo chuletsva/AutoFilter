@@ -45,8 +45,11 @@ static class PredicateBuilder
             foreach (GroupRule group in childGroups)
             {
                 if (isInGroup[group.Start]) continue;
+
                 highLevelGroups.Add(group);
-                Array.Fill(isInGroup, true, group.Start, group.End - group.Start + 1);
+
+                for (int i = group.Start; i <= group.End; i++)
+                    isInGroup[i] = true;
             }
         }
 
