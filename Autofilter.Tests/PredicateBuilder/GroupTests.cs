@@ -207,6 +207,77 @@ public class GroupTests
 
     public class ComplexScenarions
     {
+        [Theory]
+        // * and ((* or *) and (* or *)) and *
+        [InlineData("true", LogicOperator.And, "false", LogicOperator.Or, "true", LogicOperator.And, "false", LogicOperator.Or, "true", LogicOperator.And, "true", true)]
+        // * or ((* and *) or (* and *)) or *
+        [InlineData("false", LogicOperator.Or, "true", LogicOperator.And, "true", LogicOperator.Or, "false", LogicOperator.And, "false", LogicOperator.Or, "false", true)]
+        public void ThreeGroups_DoesntIncludeBorders(
+            string v1, LogicOperator logic1, 
+            string v2, LogicOperator logic2, 
+            string v3, LogicOperator logic3,
+            string v4,  LogicOperator logic4, 
+            string v5,  LogicOperator logic5,
+            string v6, bool result)
+        {
+            SearchRule[] search = 
+            {
+                new(nameof(TestClass.V1), v1, SearchOperator.Equals),
+                new(nameof(TestClass.V2), v2, SearchOperator.Equals, logic1),
+                new(nameof(TestClass.V3), v3, SearchOperator.Equals, logic2),
+                new(nameof(TestClass.V4), v4, SearchOperator.Equals, logic3),
+                new(nameof(TestClass.V5), v5, SearchOperator.Equals, logic4),
+                new(nameof(TestClass.V6), v6, SearchOperator.Equals, logic5),
+            };
+
+            GroupRule[] groups =
+            {
+                new(Start: 1, End: 2, Level: 1),
+                new(Start: 3, End: 4, Level: 1),
+                new(Start: 1, End: 4, Level: 2),
+            };
+
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
+
+            Func<TestClass, bool> func = expression.Compile();
+
+            func(new()).Should().Be(result);
+        }
+        [Theory]
+        // ((* and *) or (* and *)) and *
+        [InlineData("true", LogicOperator.And, "true", LogicOperator.Or, "false", LogicOperator.And, "false", LogicOperator.And, "true", true)]
+        // ((* or *) and (* or *)) and *
+        [InlineData("true", LogicOperator.Or, "false", LogicOperator.And, "true", LogicOperator.Or, "false", LogicOperator.And, "true", true)]
+        public void ThreeGroups_IncludeStartBorder(
+            string v1, LogicOperator logic1, 
+            string v2, LogicOperator logic2, 
+            string v3, LogicOperator logic3,
+            string v4, LogicOperator logic4, 
+            string v5, bool result)
+        {
+            SearchRule[] search = 
+            {
+                new(nameof(TestClass.V1), v1, SearchOperator.Equals),
+                new(nameof(TestClass.V2), v2, SearchOperator.Equals, logic1),
+                new(nameof(TestClass.V3), v3, SearchOperator.Equals, logic2),
+                new(nameof(TestClass.V4), v4, SearchOperator.Equals, logic3),
+                new(nameof(TestClass.V5), v5, SearchOperator.Equals, logic4),
+            };
+
+            GroupRule[] groups =
+            {
+                new(Start: 0, End: 1, Level: 1),
+                new(Start: 2, End: 3, Level: 1),
+                new(Start: 0, End: 3, Level: 2),
+            };
+
+            Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(search, groups);
+
+            Func<TestClass, bool> func = expression.Compile();
+
+            func(new()).Should().Be(result);
+        }
+
         // (* and * or *) and (* or (* and * or *) and (* or * and *) or *) and (* or * and *)
         [Theory]
         [InlineData("true", "true", "false", "true", "false", "false", "false", "false", "false", "false", "false", "true", "false", "false", true)]

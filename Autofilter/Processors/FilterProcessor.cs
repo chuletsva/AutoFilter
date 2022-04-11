@@ -35,12 +35,12 @@ class FilterProcessor
 
             if (filter.Pagination is not null)
                 source = _paginationProcessor.ApplyPagination(source, filter.Pagination);
+
+            return source;
         }
         catch (Exception ex)
         {
             throw new FilterException("Error while applying filter", ex);
         }
-
-        return source;
     }
 }
