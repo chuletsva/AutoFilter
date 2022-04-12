@@ -2,6 +2,7 @@
 using System.Reflection;
 using Autofilter.Helpers;
 using Autofilter.Model;
+using static Autofilter.Helpers.ValueConverter;
 
 namespace Autofilter.Nodes;
 
@@ -24,20 +25,13 @@ class SingleNode : INode
 
         MemberExpression propExpr = Expression.Property(_paramExpr, property);
 
-        object? value = ValueConverter.ConvertValueToType(_rule.Value, property.PropertyType);
+        object? value = ConvertValueToType(_rule.Value, property.PropertyType);
 
         Expression valueExpr;
         try { valueExpr = Expression.Constant(value, property.PropertyType); }
         catch
         {
-            string valueAlias = value switch
-            {
-                null => "null",
-                _ when string.IsNullOrWhiteSpace(_rule.Value) => "empty string",
-                _ => $"'{_rule.Value}'"
-            };
-
-            throw new Exception($"Property '{_rule.PropertyName}' with type '{property.PropertyType.Name}' is not comparable with {valueAlias}");
+            throw new Exception($"Property '{_rule.PropertyName}' with type '{property.PropertyType.Name}' is not comparable with {GetInvalidValueAlias(value)}");
         }
 
         return _rule.SearchOperator switch

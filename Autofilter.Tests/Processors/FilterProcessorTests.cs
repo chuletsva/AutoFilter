@@ -2,6 +2,7 @@
 using Autofilter.Model;
 using Autofilter.Processors;
 using AutoFixture;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -21,6 +22,18 @@ public class FilterProcessorTests
         _paginationProcessor = new Mock<IPaginationProcessor>();
         _sut = new FilterProcessor(_serachProcessor.Object, 
             _sortingProcessor.Object, _paginationProcessor.Object);
+    }
+
+    [Fact]
+    public void ReturnsSameQuery_WhenPassedEmptyFilter()
+    {
+        Fixture fixture = new();
+
+        IQueryable<int> query = fixture.CreateMany<int>().AsQueryable();
+
+        IQueryable<int> resultQuery = _sut.ApplyFilter(query, new());
+
+        resultQuery.Should().BeSameAs(query);
     }
 
     [Fact]

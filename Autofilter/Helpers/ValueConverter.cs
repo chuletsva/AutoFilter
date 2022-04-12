@@ -13,7 +13,7 @@ static class ValueConverter
 
     public static object? ConvertValueToType(string? value, Type type)
     {
-        if (value is null) return value;
+        if (value is null) return null;
 
         try
         {
@@ -26,7 +26,17 @@ static class ValueConverter
         }
         catch (Exception ex)
         {
-            throw new Exception($"Cannot convert value '{value}' to type '{type.Name}'", ex);
+            throw new Exception($"Cannot convert value {GetInvalidValueAlias(value)} to type '{type.Name}'", ex);
         }
+    }
+
+    public static string GetInvalidValueAlias(object? value)
+    {
+        return value switch
+        {
+            null => "null",
+            _ when string.IsNullOrWhiteSpace(value.ToString()) => "empty string",
+            _ => $"'{value}'"
+        };
     }
 }
