@@ -1,8 +1,8 @@
 [![Nuget](https://img.shields.io/nuget/v/ART4S.Autofilter)](https://www.nuget.org/packages/ART4S.Autofilter/)
 # Autofilter
 
-Autofilter simplifies data filtering using well known technology Expression Trees. 
-Reduces amount of code needed for manual writing filtering logic on backend side, allowing this work to be done on frontend
+Autofilter simplifies data filtering using Expression Trees. 
+Reduces amount of code needed for manual writing filter logic on backend side, enabling this work to be done on frontend
 
 Inspired by Max Arshinov's [article](https://habr.com/ru/company/jugru/blog/423891/) 
 
