@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofilter", "Autofilter\Autofilter.csproj", "{A63D90A5-276E-4046-82D5-8FD13E07197D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autofilter.Tests", "Autofilter.Tests\Autofilter.Tests.csproj", "{6B0964D6-684B-4473-B275-98CB06B4925B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{F1E0E120-E7EB-45D5-8AAE-DB25DEAE2EBD}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		..\LICENSE = ..\LICENSE
+		nuget.config = nuget.config
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A63D90A5-276E-4046-82D5-8FD13E07197D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A63D90A5-276E-4046-82D5-8FD13E07197D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A63D90A5-276E-4046-82D5-8FD13E07197D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A63D90A5-276E-4046-82D5-8FD13E07197D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B0964D6-684B-4473-B275-98CB06B4925B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B0964D6-684B-4473-B275-98CB06B4925B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B0964D6-684B-4473-B275-98CB06B4925B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B0964D6-684B-4473-B275-98CB06B4925B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {960D834D-0D9A-47FD-95BA-9102E943E93C}
+	EndGlobalSection
+EndGlobal
