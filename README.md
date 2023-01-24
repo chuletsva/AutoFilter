@@ -4,7 +4,9 @@
 Autofilter simplifies data filtering using Expression Trees. 
 Reduces amount of code needed for manual writing filter logic on backend side, enabling this work to be done on frontend
 
-Inspired by Max Arshinov's [article](https://habr.com/ru/company/jugru/blog/423891/) 
+Inspired by Max Arshinov's [article](https://habr.com/ru/company/jugru/blog/423891/).
+
+Any issues or criticism are welcome :)
 
 ## Introduction
 
