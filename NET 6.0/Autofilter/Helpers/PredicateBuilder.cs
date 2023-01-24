@@ -11,64 +11,65 @@ internal static class PredicateBuilder
     {
         GroupRule rootGroup = new
         (
-            Start: 0,
-            End: operands.Length - 1,
+            Start: 1,
+            End: operands.Length,
             Level: groups is { Length: > 0 } ? groups.Max(x => x.Level) + 1 : 0
         );
 
         ParameterExpression paramExpr = Expression.Parameter(typeof(T), "x");
 
-        Expression bodyExpr = BuildGroupNode(rootGroup, operands, groups, paramExpr).BuildExpression();
+        Dictionary<int, GroupRule[]>? groupsByLevel = groups?.GroupBy(x => x.Level)
+            .ToDictionary(x => x.Key, x => x.OrderBy(g => g.Start).ToArray());
 
-        return Expression.Lambda<Func<T, bool>>(bodyExpr, paramExpr);
+        Expression bodyExpr = BuildGroupNode(rootGroup, operands, groupsByLevel, paramExpr).BuildExpression();
+
+        var lambdaExpr = Expression.Lambda<Func<T, bool>>(bodyExpr, paramExpr);
+
+        return lambdaExpr;
     }
 
     private static INode BuildGroupNode(
         GroupRule parentGroup, SearchRule[] operands,
-        GroupRule[]? groups, ParameterExpression paramExpr)
+        IReadOnlyDictionary<int, GroupRule[]>? groupsByLevel, 
+        ParameterExpression paramExpr)
     {
-        List<GroupRule> highLevelGroups = new();
+        GroupRule[]? currentLevelGroups = default;
 
-        if (groups is { Length: > 0 })
+        if (groupsByLevel is not null)
         {
-            bool[] isInGroup = new bool[operands.Length];
+            int currentLevel = parentGroup.Level - 1;
 
-            var childGroups = groups
-                .Where(x =>
-                    x.Start >= parentGroup.Start &&
-                    x.End <= parentGroup.End &&
-                    x.Level < parentGroup.Level)
-                .OrderBy(x => x.Start)
-                .ThenByDescending(x => x.Level);
-
-            foreach (GroupRule group in childGroups)
+            while (currentLevel > 0 && !groupsByLevel.TryGetValue(currentLevel, out currentLevelGroups))
             {
-                if (isInGroup[group.Start]) continue;
-
-                highLevelGroups.Add(group);
-
-                for (int i = group.Start; i <= group.End; i++)
-                {
-                    isInGroup[i] = true;
-                }
+                currentLevel--;
             }
         }
 
         List<INode> nodes = new();
 
-        int j = 0;
-
-        for (int i = parentGroup.Start; i <= parentGroup.End; i++)
+        if (currentLevelGroups is { Length: > 0 })
         {
-            if (j < highLevelGroups.Count && highLevelGroups[j].Start == i)
+            int j = 0;
+
+            for (int i = parentGroup.Start - 1; i < parentGroup.End; i++)
             {
-                GroupRule group = highLevelGroups[j++];
-                nodes.Add(BuildGroupNode(group, operands, groups, paramExpr));
-                i = group.End;
+                if (j < currentLevelGroups.Length && currentLevelGroups[j].Start - 1 == i)
+                {
+                    GroupRule group = currentLevelGroups[j++];
+                    nodes.Add(BuildGroupNode(group, operands, groupsByLevel, paramExpr));
+                    i = group.End - 1;
+                }
+                else nodes.Add(new SingleNode(operands[i], paramExpr));
             }
-            else nodes.Add(new SingleNode(operands[i], paramExpr));
+        }
+        else
+        {
+            for (int i = parentGroup.Start - 1; i < parentGroup.End; i++)
+            {
+                nodes.Add(new SingleNode(operands[i], paramExpr));
+            }
         }
 
-        return new GroupNode(nodes, operands[parentGroup.Start].LogicOperator);
+        return new GroupNode(nodes, operands[parentGroup.Start - 1].LogicOperator);
     }
 }

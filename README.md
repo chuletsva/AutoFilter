@@ -32,14 +32,14 @@ Filter filter = new()
     {
         new SearchRule
         (
-            PropertyName: "Name",
+            Name: "Name",
             SearchOperator: SearchOperator.Contains,
             Value: "Snickers",
         ),
         new SearchRule
         (
             LogicOperator: LogicOperator.And,
-            PropertyName: "IsForSale",
+            Name: "IsForSale",
             SearchOperator: SearchOperator.Equals,
             Value: "true"
         ),
@@ -74,28 +74,28 @@ Filter filter = new()
     {
         new SearchRule
         (
-            PropertyName: "Name",
+            Name: "Name",
             SearchOperator: SearchOperator.StartsWith,
             Value: "Snickers"
         ),
         new SearchRule
         (
             LogicOperator: LogicOperator.Or,
-            PropertyName: "Name",
+            Name: "Name",
             SearchOperator: SearchOperator.Contains,
             Value: "Mars",
         ),
         new SearchRule
         (
             LogicOperator: LogicOperator.And,
-            PropertyName: "ExpireDate",
+            Name: "ExpireDate",
             SearchOperator: SearchOperator.GreaterOrEqual,
             Value: "07.04.2022"
         ),
         new SearchRule
         (
             LogicOperator: LogicOperator.And,
-            PropertyName: "IsForSale",
+            Name: "IsForSale",
             SearchOperator: SearchOperator.Equals,
             Value: "true"
         ),
@@ -104,14 +104,14 @@ Filter filter = new()
     {
         new GroupRule
         (
-            Start: 0,
-            End: 1,
+            Start: 1,
+            End: 2,
             Level: 1
         ),
         new GroupRule
         (
-            Start: 0,
-            End: 2,
+            Start: 1,
+            End: 3,
             Level: 2
         )
     }
@@ -128,8 +128,8 @@ Filter filter = new()
 {
     Sorting = new []
     {
-        new SortingRule(PropertyName: "ExpireDate"),
-        new SortingRule(PropertyName: "InStock", IsDescending: true)
+        new SortingRule(Name: "ExpireDate"),
+        new SortingRule(Name: "InStock", IsDescending: true)
     }
 };
 ```
