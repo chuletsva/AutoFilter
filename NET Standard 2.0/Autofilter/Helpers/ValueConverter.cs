@@ -2,15 +2,8 @@
 
 namespace Autofilter.Helpers;
 
-static class ValueConverter
+internal static class ValueConverter
 {
-    private static readonly HashSet<Type> FloatingPointTypes = new()
-    {
-        typeof(float), typeof(float?),
-        typeof(double), typeof(double?),
-        typeof(decimal), typeof(decimal?)
-    };
-
     public static object? ConvertValueToType(string? value, Type type)
     {
         if (value is null) return null;
@@ -19,14 +12,11 @@ static class ValueConverter
         {
             TypeConverter converter = TypeDescriptor.GetConverter(type);
 
-            if (FloatingPointTypes.Contains(type))
-                value = value.Replace(",", ".");
-
             return converter.ConvertFromInvariantString(value);
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception($"Cannot convert value {GetInvalidValueAlias(value)} to type '{type.Name}'", ex);
+            throw new Exception($"Cannot convert {GetInvalidValueAlias(value)} to type '{type.Name}'");
         }
     }
 
@@ -36,7 +26,7 @@ static class ValueConverter
         {
             null => "null",
             _ when string.IsNullOrWhiteSpace(value.ToString()) => "empty string",
-            _ => $"'{value}'"
+            _ => $"value '{value}'"
         };
     }
 }

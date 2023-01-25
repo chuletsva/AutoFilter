@@ -1,10 +1,10 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Model;
+using Autofilter.Models;
 
 namespace Autofilter.Nodes;
 
-interface INode
+internal interface INode
 {
-    LogicOperator? Logic { get; }
+    LogicOperator? Operator { get; }
     Expression BuildExpression();
 }

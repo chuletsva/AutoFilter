@@ -1,11 +1,7 @@
 <Project>
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<LangVersion>10.0</LangVersion>
-		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Nullable>enable</Nullable>
 		<NoWarn>CS1591</NoWarn>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>

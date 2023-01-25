@@ -17,6 +17,7 @@ class Product
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
+    public decimal Price { get; set; }
     public int InStock { get; set; }
     public bool IsForSale { get; set; }
     public DateTime ExpireDate { get; set; }
@@ -65,7 +66,7 @@ queryable.Where(x => x.Name.Contains("Snickers") && x.IsForSale);
 Using parentheses
 
 ```c#
-queryable.Where(x => ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= "07.04.2022") && x.IsForSale)
+queryable.Where(x => ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= "07.04.2022") && (x.IsForSale || x.IsInStock))
 ```
 ```c#
 Filter filter = new()
@@ -99,6 +100,13 @@ Filter filter = new()
             SearchOperator: SearchOperator.Equals,
             Value: "true"
         ),
+        new SearchRule
+        (
+            LogicOperator: LogicOperator.Or,
+            Name: "IsInStock",
+            SearchOperator: SearchOperator.Equals,
+            Value: "true"
+        ),
     },
     Groups = new[]
     {
@@ -113,6 +121,12 @@ Filter filter = new()
             Start: 1,
             End: 3,
             Level: 2
+        ),
+        new GroupRule
+        (
+            Start: 4,
+            End: 5,
+            Level: 2
         )
     }
 };
@@ -121,15 +135,15 @@ Filter filter = new()
 #### Sorting
 
 ```c#
-queryable.OrderBy(x => x.ExpireDate).ThenByDescending(x => x.InStock)
+queryable.OrderBy(x => x.ExpireDate).ThenByDescending(x => x.Price)
 ```
 ```c#
 Filter filter = new()
 {
     Sorting = new []
     {
-        new SortingRule(Name: "ExpireDate"),
-        new SortingRule(Name: "InStock", IsDescending: true)
+        new SortingRule("ExpireDate"),
+        new SortingRule("Price", true)
     }
 };
 ```
@@ -143,7 +157,7 @@ queryable.Skip(5).Take(1);
 ```c#
 Filter filter = new()
 {
-    Pagination = new PaginationRule(Skip: 5, Top: 1)
+    Pagination = new PaginationRule(5, 1)
 };
 ```
 

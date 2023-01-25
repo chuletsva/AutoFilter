@@ -1,12 +1,12 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Autofilter.Helpers;
-using Autofilter.Model;
+using Autofilter.Models;
 using static Autofilter.Helpers.ValueConverter;
 
 namespace Autofilter.Nodes;
 
-class SingleNode : INode
+internal class SingleNode : INode
 {
     private readonly SearchRule _rule;
     private readonly ParameterExpression _paramExpr;
@@ -17,24 +17,27 @@ class SingleNode : INode
         _paramExpr = paramExpr;
     }
 
-    public LogicOperator? Logic => _rule.LogicOperator;
+    public LogicOperator? Operator => _rule.LogicOperator;
 
     public Expression BuildExpression()
     {
-        PropertyInfo property = Reflection.GetProperty(_paramExpr.Type, _rule.PropertyName);
+        PropertyInfo property = Reflection.GetProperty(_paramExpr.Type, _rule.Name);
 
         MemberExpression propExpr = Expression.Property(_paramExpr, property);
 
         object? value = ConvertValueToType(_rule.Value, property.PropertyType);
 
         Expression valueExpr;
-        try { valueExpr = Expression.Constant(value, property.PropertyType); }
+        try
+        {
+            valueExpr = Expression.Constant(value, property.PropertyType);
+        }
         catch
         {
-            throw new Exception($"Property '{_rule.PropertyName}' with type '{property.PropertyType.Name}' is not comparable with {GetInvalidValueAlias(value)}");
+            throw new Exception($"Property '{_rule.Name}' of type '{property.PropertyType.Name}' is not comparable with {GetInvalidValueAlias(value)}");
         }
 
-        return _rule.SearchOperator switch
+        Expression predicateExpr = _rule.SearchOperator switch
         {
             SearchOperator.Equals when property.PropertyType == typeof(bool) => value switch
             {
@@ -54,22 +57,22 @@ class SingleNode : INode
 
             SearchOperator.NotEquals => Expression.NotEqual(propExpr, valueExpr),
 
-            SearchOperator.Greater when Reflection.IsComparableType(property.PropertyType) 
+            SearchOperator.Greater when Reflection.IsComparable(property.PropertyType) 
                 => Expression.GreaterThan(propExpr, valueExpr),
 
-            SearchOperator.GreaterOrEqual when Reflection.IsComparableType(property.PropertyType) 
+            SearchOperator.GreaterOrEqual when Reflection.IsComparable(property.PropertyType) 
                 => Expression.GreaterThanOrEqual(propExpr, valueExpr),
 
-            SearchOperator.Less when Reflection.IsComparableType(property.PropertyType)
+            SearchOperator.Less when Reflection.IsComparable(property.PropertyType)
                 => Expression.LessThan(propExpr, valueExpr),
 
-            SearchOperator.LessOrEqual when Reflection.IsComparableType(property.PropertyType)
+            SearchOperator.LessOrEqual when Reflection.IsComparable(property.PropertyType)
                 => Expression.LessThanOrEqual(propExpr, valueExpr),
 
-            SearchOperator.Exists when Reflection.IsNullableType(property.PropertyType)
+            SearchOperator.Exists when Reflection.CanBeNull(property.PropertyType)
                 => Expression.NotEqual(propExpr, Expression.Constant(null)),
 
-            SearchOperator.NotExists when Reflection.IsNullableType(property.PropertyType)
+            SearchOperator.NotExists when Reflection.CanBeNull(property.PropertyType)
                 => Expression.Equal(propExpr, Expression.Constant(null)),
 
             SearchOperator.StartsWith when property.PropertyType == typeof(string)
@@ -84,8 +87,10 @@ class SingleNode : INode
             SearchOperator.NotContains when property.PropertyType == typeof(string)
                 => BuildNotContainsCall(propExpr, valueExpr),
 
-            _ => throw new Exception($"Operation '{_rule.SearchOperator}' is not supported for type '{property.PropertyType.Name}'")
+            _ => throw new Exception($"Operator '{_rule.SearchOperator}' is not supported for type '{property.PropertyType.Name}'")
         };
+
+        return predicateExpr;
     }
 
     private static Expression BuildStringMethodCall(

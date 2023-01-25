@@ -1,4 +1,4 @@
-﻿using Autofilter.Model;
+﻿using Autofilter.Models;
 
 namespace Autofilter;
 

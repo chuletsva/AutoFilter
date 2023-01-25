@@ -1,47 +1,47 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Model;
+using Autofilter.Models;
 
 namespace Autofilter.Nodes;
 
-class GroupNode : INode
+internal class GroupNode : INode
 {
     private readonly IReadOnlyList<INode> _children;
 
-    public GroupNode(IReadOnlyList<INode> children, LogicOperator? logic)
+    public GroupNode(IReadOnlyList<INode> children, LogicOperator? logicOperator)
     {
-        (_children, Logic) = (children, logic);
+        (_children, Operator) = (children, logicOperator);
     }
 
-    public LogicOperator? Logic { get; }
+    public LogicOperator? Operator { get; }
 
     public Expression BuildExpression()
     {
-        Expression result = _children[0].BuildExpression();
+        Expression rightOperand = _children[0].BuildExpression();
 
         for (int i = 1; i < _children.Count; i++)
         {
-            switch (_children[i].Logic)
+            switch (_children[i].Operator)
             {
                 case LogicOperator.Or:
                     int j = i;
 
-                    Expression andExpr = _children[i].BuildExpression();
+                    Expression leftOperand = _children[i].BuildExpression();
 
-                    while (j + 1 < _children.Count && _children[j + 1].Logic == LogicOperator.And)
-                        andExpr = Expression.AndAlso(andExpr, _children[++j].BuildExpression());
+                    while (j + 1 < _children.Count && _children[j + 1].Operator == LogicOperator.And)
+                        leftOperand = Expression.AndAlso(leftOperand, _children[++j].BuildExpression());
 
-                    result = Expression.OrElse(result, andExpr);
+                    rightOperand = Expression.OrElse(rightOperand, leftOperand);
 
                     i = j;
                     break;
                 case LogicOperator.And:
-                    result = Expression.AndAlso(result, _children[i].BuildExpression());
+                    rightOperand = Expression.AndAlso(rightOperand, _children[i].BuildExpression());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        return result;
+        return rightOperand;
     }
 }
