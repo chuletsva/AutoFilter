@@ -12,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{F1E0E1
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		nuget.config = nuget.config
-		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Global

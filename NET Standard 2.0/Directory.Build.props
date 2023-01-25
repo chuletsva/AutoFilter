@@ -1,9 +1,0 @@
-<Project>
-	<PropertyGroup>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<NoWarn>CS1591</NoWarn>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-		<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
-	</PropertyGroup>
-</Project>
