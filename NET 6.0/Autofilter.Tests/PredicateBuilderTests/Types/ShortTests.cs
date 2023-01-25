@@ -1,18 +1,12 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class ShortTests
 {
-    class TestClass
-    {
-        public short Short { get; init; }
-        public short? NullableShort { get; init; }
-    }
-
     public static IEnumerable<object[]> ShortTestCases => new[]
     {
         new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.Equals, false },
@@ -107,21 +101,15 @@ public class ShortTests
 
     [Theory]
     [MemberData(nameof(ShortTestCases))]
-    public void ShouldHandleShort(short propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleShort(short objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Short = propValue };
+        TestClass obj = new() { Short = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Short),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Short), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -129,22 +117,22 @@ public class ShortTests
     [Theory]
     [MemberData(nameof(ShortTestCases))]
     [MemberData(nameof(NullableShortTestCases))]
-    public void ShouldHandleNullableShort(short? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableShort(short? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableShort = propValue };
+        TestClass obj = new() { NullableShort = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableShort),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableShort), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public short Short { get; init; }
+        public short? NullableShort { get; init; }
     }
 }

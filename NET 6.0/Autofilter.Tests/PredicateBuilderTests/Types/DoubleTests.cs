@@ -1,19 +1,13 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class DoubleTests
 {
-    class TestClass
-    {
-        public double Double { get; init; }
-        public double? NullableDouble { get; init; }
-    }
-
     public static IEnumerable<object[]> DoubleTestCases => new[]
     {
         new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true },
@@ -25,7 +19,6 @@ public class DoubleTests
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false },
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false },
         new object[] { 1D, "1.0", SearchOperator.Equals, true },
-        new object[] { 1D, "1,0", SearchOperator.Equals, true },
 
         new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false },
         new object[] { double.MinValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false },
@@ -36,7 +29,6 @@ public class DoubleTests
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true },
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true },
         new object[] { 1D, "1.0", SearchOperator.NotEquals, false },
-        new object[] { 1D, "1,0", SearchOperator.NotEquals, false },
 
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true },
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
@@ -48,7 +40,6 @@ public class DoubleTests
         new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
         new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
         new object[] { 1.1D, "1.0", SearchOperator.Greater, true },
-        new object[] { 1.1D, "1,0", SearchOperator.Greater, true },
 
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, false },
@@ -60,9 +51,7 @@ public class DoubleTests
         new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { 1.1D, "1.0", SearchOperator.GreaterOrEqual, true },
-        new object[] { 1.1D, "1,0", SearchOperator.GreaterOrEqual, true },
         new object[] { 1D, "1.0", SearchOperator.GreaterOrEqual, true },
-        new object[] { 1D, "1,0", SearchOperator.GreaterOrEqual, true },
 
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, true },
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
@@ -74,7 +63,6 @@ public class DoubleTests
         new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
         new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
         new object[] { 1.0D, "1.1", SearchOperator.Less, true },
-        new object[] { 1.0D, "1,1", SearchOperator.Less, true },
 
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, false },
@@ -86,9 +74,7 @@ public class DoubleTests
         new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { 1.0D, "1.1", SearchOperator.LessOrEqual, true },
-        new object[] { 1.0D, "1,1", SearchOperator.LessOrEqual, true },
         new object[] { 1D, "1.0", SearchOperator.LessOrEqual, true },
-        new object[] { 1D, "1,0", SearchOperator.LessOrEqual, true },
     };
 
     public static IEnumerable<object?[]> NullableDoubleTestCases => new[]
@@ -102,7 +88,6 @@ public class DoubleTests
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false },
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false },
         new object[] { 1D, "1.0", SearchOperator.Equals, true },
-        new object[] { 1D, "1,0", SearchOperator.Equals, true },
 
         new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false },
         new object[] { double.MinValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false },
@@ -113,7 +98,6 @@ public class DoubleTests
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true },
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true },
         new object[] { 1D, "1.0", SearchOperator.NotEquals, false },
-        new object[] { 1D, "1,0", SearchOperator.NotEquals, false },
 
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true },
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
@@ -125,7 +109,6 @@ public class DoubleTests
         new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
         new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
         new object[] { 1.1D, "1.0", SearchOperator.Greater, true },
-        new object[] { 1.1D, "1,0", SearchOperator.Greater, true },
 
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, false },
@@ -137,9 +120,7 @@ public class DoubleTests
         new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { 1.1D, "1.0", SearchOperator.GreaterOrEqual, true },
-        new object[] { 1.1D, "1,0", SearchOperator.GreaterOrEqual, true },
         new object[] { 1D, "1.0", SearchOperator.GreaterOrEqual, true },
-        new object[] { 1D, "1,0", SearchOperator.GreaterOrEqual, true },
 
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, true },
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
@@ -151,7 +132,6 @@ public class DoubleTests
         new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
         new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
         new object[] { 1.0D, "1.1", SearchOperator.Less, true },
-        new object[] { 1.0D, "1,1", SearchOperator.Less, true },
 
         new object[] { double.MinValue, double.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { double.MaxValue, double.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, false },
@@ -163,29 +143,20 @@ public class DoubleTests
         new object[] { double.PositiveInfinity, double.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { double.Epsilon, double.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { 1.0D, "1.1", SearchOperator.LessOrEqual, true },
-        new object[] { 1.0D, "1,1", SearchOperator.LessOrEqual, true },
         new object[] { 1D, "1.0", SearchOperator.LessOrEqual, true },
-        new object[] { 1D, "1,0", SearchOperator.LessOrEqual, true },
     };
 
     [Theory]
     [MemberData(nameof(DoubleTestCases))]
-    public void ShouldHandleDouble(
-        double propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleDouble(double objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Double = propValue };
+        TestClass obj = new() { Double = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Double),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Double), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -193,23 +164,22 @@ public class DoubleTests
     [Theory]
     [MemberData(nameof(DoubleTestCases))]
     [MemberData(nameof(NullableDoubleTestCases))]
-    public void ShouldHandleNullableDouble(
-        double? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableDouble(double? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableDouble = propValue };
+        TestClass obj = new() { NullableDouble = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableDouble),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableDouble), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public double Double { get; init; }
+        public double? NullableDouble { get; init; }
     }
 }

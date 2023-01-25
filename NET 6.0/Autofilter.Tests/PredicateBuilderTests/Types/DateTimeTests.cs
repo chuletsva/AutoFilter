@@ -1,19 +1,13 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class DateTimeTests
 {
-    class TestClass
-    {
-        public DateTime DateTime { get; init; }
-        public DateTime? NullableDateTime { get; init; }
-    }
-
     public static IEnumerable<object?[]> DateTimeTestCases => new[]
     {
         new object[] { default(DateTime), default(DateTime).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true },
@@ -112,22 +106,15 @@ public class DateTimeTests
 
     [Theory]
     [MemberData(nameof(DateTimeTestCases))]
-    public void ShouldHandleDateTime(
-        DateTime propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleDateTime(DateTime objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { DateTime = propValue };
+        TestClass obj = new() { DateTime = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.DateTime),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.DateTime), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -135,23 +122,22 @@ public class DateTimeTests
     [Theory]
     [MemberData(nameof(DateTimeTestCases))]
     [MemberData(nameof(NullableDateTimeTestCases))]
-    public void ShouldHandleNullableDateTime(
-        DateTime? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableDateTime(DateTime? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableDateTime = propValue };
+        TestClass obj = new() { NullableDateTime = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableDateTime),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableDateTime), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public DateTime DateTime { get; init; }
+        public DateTime? NullableDateTime { get; init; }
     }
 }

@@ -34,7 +34,7 @@ internal class SingleNode : INode
         }
         catch
         {
-            throw new Exception($"Property '{_rule.Name}' with type '{property.PropertyType.Name}' is not comparable with {GetInvalidValueAlias(value)}");
+            throw new Exception($"Property '{_rule.Name}' of type '{property.PropertyType.Name}' is not comparable with {GetInvalidValueAlias(value)}");
         }
 
         Expression predicateExpr = _rule.SearchOperator switch
@@ -87,7 +87,7 @@ internal class SingleNode : INode
             SearchOperator.NotContains when property.PropertyType == typeof(string)
                 => BuildNotContainsCall(propExpr, valueExpr),
 
-            _ => throw new Exception($"Operation '{_rule.SearchOperator}' is not supported for type '{property.PropertyType.Name}'")
+            _ => throw new Exception($"Operator '{_rule.SearchOperator}' is not supported for type '{property.PropertyType.Name}'")
         };
 
         return predicateExpr;

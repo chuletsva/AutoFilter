@@ -6,8 +6,7 @@ namespace Autofilter.Helpers;
 
 internal static class PredicateBuilder
 {
-    public static Expression<Func<T, bool>> BuildPredicate<T>(
-        SearchRule[] operands, GroupRule[]? groups = default)
+    public static Expression<Func<T, bool>> Build<T>(SearchRule[] operands, GroupRule[]? groups = default)
     {
         GroupRule rootGroup = new
         (
@@ -30,7 +29,7 @@ internal static class PredicateBuilder
 
     private static INode BuildGroupNode(
         GroupRule parentGroup, SearchRule[] operands,
-        IReadOnlyDictionary<int, GroupRule[]>? groupsByLevel, 
+        IReadOnlyDictionary<int, GroupRule[]>? groupsByLevel,
         ParameterExpression paramExpr)
     {
         GroupRule[]? currentLevelGroups = default;
@@ -47,15 +46,28 @@ internal static class PredicateBuilder
 
         List<INode> nodes = new();
 
+        List<GroupRule> childGroups = new();
+
         if (currentLevelGroups is { Length: > 0 })
+        {
+            foreach (GroupRule group in currentLevelGroups)
+            {
+                if (parentGroup.Start <= group.Start && group.End <= parentGroup.End)
+                {
+                    childGroups.Add(group);
+                }
+            }
+        }
+
+        if (childGroups.Count > 0)
         {
             int j = 0;
 
             for (int i = parentGroup.Start - 1; i < parentGroup.End; i++)
             {
-                if (j < currentLevelGroups.Length && currentLevelGroups[j].Start - 1 == i)
+                if (j < childGroups.Count && childGroups[j].Start - 1 == i)
                 {
-                    GroupRule group = currentLevelGroups[j++];
+                    GroupRule group = childGroups[j++];
                     nodes.Add(BuildGroupNode(group, operands, groupsByLevel, paramExpr));
                     i = group.End - 1;
                 }

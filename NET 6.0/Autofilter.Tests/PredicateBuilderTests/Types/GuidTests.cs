@@ -1,18 +1,12 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class GuidTests
 {
-    class TestClass
-    {
-        public Guid Guid { get; init; }
-        public Guid? NullableGuid { get; init; }
-    }
-
     public static IEnumerable<object[]> GuidTestCases
     {
         get
@@ -56,22 +50,15 @@ public class GuidTests
 
     [Theory]
     [MemberData(nameof(GuidTestCases))]
-    public void ShouldHandleGuid(
-        Guid propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleGuid(Guid objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Guid = propValue };
+        TestClass obj = new() { Guid = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Guid),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Guid), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -79,23 +66,22 @@ public class GuidTests
     [Theory]
     [MemberData(nameof(GuidTestCases))]
     [MemberData(nameof(NullableGuidTestCases))]
-    public void ShouldHandleNullableGuid(
-        Guid? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableGuid(Guid? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableGuid = propValue };
+        TestClass obj = new() { NullableGuid = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableGuid),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableGuid), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public Guid Guid { get; init; }
+        public Guid? NullableGuid { get; init; }
     }
 }

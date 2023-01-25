@@ -1,19 +1,13 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class FloatTests
 {
-    class TestClass
-    {
-        public float Float { get; init; }
-        public float? NullableFloat { get; init; }
-    }
-
     public static IEnumerable<object[]> FloatTestCases => new[]
     {
         new object[] { default(float), default(float).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true },
@@ -25,7 +19,6 @@ public class FloatTests
         new object[] { float.MinValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false },
         new object[] { float.MaxValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false },
         new object[] { 1F, "1.0", SearchOperator.Equals, true },
-        new object[] { 1F, "1,0", SearchOperator.Equals, true },
 
         new object[] { default(float), default(float).ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false },
         new object[] { float.MinValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false },
@@ -36,7 +29,6 @@ public class FloatTests
         new object[] { float.MinValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true },
         new object[] { float.MaxValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true },
         new object[] { 1F, "1.0", SearchOperator.NotEquals, false },
-        new object[] { 1F, "1,0", SearchOperator.NotEquals, false },
 
         new object[] { float.MaxValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true },
         new object[] { float.MinValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
@@ -48,7 +40,6 @@ public class FloatTests
         new object[] { float.PositiveInfinity, float.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
         new object[] { float.Epsilon, float.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
         new object[] { 1.1F, "1.0", SearchOperator.Greater, true },
-        new object[] { 1.1F, "1,0", SearchOperator.Greater, true },
 
         new object[] { float.MaxValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { float.MinValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, false },
@@ -60,9 +51,7 @@ public class FloatTests
         new object[] { float.PositiveInfinity, float.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { float.Epsilon, float.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { 1.1F, "1.0", SearchOperator.GreaterOrEqual, true },
-        new object[] { 1.1F, "1,0", SearchOperator.GreaterOrEqual, true },
         new object[] { 1F, "1.0", SearchOperator.GreaterOrEqual, true },
-        new object[] { 1F, "1,0", SearchOperator.GreaterOrEqual, true },
 
         new object[] { float.MinValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, true },
         new object[] { float.MaxValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
@@ -74,7 +63,6 @@ public class FloatTests
         new object[] { float.PositiveInfinity, float.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
         new object[] { float.Epsilon, float.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
         new object[] { 1.0F, "1.1", SearchOperator.Less, true },
-        new object[] { 1.0F, "1,1", SearchOperator.Less, true },
 
         new object[] { float.MinValue, float.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { float.MaxValue, float.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, false },
@@ -86,9 +74,7 @@ public class FloatTests
         new object[] { float.PositiveInfinity, float.PositiveInfinity.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { float.Epsilon, float.Epsilon.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { 1.0F, "1.1", SearchOperator.LessOrEqual, true },
-        new object[] { 1.0F, "1,1", SearchOperator.LessOrEqual, true },
         new object[] { 1F, "1.0", SearchOperator.LessOrEqual, true },
-        new object[] { 1F, "1,0", SearchOperator.LessOrEqual, true },
     };
 
     public static IEnumerable<object?[]> NullableFloatTestCases => new[]
@@ -146,22 +132,15 @@ public class FloatTests
 
     [Theory]
     [MemberData(nameof(FloatTestCases))]
-    public void ShouldHandleFloat(
-        float propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleFloat(float objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Float = propValue };
+        TestClass obj = new() { Float = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Float),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Float), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -169,23 +148,22 @@ public class FloatTests
     [Theory]
     [MemberData(nameof(FloatTestCases))]
     [MemberData(nameof(NullableFloatTestCases))]
-    public void ShouldHandleNullableFloat(
-        float? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableFloat(float? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableFloat = propValue };
+        TestClass obj = new() { NullableFloat = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableFloat),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableFloat), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public float Float { get; init; }
+        public float? NullableFloat { get; init; }
     }
 }

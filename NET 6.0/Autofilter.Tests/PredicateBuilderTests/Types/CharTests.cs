@@ -1,18 +1,12 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class CharTests
 {
-    class TestClass
-    {
-        public char Char { get; init; }
-        public char? NullableChar { get; init; }
-    }
-
     public static IEnumerable<object[]> CharTestCases => new[]
     {
         new object[] { default(char), default(char).ToString(), SearchOperator.Equals, true },
@@ -107,22 +101,15 @@ public class CharTests
 
     [Theory]
     [MemberData(nameof(CharTestCases))]
-    public void ShouldHandleChar(
-        char propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleChar(char objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Char = propValue };
+        TestClass obj = new() { Char = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Char),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Char), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -130,23 +117,22 @@ public class CharTests
     [Theory]
     [MemberData(nameof(CharTestCases))]
     [MemberData(nameof(NullableCharTestCases))]
-    public void ShouldHandleNullableChar(
-        char? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableChar(char? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableChar = propValue };
+        TestClass obj = new() { NullableChar = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableChar),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableChar), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public char Char { get; init; }
+        public char? NullableChar { get; init; }
     }
 }

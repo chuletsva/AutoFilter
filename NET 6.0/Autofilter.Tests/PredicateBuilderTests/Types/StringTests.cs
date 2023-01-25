@@ -1,17 +1,12 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class StringTests
 {
-    class TestClass
-    {
-        public string? String { get; init; }
-    }
-
     public static IEnumerable<object?[]> TestCases => new[]
     {
         // Equals
@@ -80,23 +75,21 @@ public class StringTests
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void ShouldHandleString(
-        string? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleString(string? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { String = propValue };
+        TestClass obj = new() { String = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.String),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.String), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public string? String { get; init; }
     }
 }

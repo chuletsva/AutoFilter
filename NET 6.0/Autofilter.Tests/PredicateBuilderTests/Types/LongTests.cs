@@ -1,18 +1,12 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class LongTests
 {
-    class TestClass
-    {
-        public long Long { get; init; }
-        public long? NullableLong { get; init; }
-    }
-
     public static IEnumerable<object[]> LongTestCases => new[]
     {
         new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.Equals, false },
@@ -107,22 +101,15 @@ public class LongTests
 
     [Theory]
     [MemberData(nameof(LongTestCases))]
-    public void ShouldHandleLong(
-        long propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleLong(long objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Long = propValue };
+        TestClass obj = new() { Long = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Long),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Long), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -130,23 +117,22 @@ public class LongTests
     [Theory]
     [MemberData(nameof(LongTestCases))]
     [MemberData(nameof(NullableLongTestCases))]
-    public void ShouldHandleNullableLong(
-        long? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableLong(long? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableLong = propValue };
+        TestClass obj = new() { NullableLong = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableLong),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableLong), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public long Long { get; init; }
+        public long? NullableLong { get; init; }
     }
 }

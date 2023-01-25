@@ -15,7 +15,7 @@ internal class SearchProcessor : ISearchProcessor
     {
         if (search.Length is 0) return source;
 
-        Expression<Func<T, bool>> predicate = PredicateBuilder.BuildPredicate<T>(search, groups);
+        Expression<Func<T, bool>> predicate = PredicateBuilder.Build<T>(search, groups);
 
         return source.Where(predicate);
     }

@@ -1,18 +1,12 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class ByteTests
 {
-    class TestClass
-    {
-        public byte Byte { get; set; }
-        public byte? NullableByte { get; set; }
-    }
-
     public static IEnumerable<object[]> ByteTestCases => new[]
     {
         new object[] { default(byte), default(byte).ToString(), SearchOperator.Equals, true },
@@ -107,22 +101,15 @@ public class ByteTests
 
     [Theory]
     [MemberData(nameof(ByteTestCases))]
-    public void ShouldHandleByte(
-        byte propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleByte(byte objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Byte = propValue };
+        TestClass obj = new() { Byte = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Byte),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Byte), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -130,23 +117,22 @@ public class ByteTests
     [Theory]
     [MemberData(nameof(ByteTestCases))]
     [MemberData(nameof(NullableByteTestCases))]
-    public void ShouldHandleNullableByte(
-        byte? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableByte(byte? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableByte = propValue };
+        TestClass obj = new() { NullableByte = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableByte),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableByte), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public byte Byte { get; set; }
+        public byte? NullableByte { get; set; }
     }
 }

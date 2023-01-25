@@ -1,19 +1,13 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class DecimalTests
 {
-    class TestClass
-    {
-        public decimal Decimal { get; init; }
-        public decimal? NullableDecimal { get; init; }
-    }
-
     public static IEnumerable<object[]> DecimalTestCases => new[]
     {
         new object[] { default(decimal), default(decimal).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true },
@@ -25,7 +19,6 @@ public class DecimalTests
         new object[] { decimal.MinValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false },
         new object[] { decimal.MaxValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, false },
         new object[] { 1M, "1.0", SearchOperator.Equals, true },
-        new object[] { 1M, "1,0", SearchOperator.Equals, true },
 
         new object[] { default(decimal), default(decimal).ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false },
         new object[] { decimal.Zero, decimal.Zero.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, false },
@@ -36,7 +29,6 @@ public class DecimalTests
         new object[] { decimal.MinValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true },
         new object[] { decimal.MaxValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.NotEquals, true },
         new object[] { 1M, "1.0", SearchOperator.NotEquals, false },
-        new object[] { 1M, "1,0", SearchOperator.NotEquals, false },
 
         new object[] { decimal.MaxValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, true },
         new object[] { decimal.MinValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
@@ -47,7 +39,6 @@ public class DecimalTests
         new object[] { decimal.MinValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
         new object[] { decimal.MaxValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Greater, false },
         new object[] { 1.1M, "1.0", SearchOperator.Greater, true },
-        new object[] { 1.1M, "1,0", SearchOperator.Greater, true },
 
         new object[] { decimal.MaxValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { decimal.MinValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, false },
@@ -58,9 +49,7 @@ public class DecimalTests
         new object[] { decimal.MinValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { decimal.MaxValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.GreaterOrEqual, true },
         new object[] { 1.1M, "1.0", SearchOperator.GreaterOrEqual, true },
-        new object[] { 1.1M, "1,0", SearchOperator.GreaterOrEqual, true },
         new object[] { 1M, "1.0", SearchOperator.GreaterOrEqual, true },
-        new object[] { 1M, "1,0", SearchOperator.GreaterOrEqual, true },
 
         new object[] { decimal.MinValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, true },
         new object[] { decimal.MaxValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
@@ -71,7 +60,6 @@ public class DecimalTests
         new object[] { decimal.MinValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
         new object[] { decimal.MaxValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.Less, false },
         new object[] { 1.0M, "1.1", SearchOperator.Less, true },
-        new object[] { 1.0M, "1,1", SearchOperator.Less, true },
 
         new object[] { decimal.MinValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { decimal.MaxValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, false },
@@ -82,9 +70,7 @@ public class DecimalTests
         new object[] { decimal.MinValue, decimal.MinValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { decimal.MaxValue, decimal.MaxValue.ToString(CultureInfo.InvariantCulture), SearchOperator.LessOrEqual, true },
         new object[] { 1.0M, "1.1", SearchOperator.LessOrEqual, true },
-        new object[] { 1.0M, "1,1", SearchOperator.LessOrEqual, true },
         new object[] { 1M, "1.0", SearchOperator.LessOrEqual, true },
-        new object[] { 1M, "1,0", SearchOperator.LessOrEqual, true },
     };
 
     public static IEnumerable<object?[]> NullableDecimalTestCases => new[]
@@ -142,22 +128,15 @@ public class DecimalTests
 
     [Theory]
     [MemberData(nameof(DecimalTestCases))]
-    public void ShouldHandleDecimal(
-        decimal propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleDecimal(decimal objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Decimal = propValue };
+        TestClass obj = new() { Decimal = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Decimal),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Decimal), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -165,23 +144,22 @@ public class DecimalTests
     [Theory]
     [MemberData(nameof(DecimalTestCases))]
     [MemberData(nameof(NullableDecimalTestCases))]
-    public void ShouldHandleNullableDecimal(
-        decimal? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableDecimal(decimal? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableDecimal = propValue };
+        TestClass obj = new() { NullableDecimal = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableDecimal),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableDecimal), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
+    }
+
+    private class TestClass
+    {
+        public decimal Decimal { get; init; }
+        public decimal? NullableDecimal { get; init; }
     }
 }

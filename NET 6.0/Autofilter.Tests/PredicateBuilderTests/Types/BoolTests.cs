@@ -1,18 +1,12 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Models;
 using FluentAssertions;
-using static Autofilter.Helpers.PredicateBuilder;
 
-namespace Autofilter.Tests.PredicateBuilder.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class BoolTests
 {
-    class TestClass
-    {
-        public bool Bool { get; set; }
-        public bool? NullableBool { get; set; }
-    }
-
     public static IEnumerable<object[]> BoolTestCases => new[]
     {
         new object[] { true, "true", SearchOperator.Equals, true },
@@ -53,22 +47,15 @@ public class BoolTests
 
     [Theory]
     [MemberData(nameof(BoolTestCases))]
-    public void ShouldHandleBool(
-        bool propValue, string ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleBool(bool objValue, string searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { Bool = propValue };
+        TestClass obj = new() { Bool = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.Bool),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.Bool), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
@@ -76,58 +63,43 @@ public class BoolTests
     [Theory]
     [MemberData(nameof(BoolTestCases))]
     [MemberData(nameof(NullableBoolTestCases))]
-    public void ShouldHandleNullableBool(
-        bool? propValue, string? ruleValue, 
-        SearchOperator operation, bool result)
+    public void ShouldHandleNullableBool(bool? objValue, string? searchValue, SearchOperator searchOperator, bool result)
     {
-        TestClass obj = new() { NullableBool = propValue };
+        TestClass obj = new() { NullableBool = objValue };
 
-        SearchRule rule = new
-        (
-            Name: nameof(obj.NullableBool),
-            Value: ruleValue,
-            SearchOperator: operation
-        );
+        SearchRule rule = new(nameof(obj.NullableBool), searchValue, searchOperator);
 
-        Expression<Func<TestClass, bool>> expression = BuildPredicate<TestClass>(new[] { rule });
+        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
 
-        Func<TestClass, bool> func = expression.Compile();
+        Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
 
     [Theory]
-    [InlineData(null, "null")]
-    public void ShouldThrow_WhenPassedNotComparableValue(string? value, string valueAlias)
+    [InlineData(null)]
+    public void ShouldThrow_WhenNotComparableValue(string? searchValue)
     {
-        SearchRule rule = new
-        (
-            Name: nameof(TestClass.Bool),
-            Value: value,
-            SearchOperator: SearchOperator.Equals
-        );
+        SearchRule rule = new(nameof(TestClass.Bool), searchValue, SearchOperator.Equals);
 
-        Action act = () => BuildPredicate<TestClass>(new[] { rule });
-
-        string expectedMessage = $"Property '{nameof(TestClass.Bool)}' with type '{nameof(Boolean)}' is not comparable with {valueAlias}";
-
-        act.Should().Throw<Exception>().WithMessage(expectedMessage);
+        FluentActions.Invoking(() => PredicateBuilder.Build<TestClass>(new[] { rule }))
+            .Should().Throw<Exception>().Which.Message
+            .Should().StartWith($"Property '{nameof(TestClass.Bool)}' of type '{nameof(Boolean)}' is not comparable with");
     }
 
     [Theory]
     [InlineData("")]
-    public void ShouldThrow_WhenPassedNotConvertableValue(string value)
+    public void ShouldThrow_WhenNotConvertableValue(string searchValue)
     {
-        SearchRule rule = new
-        (
-            Name: nameof(TestClass.Bool),
-            Value: value,
-            SearchOperator: SearchOperator.Equals
-        );
+        SearchRule rule = new(nameof(TestClass.Bool), searchValue, SearchOperator.Equals);
 
-        Action act = () => BuildPredicate<TestClass>(new[] { rule });
+        FluentActions.Invoking(() => PredicateBuilder.Build<TestClass>(new[] { rule }))
+            .Should().Throw<Exception>().Which.Message.Should().StartWith("Cannot convert");
+    }
 
-        act.Should().Throw<Exception>()
-            .Which.Message.Should().StartWith("Cannot convert");
+    private class TestClass
+    {
+        public bool Bool { get; set; }
+        public bool? NullableBool { get; set; }
     }
 }
