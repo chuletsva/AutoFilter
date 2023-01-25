@@ -1,4 +1,4 @@
-[![Nuget](https://img.shields.io/nuget/v/ART4S.Autofilter)](https://www.nuget.org/packages/ART4S.Autofilter/)
+![Nuget](https://img.shields.io/nuget/v/ART4S.Autofilter?label=net%20standard)
 # Autofilter
 
 Autofilter simplifies data filtering using Expression Trees. 
@@ -62,9 +62,6 @@ queryable.Where(x => x.Name.Contains("Snickers") && x.IsForSale);
 ## Examples
 
 #### Filtering
-
-Using parentheses
-
 ```c#
 queryable.Where(x => ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= "07.04.2022") && (x.IsForSale || x.IsInStock))
 ```
