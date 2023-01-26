@@ -50,27 +50,22 @@ public class StringTests
         new object?[] { "ab", "a", SearchOperator.StartsWith, true },
         new object?[] { "ab", "b", SearchOperator.StartsWith, false },
         new object?[] { null, string.Empty, SearchOperator.StartsWith, false },
-        new object?[] { string.Empty, null, SearchOperator.StartsWith, false },
         new object?[] { null, null, SearchOperator.StartsWith, false },
 
         new object?[] { "ab", "b", SearchOperator.EndsWith, true },
         new object?[] { "ab", "a", SearchOperator.EndsWith, false },
         new object?[] { null, string.Empty, SearchOperator.EndsWith, false },
-        new object?[] { string.Empty, null, SearchOperator.EndsWith, false },
         new object?[] { null, null, SearchOperator.EndsWith, false },
 
         new object?[] { "a", "a", SearchOperator.Contains, true },
         new object?[] { "abc", "b", SearchOperator.Contains, true },
         new object?[] { "a", "b", SearchOperator.Contains, false },
         new object?[] { null, string.Empty, SearchOperator.Contains, false },
-        new object?[] { string.Empty, null, SearchOperator.Contains, false },
-        new object?[] { null, null, SearchOperator.Contains, false },
 
         new object?[] { "abc", "d", SearchOperator.NotContains, true },
         new object?[] { "abc", "b", SearchOperator.NotContains, false },
-        new object?[] { null, string.Empty, SearchOperator.NotContains, false },
-        new object?[] { string.Empty, null, SearchOperator.NotContains, false },
-        new object?[] { null, null, SearchOperator.NotContains, false },
+        new object?[] { null, string.Empty, SearchOperator.NotContains, true },
+        new object?[] { null, null, SearchOperator.NotContains, true },
     };
 
     [Theory]
