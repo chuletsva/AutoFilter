@@ -1,71 +1,515 @@
-﻿using Autofilter.Processors;
+﻿using System.Linq.Expressions;
+using Autofilter.Processors;
+using Autofilter.Rules;
+using Autofilter.Tests.Common;
 using AutoFixture;
 using FluentAssertions;
-using Moq;
 
 namespace Autofilter.Tests.ProcessorTests;
 
 public class FilterProcessorTests
 {
-    private readonly Fixture _fixture;
-    private readonly Mock<ISearchProcessor> _serachProcessor;
-    private readonly Mock<ISortingProcessor> _sortingProcessor;
-    private readonly Mock<IPaginationProcessor> _paginationProcessor;
-    private readonly FilterProcessor _sut;
-
-    public FilterProcessorTests()
+    [Fact]
+    public void ShouldFilter()
     {
-        _fixture = new Fixture();
-        _serachProcessor = new Mock<ISearchProcessor>();
-        _sortingProcessor = new Mock<ISortingProcessor>();
-        _paginationProcessor = new Mock<IPaginationProcessor>();
-        _sut = new FilterProcessor(_serachProcessor.Object, 
-            _sortingProcessor.Object, _paginationProcessor.Object);
+        var query = new Fixture().CreateMany<TestClass>().AsQueryable();
+
+        Condition condition = new(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals);
+
+        FilterRule filter = new(new[] { condition });
+
+        FluentActions.Invoking(() => FilterProcessor.ApplyFilter(query, filter)).Should().NotThrow();
     }
 
-    [Fact]
-    public void ShouldReturnSameQuery_WhenDefaultFilter()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void ShouldGenerateValidExpression(string expectedExpression, FilterRule filter)
     {
-        IQueryable<int> query = _fixture.CreateMany<int>().AsQueryable();
+        var lambda = (Expression<Func<TestClass, bool>>)
+            FilterProcessor.BuildPredicate(typeof(TestClass), filter.Conditions, filter.Groups);
 
-        IQueryable<int> resultQuery = _sut.ApplyFilter(query, new Filter());
+        string resultExpression = ExpressionPrettifier.PrettifyLambda(lambda);
 
-        resultQuery.Should().BeSameAs(query);
+        resultExpression.Should().Be(expectedExpression);
     }
 
-    [Fact]
-    public void ShouldCallSearchProcessor()
+    public static IEnumerable<object[]> TestCases
     {
-        IQueryable<int> query = _fixture.CreateMany<int>().AsQueryable();
+        get
+        {
+            // 2 operands
 
-        var filter = _fixture.Create<Filter>();
+            yield return new object[]
+            {
+                "1 and 2",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    }
+                )
+            }; // 1 and 2
 
-        _sut.ApplyFilter(query, filter);
+            yield return new object[]
+            {
+                "1 or 2",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                    }
+                )
+            }; // 1 or 2
 
-        _serachProcessor.Verify(x => x.ApplySearch(It.IsAny<IQueryable<int>>(), filter.Search, filter.Groups), Times.Once);
+            // 3 operands
+
+            yield return new object[]
+            {
+                "(1 and 2) and 3",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    }
+                )
+            }; // 1 and 2 and 3
+
+            yield return new object[]
+            {
+                "(1 or 2) or 3",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                    }
+                )
+            }; // 1 or 2 or 3
+
+            yield return new object[]
+            {
+                "(1 and 2) or 3",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                    }
+                ),
+            }; // 1 and 2 or 3
+
+            yield return new object[]
+            {
+                "1 or (2 and 3)",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    }
+                )
+            }; // 1 or 2 and 3
+
+            // 4 operands
+
+            yield return new object[]
+            {
+                "((1 and 2) and 3) and 4",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    }
+                )
+            }; // 1 and 2 and 3 and 4
+
+            yield return new object[]
+            {
+                "((1 or 2) or 3) or 4",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                    }
+                )
+            }; // 1 or 2 or 3 or 4
+
+            yield return new object[]
+            {
+                "((1 and 2) or 3) and 4",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    },
+
+                    new[]
+                    {
+                        new Group
+                        (
+                            Start: 1,
+                            End: 3,
+                            Level: 1
+                        )
+                    }
+                )
+            }; // (1 and 2 or 3) and 4
+
+            yield return new object[]
+            {
+                "1 and ((2 and 3) or 4)",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                    },
+
+                    new []
+                    {
+                        new Group
+                        (
+                            Start: 2,
+                            End: 4,
+                            Level: 1
+                        )
+                    }
+                )
+            }; // 1 and (2 and 3 or 4)
+
+            // 5 operands
+
+            yield return new object[]
+            {
+                "(1 and ((2 or 3) or 4)) and 5",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    },
+
+                    new[]
+                    {
+                        new Group
+                        (
+                            Start: 2,
+                            End: 4,
+                            Level: 1
+                        )
+                    }
+                )
+            }; // 1 and (2 or 3 or 4) and 5
+
+            yield return new object[]
+            {
+                "((1 and 2) or (3 and 4)) or 5",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                    },
+
+                    new []
+                    {
+                        new Group
+                        (
+                            Start: 1,
+                            End: 2,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 3,
+                            End: 4,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 1,
+                            End: 4,
+                            Level: 2
+                        )
+                    }
+                )
+            }; // ((1 and 2) or (3 and 4)) or 5
+
+            yield return new object[]
+            {
+                "((1 or 2) and (3 or 4)) and 5",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    },
+
+                    new []
+                    {
+                        new Group
+                        (
+                            Start: 1,
+                            End: 2,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 3,
+                            End: 4,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 1,
+                            End: 4,
+                            Level: 2
+                        )
+                    }
+                )
+            }; // ((1 or 2) and (3 or 4)) and 5
+
+            // 6 operands
+
+            yield return new object[]
+            {
+                "(1 or (2 and 3)) or ((4 and 5) or 6)",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                    },
+
+                    new[]
+                    {
+                        new Group
+                        (
+                            Start: 1,
+                            End: 3,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 4,
+                            End: 6,
+                            Level: 1
+                        ),
+                    }
+                )
+            }; // (1 or 2 and 3) or (4 and 5 or 6)
+
+            yield return new object[]
+            {
+                "(1 and ((2 or 3) and (4 or 5))) and 6",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    },
+
+                    new[]
+                    {
+                        new Group
+                        (
+                            Start: 2,
+                            End: 3,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 4,
+                            End: 5,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 2,
+                            End: 5,
+                            Level: 2
+                        ),
+                    }
+                )
+            }; // 1 and ((2 or 3) and (4 or 5)) and 6
+
+            yield return new object[]
+            {
+                "(1 or ((2 and 3) or (4 and 5))) or 6",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                    },
+
+                    new[]
+                    {
+                        new Group
+                        (
+                            Start: 2,
+                            End: 3,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 4,
+                            End: 5,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 2,
+                            End: 5,
+                            Level: 2
+                        ),
+                    }
+                )
+            }; // 1 or ((2 and 3) or (4 and 5)) or 6
+
+            // 8 operands
+
+            yield return new object[]
+            {
+                "(1 and (2 or (3 and 4))) or (((5 and 6) or 7) and 8)",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    },
+
+                    new[]
+                    {
+                        new Group
+                        (
+                            Start: 2,
+                            End: 4,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 5,
+                            End: 7,
+                            Level: 1
+                        ),
+                    }
+                )
+            }; // 1 and (2 or 3 and 4) or (5 and 6 or 7) and 8
+
+            yield return new object[]
+            {
+                "((1 and (2 or 3)) and 4) or ((5 and (6 or 7)) and 8)",
+                new FilterRule
+                (
+                    new[]
+                    {
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                    },
+
+                    new[]
+                    {
+                        new Group
+                        (
+                            Start: 2,
+                            End: 3,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 6,
+                            End: 7,
+                            Level: 1
+                        ),
+                        new Group
+                        (
+                            Start: 1,
+                            End: 4,
+                            Level: 2
+                        ),
+                        new Group
+                        (
+                            Start: 5,
+                            End: 8,
+                            Level: 2
+                        ),
+                    }
+                )
+            }; // (1 and (2 or 3) and 4) or (5 and (6 or 7) and 8)
+        }
     }
 
-    [Fact]
-    public void ShouldCallSortingProcessor()
+    private class TestClass
     {
-        IQueryable<int> query = _fixture.CreateMany<int>().AsQueryable();
-
-        var filter = _fixture.Create<Filter>();
-
-        _sut.ApplyFilter(query, filter);
-
-        _sortingProcessor.Verify(x => x.ApplySorting(It.IsAny<IQueryable<int>>(), filter.Sorting), Times.Once);
-    }
-
-    [Fact]
-    public void ShouldCallPaginationProcessor()
-    {
-        IQueryable<int> query = _fixture.CreateMany<int>().AsQueryable();
-
-        var filter = _fixture.Create<Filter>();
-
-        _sut.ApplyFilter(query, filter);
-
-        _paginationProcessor.Verify(x => x.ApplyPagination(It.IsAny<IQueryable<int>>(), filter.Pagination), Times.Once);
+        public bool Prop => true;
     }
 }

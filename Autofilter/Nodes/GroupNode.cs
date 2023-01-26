@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Models;
+using Autofilter.Rules;
 
 namespace Autofilter.Nodes;
 
-internal class GroupNode : INode
+internal sealed class GroupNode : INode
 {
     private readonly IReadOnlyList<INode> _children;
 

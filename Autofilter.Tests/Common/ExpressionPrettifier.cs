@@ -9,7 +9,9 @@ internal static class ExpressionPrettifier
     {
         string lambda = lambdaExpr.ToString();
 
-        lambda = Regex.Replace(lambda, @"x.Prop(?'num'\d+)", match => match.Groups["num"].Value);
+        int i = 0;
+
+        lambda = Regex.Replace(lambda, @"x.\w+", _ => (++i).ToString());
         lambda = Regex.Replace(lambda, @"OrElse", _ => "or");
         lambda = Regex.Replace(lambda, @"AndAlso", _ => "and");
         lambda = Regex.Replace(lambda, @"x => ", _ => "");

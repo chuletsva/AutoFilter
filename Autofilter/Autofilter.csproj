@@ -1,19 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
+	<TargetFramework>netstandard2.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>ART4S.$(AssemblyName).NET6.0</PackageId>
+    <PackageId>ART4S.$(AssemblyName)</PackageId>
     <Authors>Vyacheslav Chulets</Authors>
     <Description>Simplify data filtering using Expression Trees</Description>
     <RepositoryUrl>https://github.com/ART4S/Autofilter</RepositoryUrl>
-    <PackageTags>filter; linq; queryable; expressions; expression trees; net6.0;</PackageTags>
+    <PackageTags>filter; linq; queryable; expressions; expression trees;</PackageTags>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Version>1.0.0</Version>
+    <Version>3.0.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Title>ART4S.AutoFilter</Title>
   </PropertyGroup>
 
 	<ItemGroup>

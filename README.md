@@ -1,11 +1,11 @@
-[![Nuget](https://img.shields.io/nuget/v/ART4S.Autofilter?label=net%20standard)](https://www.nuget.org/packages/ART4S.Autofilter/)
-[![Nuget](https://img.shields.io/nuget/v/ART4S.Autofilter.NET6.0?label=net%206.0)](https://www.nuget.org/packages/ART4S.Autofilter.NET6.0)
 # Autofilter
 
 Autofilter simplifies data filtering using Expression Trees. 
-Reduces amount of code needed for manual writing filtering logic on backend side
+Reduces amount of code needed for manual writing filtering logic on backend side.
 
 Inspired by Max Arshinov's [article](https://habr.com/ru/company/jugru/blog/423891/).
+
+All operations were tested against EF Core and PostgreSql.
 
 Any issues or criticism are welcome :)
 
@@ -19,7 +19,7 @@ class Product
     public Guid Id { get; set; }
     public string Name { get; set; }
     public decimal Price { get; set; }
-    public int InStock { get; set; }
+    public bool IsInStock { get; set; }
     public bool IsForSale { get; set; }
     public DateTime ExpireDate { get; set; }
 }
@@ -28,25 +28,28 @@ class Product
 Build a filter
 
 ```c#
-Filter filter = new()
-{
-    Search = new[]
-    {
-        new SearchRule
-        (
-            Name: "Name",
-            SearchOperator: SearchOperator.Contains,
-            Value: "Snickers",
-        ),
-        new SearchRule
-        (
-            LogicOperator: LogicOperator.And,
-            Name: "IsForSale",
-            SearchOperator: SearchOperator.Equals,
-            Value: "true"
-        ),
-    }
-};
+var filter = new AutoFilter
+(
+    Filter: new FilterRule
+    (
+        Conditions: new[]
+        {
+            new Condition
+            (
+                Name: "Name",
+                SearchOperator: SearchOperator.Contains,
+                Value: new[]{ "Snickers" }
+            ),
+            new Condition
+            (
+                LogicOperator: LogicOperator.And,
+                Name: "IsForSale",
+                SearchOperator: SearchOperator.Equals,
+                Value: new[] { "true" }
+            ),
+        }
+    )
+);
 ```
 
 Apply filter to queryable
@@ -64,86 +67,148 @@ queryable.Where(x => x.Name.Contains("Snickers") && x.IsForSale);
 
 #### Filtering
 ```c#
-queryable.Where(x => ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= "07.04.2022") && (x.IsForSale || x.IsInStock))
+queryable.Where(x => ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= DateTime.UtcNow) && (x.IsForSale || x.IsInStock))
 ```
 ```c#
-Filter filter = new()
-{
-    Search = new[]
-    {
-        new SearchRule
-        (
-            Name: "Name",
-            SearchOperator: SearchOperator.StartsWith,
-            Value: "Snickers"
-        ),
-        new SearchRule
-        (
-            LogicOperator: LogicOperator.Or,
-            Name: "Name",
-            SearchOperator: SearchOperator.Contains,
-            Value: "Mars",
-        ),
-        new SearchRule
-        (
-            LogicOperator: LogicOperator.And,
-            Name: "ExpireDate",
-            SearchOperator: SearchOperator.GreaterOrEqual,
-            Value: "07.04.2022"
-        ),
-        new SearchRule
-        (
-            LogicOperator: LogicOperator.And,
-            Name: "IsForSale",
-            SearchOperator: SearchOperator.Equals,
-            Value: "true"
-        ),
-        new SearchRule
-        (
-            LogicOperator: LogicOperator.Or,
-            Name: "IsInStock",
-            SearchOperator: SearchOperator.Equals,
-            Value: "true"
-        ),
-    },
-    Groups = new[]
-    {
-        new GroupRule
-        (
-            Start: 1,
-            End: 2,
-            Level: 1
-        ),
-        new GroupRule
-        (
-            Start: 1,
-            End: 3,
-            Level: 2
-        ),
-        new GroupRule
-        (
-            Start: 4,
-            End: 5,
-            Level: 2
-        )
-    }
-};
+var filter = new AutoFilter
+(
+    Filter: new FilterRule
+    (
+        new Condition[]
+        {
+            new
+            (
+                Name: nameof(Product.Name),
+                SearchOperator: SearchOperator.StartsWith,
+                Value: new[]{ "Snickers" }
+            ),
+            new
+            (
+                LogicOperator: LogicOperator.Or,
+                Name: nameof(Product.Name),
+                SearchOperator: SearchOperator.Contains,
+                Value: new[]{ "Mars" }
+            ),
+            new
+            (
+                LogicOperator: LogicOperator.And,
+                Name: nameof(Product.ExpireDate),
+                SearchOperator: SearchOperator.GreaterOrEqual,
+                Value: new[] { DateTime.UtcNow.ToString("u") }
+            ),
+            new
+            (
+                LogicOperator: LogicOperator.And,
+                Name: nameof(Product.IsForSale),
+                SearchOperator: SearchOperator.Equals,
+                Value: new[] { "true" }
+            ),
+            new
+            (
+                LogicOperator: LogicOperator.Or,
+                Name: nameof(Product.IsInStock),
+                SearchOperator: SearchOperator.Equals,
+                Value: new[] { "true" }
+            ),
+        },
+
+        new Group[]
+        {
+            new
+            (
+                Start: 1,
+                End: 2,
+                Level: 1
+            ),
+            new
+            (
+                Start: 1,
+                End: 3,
+                Level: 2
+            ),
+            new
+            (
+                Start: 4,
+                End: 5,
+                Level: 2
+            )
+        }
+    )
+);
+
+queryable.ApplyFilter(filter);
+```
+
+#### Distinct
+```c#
+queryable.Distinct();
+```
+```c#
+var filter = new AutoFilter
+(
+    DistinctBy: ""
+);
+
+queryable.ApplyFilter(filter);
+```
+
+
+
+```c#
+queryable.DistinctBy(x => x.Name);
+```
+
+```c#
+var filter = new AutoFilter
+(
+    DistinctBy: "Name"
+);
+
+queryable.ApplyFilter(filter);
 ```
 
 #### Sorting
 
 ```c#
-queryable.OrderBy(x => x.ExpireDate).ThenByDescending(x => x.Price)
+queryable.OrderBy(x => x.ExpireDate);
 ```
 ```c#
-Filter filter = new()
+var filter = new AutoFilter
+(
+    Sorting: new SortingRule
+    (
+        PropertyName: "ExpireDate"
+    )
+);
+
+queryable.ApplyFilter(filter);
+```
+
+```c#
+queryable.OrderBy(x => x.ExpireDate).ThenByDescending(x => x.Price);
+```
+```c#
+var filters = new AutoFilter[]
 {
-    Sorting = new []
-    {
-        new SortingRule("ExpireDate"),
-        new SortingRule("Price", true)
-    }
+    new
+    (
+        Sorting: new SortingRule
+        (
+            PropertyName: "ExpireDate"
+        )
+    ),
+    new
+    (
+        Sorting: new SortingRule
+        (
+            PropertyName: "Price",
+            ThenBy: true,
+            IsDescending: true
+        )
+    ),
 };
+
+queryable.ApplyFilters(filters);
 ```
 
 #### Paging
@@ -153,11 +218,34 @@ queryable.Skip(5).Take(1);
 ```
 
 ```c#
-Filter filter = new()
+var filters = new[]
 {
-    Pagination = new PaginationRule(5, 1)
+    new AutoFilter(Skip: 5),
+    new AutoFilter(Top: 1)
 };
+
+queryable.ApplyFilters(filters);
 ```
+
+#### Select
+```c#
+queryable.Select(x => new Dictionary<string, object>()
+{
+    { "Id", x.Id },
+    { "Name", x.Name }
+})
+```
+```c#   
+var filter = new AutoFilter
+(
+    Select: new[] { "Id", "Name" }
+);
+
+queryable.ApplyFilterAndSelect(filter);
+```
+
+This implementation of "Select" was made due to the limitations of anonymous types and should be used as the last operation 
+and only to reduce the final number of properties to be fetched from the database.
 
 ## Operations vs Types compatibility
 
