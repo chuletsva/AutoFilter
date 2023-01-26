@@ -96,22 +96,18 @@ internal class SingleNode : INode
     private static Expression BuildStringMethodCall(
         Expression property, string methodName, Expression value)
     {
-        // property != null && value != null && property.Method(value)
+        // property != null && property.Method(value)
         return Expression.AndAlso(
-            Expression.AndAlso(
-                Expression.NotEqual(property, Expression.Constant(null)),
-                Expression.NotEqual(value, Expression.Constant(null))),
+            Expression.NotEqual(property, Expression.Constant(null)),
             Expression.Call(property, methodName, null, value));
     }
 
     private static Expression BuildNotContainsCall(
         Expression property, Expression value)
     {
-        // property != null && value != null && !property.Contains(value)
-        return Expression.AndAlso(
-            Expression.AndAlso(
-                Expression.NotEqual(property, Expression.Constant(null)),
-                Expression.NotEqual(value, Expression.Constant(null))),
+        // property == null || !property.Contains(value)
+        return Expression.OrElse(
+            Expression.Equal(property, Expression.Constant(null)),
             Expression.Not(Expression.Call(property, "Contains", null, value)));
     }
 }

@@ -13,9 +13,8 @@ internal class FilterProcessor
     private readonly ISortingProcessor _sortingProcessor;
     private readonly IPaginationProcessor _paginationProcessor;
     
-    public FilterProcessor(
-        ISearchProcessor searchProcessor,
-        ISortingProcessor sortingProcessor,
+    public FilterProcessor(ISearchProcessor searchProcessor, 
+        ISortingProcessor sortingProcessor, 
         IPaginationProcessor paginationProcessor)
     {
         _searchProcessor = searchProcessor;
@@ -46,7 +45,7 @@ internal class FilterProcessor
         }
         catch (Exception ex)
         {
-            throw new FilterException("Error while applying filter", ex);
+            throw new FilterException("Filtering error", ex);
         }
     }
 }
