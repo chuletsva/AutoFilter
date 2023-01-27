@@ -15,7 +15,7 @@ public static class AutofilterLinqExtensions
         return (IQueryable<T>) ApplyFilterDynamic(queryable, filter);
     }
 
-    public static object ApplyFilterDynamic(this IQueryable queryable, AutoFilter filter)
+    public static IQueryable ApplyFilterDynamic(this IQueryable queryable, AutoFilter filter)
     {
         try
         {
@@ -46,7 +46,7 @@ public static class AutofilterLinqExtensions
 
             if (filter.Select is { Length: >0 })
             {
-                return SelectProcessor.ApplySelect(queryable, filter.Select);
+                queryable = SelectProcessor.ApplySelect(queryable, filter.Select);
             }
 
             return queryable;

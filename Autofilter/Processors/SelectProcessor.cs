@@ -6,7 +6,7 @@ namespace Autofilter.Processors;
 
 internal static class SelectProcessor
 {
-    public static object ApplySelect(IQueryable queryable, string[] propertyNames)
+    public static IQueryable ApplySelect(IQueryable queryable, string[] propertyNames)
     {
         var properties = new PropertyInfo[propertyNames.Length];
 
@@ -22,7 +22,7 @@ internal static class SelectProcessor
         var addMethod = destinationType.GetMethod("Add") ?? throw new NullReferenceException();
 
         ListInitExpression bodyExpr = Expression.ListInit(
-            Expression.New(destinationType), 
+            Expression.New(destinationType),
             properties.Select(x => Expression.ElementInit(
                 addMethod,
                 Expression.Constant(x.Name),

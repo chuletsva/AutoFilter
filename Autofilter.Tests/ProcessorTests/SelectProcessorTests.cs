@@ -13,7 +13,7 @@ public class SelectProcessorTests
 
         var properties = new[] { nameof(TestClass.Prop1) };
 
-        query = (IQueryable) SelectProcessor.ApplySelect(query, properties);
+        query = SelectProcessor.ApplySelect(query, properties);
 
         query.ElementType.Should().Be(typeof(Dictionary<string, object>));
     }
