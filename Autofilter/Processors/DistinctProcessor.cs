@@ -15,7 +15,7 @@ internal static class DistinctProcessor
                 .Single(x => x.Name == "Distinct" && x.GetParameters().Length is 1)
                 .MakeGenericMethod(queryable.ElementType);
 
-            var distinctQueryable = method.Invoke(null, new object?[] { queryable }) ?? throw new NullReferenceException("Unreachable exception");
+            var distinctQueryable = method.Invoke(null, new object?[] { queryable }) ?? throw new NullReferenceException();
 
             return (IQueryable) distinctQueryable;
         }
@@ -31,7 +31,7 @@ internal static class DistinctProcessor
                 .Single(x => x.Name == "DistinctBy" && x.GetParameters().Length == 2)
                 .MakeGenericMethod(queryable.ElementType, property.PropertyType);
 
-            var distinctQueryable = method.Invoke(null, new object?[] { queryable, keySelector }) ?? throw new NullReferenceException("Unreachable exception");
+            var distinctQueryable = method.Invoke(null, new object?[] { queryable, keySelector }) ?? throw new NullReferenceException();
 
             return (IQueryable) distinctQueryable;
         }

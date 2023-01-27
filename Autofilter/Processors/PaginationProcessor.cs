@@ -8,7 +8,7 @@ internal static class PaginationProcessor
             .Single(x => x.Name == "Skip" && x.GetParameters().Length == 2)
             .MakeGenericMethod(queryable.ElementType);
 
-        var skipQueryable = method.Invoke(null, new object[] { queryable, skip }) ?? throw new NullReferenceException("Unreachable exception");
+        var skipQueryable = method.Invoke(null, new object[] { queryable, skip }) ?? throw new NullReferenceException();
 
         return (IQueryable) skipQueryable;
     }
@@ -19,7 +19,7 @@ internal static class PaginationProcessor
             .First(x => x.Name == "Take" && x.GetParameters().Length == 2)
             .MakeGenericMethod(queryable.ElementType);
 
-        var skipQueryable = method.Invoke(null, new object[] { queryable, top }) ?? throw new NullReferenceException("Unreachable exception");
+        var skipQueryable = method.Invoke(null, new object[] { queryable, top }) ?? throw new NullReferenceException();
 
         return (IQueryable) skipQueryable;
     }

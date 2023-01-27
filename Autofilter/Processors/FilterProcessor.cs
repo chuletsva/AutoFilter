@@ -16,12 +16,12 @@ internal static class FilterProcessor
             .First(x => x.Name == "Where" && x.GetParameters().Length == 2)
             .MakeGenericMethod(queryable.ElementType);
 
-        var filteredQueryable = method.Invoke(null, new object[] { queryable, lambda }) ?? throw new NullReferenceException("Unreachable exception");
+        var filteredQueryable = method.Invoke(null, new object[] { queryable, lambda }) ?? throw new NullReferenceException();
 
         return (IQueryable) filteredQueryable;
     }
 
-    internal static LambdaExpression BuildPredicate(Type elementType, Condition[] conditions, Group[]? groups = default)
+    public static LambdaExpression BuildPredicate(Type elementType, Condition[] conditions, Group[]? groups = default)
     {
         Group rootGroup = new
         (

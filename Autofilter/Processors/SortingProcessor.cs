@@ -29,7 +29,7 @@ internal static class SortingProcessor
             .Single(x => x.Name == sortingMethodName && x.GetParameters().Length == 2)
             .MakeGenericMethod(queryable.ElementType, property.PropertyType);
 
-        var sorted = method.Invoke(null, new object[]{ queryable, keySelector }) ?? throw new NullReferenceException("Unreachable exception");
+        var sorted = method.Invoke(null, new object[]{ queryable, keySelector }) ?? throw new NullReferenceException();
 
         return (IQueryable) sorted;
     }

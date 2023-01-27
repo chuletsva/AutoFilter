@@ -1,5 +1,4 @@
-﻿using Autofilter.Processors;
-using Autofilter.Rules;
+﻿using Autofilter.Rules;
 
 namespace Autofilter;
 
