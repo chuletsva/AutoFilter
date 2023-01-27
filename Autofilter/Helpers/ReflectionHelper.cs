@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Autofilter.Helpers;
 
-internal static class Reflection
+internal static class ReflectionHelper
 {
     private static readonly ConcurrentDictionary<Type, IReadOnlyDictionary<string, PropertyInfo>> PropertiesCache = new();
 

@@ -11,26 +11,22 @@ internal static class SortingProcessor
     {
         var (propertyName, thenBy, isDescending) = sorting;
 
-        PropertyInfo property = Reflection.GetProperty(queryable.ElementType, propertyName);
+        PropertyInfo property = ReflectionHelper.GetProperty(queryable.ElementType, propertyName);
 
         ParameterExpression paramExpr = Expression.Parameter(queryable.ElementType, "x");
         MemberExpression propExpr = Expression.Property(paramExpr, property);
         Expression keySelector = Expression.Lambda(propExpr, paramExpr);
 
-        string sortingMethodName = (thenBy, isDescending) switch
+        var method = (thenBy, isDescending) switch
         {
-            (false, false) => "OrderBy",
-            (true, false) => "ThenBy",
-            (false, true) => "OrderByDescending",
-            (true, true) => "ThenByDescending",
+            (false, false) => LinqMethods.OrderBy(queryable.ElementType, property.PropertyType),
+            (false, true) => LinqMethods.OrderByDescending(queryable.ElementType, property.PropertyType),
+            (true, false) => LinqMethods.ThenBy(queryable.ElementType, property.PropertyType),
+            (true, true) => LinqMethods.ThenByDescending(queryable.ElementType, property.PropertyType),
         };
 
-        MethodInfo method = typeof(Queryable).GetMethods()
-            .Single(x => x.Name == sortingMethodName && x.GetParameters().Length == 2)
-            .MakeGenericMethod(queryable.ElementType, property.PropertyType);
+        var sortingQueryable = method.Invoke(null, new object[]{ queryable, keySelector }) ?? throw new NullReferenceException();
 
-        var sorted = method.Invoke(null, new object[]{ queryable, keySelector }) ?? throw new NullReferenceException();
-
-        return (IQueryable) sorted;
+        return (IQueryable) sortingQueryable;
     }
 }

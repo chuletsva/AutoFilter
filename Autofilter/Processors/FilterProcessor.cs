@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Nodes;
 using Autofilter.Rules;
 
@@ -12,9 +13,7 @@ internal static class FilterProcessor
 
         LambdaExpression lambda = BuildPredicate(queryable.ElementType, filter.Conditions, filter.Groups);
 
-        var method = typeof(Queryable).GetMethods()
-            .First(x => x.Name == "Where" && x.GetParameters().Length == 2)
-            .MakeGenericMethod(queryable.ElementType);
+        var method = LinqMethods.Where(queryable.ElementType);
 
         var filteredQueryable = method.Invoke(null, new object[] { queryable, lambda }) ?? throw new NullReferenceException();
 

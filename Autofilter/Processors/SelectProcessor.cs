@@ -12,7 +12,7 @@ internal static class SelectProcessor
 
         for (int i = 0; i < propertyNames.Length; i++)
         {
-            properties[i] = Reflection.GetProperty(queryable.ElementType, propertyNames[i]);
+            properties[i] = ReflectionHelper.GetProperty(queryable.ElementType, propertyNames[i]);
         }
 
         ParameterExpression paramExpr = Expression.Parameter(queryable.ElementType, "x");
@@ -28,9 +28,7 @@ internal static class SelectProcessor
                 Expression.Constant(x.Name),
                 Expression.Convert(Expression.Property(paramExpr, x), typeof(object)))));
 
-        MethodInfo method = typeof(Queryable).GetMethods()
-            .First(x => x.Name == "Select" && x.GetParameters().Length == 2)
-            .MakeGenericMethod(queryable.ElementType, destinationType);
+        MethodInfo method = LinqMethods.Select(queryable.ElementType, destinationType);
 
         var lambda = Expression.Lambda(body, paramExpr);
 

@@ -21,7 +21,7 @@ internal sealed class SingleNode : INode
 
     public Expression BuildExpression()
     {
-        PropertyInfo property = Reflection.GetProperty(_paramExpr.Type, _condition.Name);
+        PropertyInfo property = ReflectionHelper.GetProperty(_paramExpr.Type, _condition.Name);
 
         MemberExpression propExpr = Expression.Property(_paramExpr, property);
 
@@ -57,22 +57,22 @@ internal sealed class SingleNode : INode
 
             SearchOperator.NotEquals => Expression.NotEqual(propExpr, valueExpr),
 
-            SearchOperator.Greater when Reflection.IsComparable(property.PropertyType) 
+            SearchOperator.Greater when ReflectionHelper.IsComparable(property.PropertyType) 
                 => Expression.GreaterThan(propExpr, valueExpr),
 
-            SearchOperator.GreaterOrEqual when Reflection.IsComparable(property.PropertyType) 
+            SearchOperator.GreaterOrEqual when ReflectionHelper.IsComparable(property.PropertyType) 
                 => Expression.GreaterThanOrEqual(propExpr, valueExpr),
 
-            SearchOperator.Less when Reflection.IsComparable(property.PropertyType)
+            SearchOperator.Less when ReflectionHelper.IsComparable(property.PropertyType)
                 => Expression.LessThan(propExpr, valueExpr),
 
-            SearchOperator.LessOrEqual when Reflection.IsComparable(property.PropertyType)
+            SearchOperator.LessOrEqual when ReflectionHelper.IsComparable(property.PropertyType)
                 => Expression.LessThanOrEqual(propExpr, valueExpr),
 
-            SearchOperator.Exists when Reflection.CanBeNull(property.PropertyType)
+            SearchOperator.Exists when ReflectionHelper.CanBeNull(property.PropertyType)
                 => Expression.NotEqual(propExpr, Expression.Constant(null)),
 
-            SearchOperator.NotExists when Reflection.CanBeNull(property.PropertyType)
+            SearchOperator.NotExists when ReflectionHelper.CanBeNull(property.PropertyType)
                 => Expression.Equal(propExpr, Expression.Constant(null)),
 
             SearchOperator.StartsWith when property.PropertyType == typeof(string)
