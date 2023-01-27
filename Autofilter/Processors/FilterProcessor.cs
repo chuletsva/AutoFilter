@@ -9,13 +9,11 @@ internal static class FilterProcessor
 {
     public static IQueryable ApplyFilter(IQueryable queryable, FilterRule filter)
     {
-        if (filter.Conditions.Length is 0) return queryable;
-
-        LambdaExpression lambda = BuildPredicate(queryable.ElementType, filter.Conditions, filter.Groups);
+        LambdaExpression lambdaExpr = BuildPredicate(queryable.ElementType, filter.Conditions, filter.Groups);
 
         var method = LinqMethods.Where(queryable.ElementType);
 
-        var filteredQueryable = method.Invoke(null, new object[] { queryable, lambda }) ?? throw new NullReferenceException();
+        var filteredQueryable = method.Invoke(null, new object[] { queryable, lambdaExpr }) ?? throw new NullReferenceException();
 
         return (IQueryable) filteredQueryable;
     }
@@ -31,10 +29,9 @@ internal static class FilterProcessor
 
         ParameterExpression paramExpr = Expression.Parameter(elementType, "x");
 
-        Dictionary<int, Group[]>? groupsByLevel = groups?.GroupBy(x => x.Level)
-            .ToDictionary(x => x.Key, x => x.OrderBy(g => g.Start).ToArray());
+        var levels = groups?.GroupBy(x => x.Level).ToDictionary(x => x.Key, x => x.OrderBy(g => g.Start).ToArray());
 
-        Expression bodyExpr = BuildGroupNode(rootGroup, conditions, groupsByLevel, paramExpr).BuildExpression();
+        Expression bodyExpr = BuildGroupNode(rootGroup, conditions, levels, paramExpr).BuildExpression();
 
         var lambdaExpr = Expression.Lambda(bodyExpr, paramExpr);
 
@@ -43,20 +40,20 @@ internal static class FilterProcessor
 
     private static INode BuildGroupNode(
         Group parentGroup, Condition[] conditions,
-        IReadOnlyDictionary<int, Group[]>? groupsByLevel,
+        IReadOnlyDictionary<int, Group[]>? levels,
         ParameterExpression paramExpr)
     {
         List<Group> childGroups = new();
 
-        if (groupsByLevel is not null)
+        if (levels is not null)
         {
             int currentLevel = parentGroup.Level - 1;
 
             while (currentLevel > 0 && childGroups.Count is 0)
             {
-                if (groupsByLevel.TryGetValue(currentLevel, out var currentLevelGroups))
+                if (levels.TryGetValue(currentLevel, out var groups))
                 {
-                    foreach (Group group in currentLevelGroups)
+                    foreach (Group group in groups)
                     {
                         if (parentGroup.Start <= group.Start && group.End <= parentGroup.End)
                         {
@@ -80,7 +77,7 @@ internal static class FilterProcessor
                 if (j < childGroups.Count && childGroups[j].Start - 1 == i)
                 {
                     Group group = childGroups[j++];
-                    nodes.Add(BuildGroupNode(group, conditions, groupsByLevel, paramExpr));
+                    nodes.Add(BuildGroupNode(group, conditions, levels, paramExpr));
                     i = group.End - 1;
                 }
                 else nodes.Add(new SingleNode(conditions[i], paramExpr));

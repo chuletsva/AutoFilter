@@ -21,7 +21,7 @@ internal static class SelectProcessor
 
         var addMethod = destinationType.GetMethod("Add") ?? throw new NullReferenceException();
 
-        ListInitExpression body = Expression.ListInit(
+        ListInitExpression bodyExpr = Expression.ListInit(
             Expression.New(destinationType), 
             properties.Select(x => Expression.ElementInit(
                 addMethod,
@@ -30,9 +30,9 @@ internal static class SelectProcessor
 
         MethodInfo method = LinqMethods.Select(queryable.ElementType, destinationType);
 
-        var lambda = Expression.Lambda(body, paramExpr);
+        LambdaExpression lambdaExpr = Expression.Lambda(bodyExpr, paramExpr);
 
-        var selectQueryable = method.Invoke(null, new object?[] { queryable, lambda }) ?? throw new NullReferenceException();
+        var selectQueryable = method.Invoke(null, new object?[] { queryable, lambdaExpr }) ?? throw new NullReferenceException();
 
         return (IQueryable)selectQueryable;
     }

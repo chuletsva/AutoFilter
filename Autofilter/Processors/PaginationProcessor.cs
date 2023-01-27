@@ -17,8 +17,8 @@ internal static class PaginationProcessor
     {
         var method = LinqMethods.Take(queryable.ElementType);
 
-        var skipQueryable = method.Invoke(null, new object[] { queryable, top }) ?? throw new NullReferenceException();
+        var topQueryable = method.Invoke(null, new object[] { queryable, top }) ?? throw new NullReferenceException();
 
-        return (IQueryable) skipQueryable;
+        return (IQueryable) topQueryable;
     }
 }

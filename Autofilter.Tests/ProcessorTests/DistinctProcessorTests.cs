@@ -39,6 +39,6 @@ public class DistinctProcessorTests
 
     private class TestClass
     {
-        public bool Prop { get; set; }
+        public bool Prop { get; init; }
     }
 }

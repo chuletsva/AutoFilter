@@ -25,8 +25,8 @@ internal static class SortingProcessor
             (true, true) => LinqMethods.ThenByDescending(queryable.ElementType, property.PropertyType),
         };
 
-        var sortingQueryable = method.Invoke(null, new object[]{ queryable, keySelector }) ?? throw new NullReferenceException();
+        var sortedQueryable = method.Invoke(null, new object[]{ queryable, keySelector }) ?? throw new NullReferenceException();
 
-        return (IQueryable) sortingQueryable;
+        return (IQueryable) sortedQueryable;
     }
 }
