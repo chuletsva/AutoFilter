@@ -1,13 +1,44 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class DecimalTests
 {
+    [Theory]
+    [MemberData(nameof(DecimalTestCases))]
+    public void ShouldHandleDecimal(decimal objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { Decimal = objValue };
+
+        Condition condition = new(nameof(obj.Decimal), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(DecimalTestCases))]
+    [MemberData(nameof(NullableDecimalTestCases))]
+    public void ShouldHandleNullableDecimal(decimal? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { NullableDecimal = objValue };
+
+        Condition condition = new(nameof(obj.NullableDecimal), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object[]> DecimalTestCases => new[]
     {
         new object[] { default(decimal), default(decimal).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true },
@@ -125,37 +156,6 @@ public class DecimalTests
         new object?[] { decimal.MaxValue, null, SearchOperator.NotExists, false },
         new object?[] { default(decimal), null, SearchOperator.NotExists, false },
     };
-
-    [Theory]
-    [MemberData(nameof(DecimalTestCases))]
-    public void ShouldHandleDecimal(decimal objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { Decimal = objValue };
-
-        SearchRule rule = new(nameof(obj.Decimal), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(DecimalTestCases))]
-    [MemberData(nameof(NullableDecimalTestCases))]
-    public void ShouldHandleNullableDecimal(decimal? objValue, string? searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { NullableDecimal = objValue };
-
-        SearchRule rule = new(nameof(obj.NullableDecimal), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     private class TestClass
     {

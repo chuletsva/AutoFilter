@@ -1,13 +1,44 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class FloatTests
 {
+    [Theory]
+    [MemberData(nameof(FloatTestCases))]
+    public void ShouldHandleFloat(float objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { Float = objValue };
+
+        Condition condition = new(nameof(obj.Float), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(FloatTestCases))]
+    [MemberData(nameof(NullableFloatTestCases))]
+    public void ShouldHandleNullableFloat(float? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { NullableFloat = objValue };
+
+        Condition condition = new(nameof(obj.NullableFloat), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object[]> FloatTestCases => new[]
     {
         new object[] { default(float), default(float).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true },
@@ -129,37 +160,6 @@ public class FloatTests
         new object?[] { float.MaxValue, null, SearchOperator.NotExists, false },
         new object?[] { default(float), null, SearchOperator.NotExists, false },
     };
-
-    [Theory]
-    [MemberData(nameof(FloatTestCases))]
-    public void ShouldHandleFloat(float objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { Float = objValue };
-
-        SearchRule rule = new(nameof(obj.Float), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(FloatTestCases))]
-    [MemberData(nameof(NullableFloatTestCases))]
-    public void ShouldHandleNullableFloat(float? objValue, string? searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { NullableFloat = objValue };
-
-        SearchRule rule = new(nameof(obj.NullableFloat), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     private class TestClass
     {

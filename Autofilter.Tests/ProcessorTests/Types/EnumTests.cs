@@ -1,12 +1,43 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class EnumTests
 {
+    [Theory]
+    [MemberData(nameof(EnumTestCases))]
+    public void ShouldHandleEnum(TestEnum objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { Enum = objValue };
+
+        Condition condition = new(nameof(obj.Enum), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(EnumTestCases))]
+    [MemberData(nameof(NullableEnumTestCases))]
+    public void ShouldHandleNullableEnum(TestEnum? objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { NullableEnum = objValue };
+
+        Condition condition = new(nameof(obj.NullableEnum), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object[]> EnumTestCases => new[]
     {
         new object[] { default(TestEnum), default(TestEnum).ToString(), SearchOperator.Equals, true },
@@ -23,7 +54,7 @@ public class EnumTests
         new object?[] { null, default(TestEnum).ToString(), SearchOperator.Equals, false },
         new object?[] { null, TestEnum.One.ToString(), SearchOperator.Equals, false },
         new object?[] { default(TestEnum), null, SearchOperator.Equals, false },
-        new object?[] { TestEnum.One, null, SearchOperator.Equals, false },   
+        new object?[] { TestEnum.One, null, SearchOperator.Equals, false },
 
         new object?[] { null, null, SearchOperator.NotEquals, false },
         new object?[] { null, string.Empty, SearchOperator.NotEquals, false },
@@ -40,37 +71,6 @@ public class EnumTests
         new object?[] { TestEnum.One, null, SearchOperator.NotExists, false },
         new object?[] { default(TestEnum), null, SearchOperator.NotExists, false },
     };
-
-    [Theory]
-    [MemberData(nameof(EnumTestCases))]
-    public void ShouldHandleEnum(TestEnum objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { Enum = objValue };
-
-        SearchRule rule = new(nameof(obj.Enum), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(EnumTestCases))]
-    [MemberData(nameof(NullableEnumTestCases))]
-    public void ShouldHandleNullableEnum(TestEnum? objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { NullableEnum = objValue };
-
-        SearchRule rule = new(nameof(obj.NullableEnum), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     public enum TestEnum { One, Two }
 

@@ -1,7 +1,11 @@
 ﻿namespace Autofilter.Exceptions;
 
-public class FilterException : Exception
+public sealed class FilterException : Exception
 {
+    internal FilterException(string message) : base(message)
+    {
+    }
+
     internal FilterException(string message, Exception innerException) : base(message, innerException)
     {
     }

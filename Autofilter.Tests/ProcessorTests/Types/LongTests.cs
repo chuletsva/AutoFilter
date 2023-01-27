@@ -1,12 +1,43 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class LongTests
 {
+    [Theory]
+    [MemberData(nameof(LongTestCases))]
+    public void ShouldHandleLong(long objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { Long = objValue };
+
+        Condition condition = new(nameof(obj.Long), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(LongTestCases))]
+    [MemberData(nameof(NullableLongTestCases))]
+    public void ShouldHandleNullableLong(long? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { NullableLong = objValue };
+
+        Condition condition = new(nameof(obj.NullableLong), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object[]> LongTestCases => new[]
     {
         new object[] { long.MinValue, long.MaxValue.ToString(), SearchOperator.Equals, false },
@@ -98,37 +129,6 @@ public class LongTests
         new object?[] { long.MaxValue, null, SearchOperator.NotExists, false },
         new object?[] { default(long), null, SearchOperator.NotExists, false },
     };
-
-    [Theory]
-    [MemberData(nameof(LongTestCases))]
-    public void ShouldHandleLong(long objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { Long = objValue };
-
-        SearchRule rule = new(nameof(obj.Long), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(LongTestCases))]
-    [MemberData(nameof(NullableLongTestCases))]
-    public void ShouldHandleNullableLong(long? objValue, string? searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { NullableLong = objValue };
-
-        SearchRule rule = new(nameof(obj.NullableLong), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     private class TestClass
     {

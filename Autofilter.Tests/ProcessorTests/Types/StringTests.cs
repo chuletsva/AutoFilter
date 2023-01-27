@@ -1,12 +1,27 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class StringTests
 {
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void ShouldHandleString(string? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { String = objValue };
+
+        Condition condition = new(nameof(obj.String), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object?[]> TestCases => new[]
     {
         // Equals
@@ -49,39 +64,17 @@ public class StringTests
 
         new object?[] { "ab", "a", SearchOperator.StartsWith, true },
         new object?[] { "ab", "b", SearchOperator.StartsWith, false },
-        new object?[] { null, string.Empty, SearchOperator.StartsWith, false },
-        new object?[] { null, null, SearchOperator.StartsWith, false },
 
         new object?[] { "ab", "b", SearchOperator.EndsWith, true },
         new object?[] { "ab", "a", SearchOperator.EndsWith, false },
-        new object?[] { null, string.Empty, SearchOperator.EndsWith, false },
-        new object?[] { null, null, SearchOperator.EndsWith, false },
 
         new object?[] { "a", "a", SearchOperator.Contains, true },
         new object?[] { "abc", "b", SearchOperator.Contains, true },
         new object?[] { "a", "b", SearchOperator.Contains, false },
-        new object?[] { null, string.Empty, SearchOperator.Contains, false },
 
         new object?[] { "abc", "d", SearchOperator.NotContains, true },
         new object?[] { "abc", "b", SearchOperator.NotContains, false },
-        new object?[] { null, string.Empty, SearchOperator.NotContains, true },
-        new object?[] { null, null, SearchOperator.NotContains, true },
     };
-
-    [Theory]
-    [MemberData(nameof(TestCases))]
-    public void ShouldHandleString(string? objValue, string? searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { String = objValue };
-
-        SearchRule rule = new(nameof(obj.String), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     private class TestClass
     {

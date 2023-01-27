@@ -1,12 +1,43 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class ShortTests
 {
+    [Theory]
+    [MemberData(nameof(ShortTestCases))]
+    public void ShouldHandleShort(short objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { Short = objValue };
+
+        Condition condition = new(nameof(obj.Short), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(ShortTestCases))]
+    [MemberData(nameof(NullableShortTestCases))]
+    public void ShouldHandleNullableShort(short? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { NullableShort = objValue };
+
+        Condition condition = new(nameof(obj.NullableShort), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object[]> ShortTestCases => new[]
     {
         new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.Equals, false },
@@ -98,37 +129,6 @@ public class ShortTests
         new object?[] { short.MaxValue, null, SearchOperator.NotExists, false },
         new object?[] { default(short), null, SearchOperator.NotExists, false },
     };
-
-    [Theory]
-    [MemberData(nameof(ShortTestCases))]
-    public void ShouldHandleShort(short objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { Short = objValue };
-
-        SearchRule rule = new(nameof(obj.Short), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(ShortTestCases))]
-    [MemberData(nameof(NullableShortTestCases))]
-    public void ShouldHandleNullableShort(short? objValue, string? searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { NullableShort = objValue };
-
-        SearchRule rule = new(nameof(obj.NullableShort), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     private class TestClass
     {

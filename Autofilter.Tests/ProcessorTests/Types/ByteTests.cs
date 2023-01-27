@@ -1,12 +1,43 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class ByteTests
 {
+    [Theory]
+    [MemberData(nameof(ByteTestCases))]
+    public void ShouldHandleByte(byte objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { Byte = objValue };
+
+        Condition condition = new(nameof(obj.Byte), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(ByteTestCases))]
+    [MemberData(nameof(NullableByteTestCases))]
+    public void ShouldHandleNullableByte(byte? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { NullableByte = objValue };
+
+        Condition condition = new(nameof(obj.NullableByte), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object[]> ByteTestCases => new[]
     {
         new object[] { default(byte), default(byte).ToString(), SearchOperator.Equals, true },
@@ -98,37 +129,6 @@ public class ByteTests
         new object?[] { byte.MaxValue, null, SearchOperator.NotExists, false },
         new object?[] { default(byte), null, SearchOperator.NotExists, false },
     };
-
-    [Theory]
-    [MemberData(nameof(ByteTestCases))]
-    public void ShouldHandleByte(byte objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { Byte = objValue };
-
-        SearchRule rule = new(nameof(obj.Byte), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(ByteTestCases))]
-    [MemberData(nameof(NullableByteTestCases))]
-    public void ShouldHandleNullableByte(byte? objValue, string? searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { NullableByte = objValue };
-
-        SearchRule rule = new(nameof(obj.NullableByte), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     private class TestClass
     {

@@ -1,13 +1,44 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class DoubleTests
 {
+    [Theory]
+    [MemberData(nameof(DoubleTestCases))]
+    public void ShouldHandleDouble(double objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { Double = objValue };
+
+        Condition condition = new(nameof(obj.Double), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(DoubleTestCases))]
+    [MemberData(nameof(NullableDoubleTestCases))]
+    public void ShouldHandleNullableDouble(double? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { NullableDouble = objValue };
+
+        Condition condition = new(nameof(obj.NullableDouble), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object[]> DoubleTestCases => new[]
     {
         new object[] { default(double), default(double).ToString(CultureInfo.InvariantCulture), SearchOperator.Equals, true },
@@ -145,37 +176,6 @@ public class DoubleTests
         new object[] { 1.0D, "1.1", SearchOperator.LessOrEqual, true },
         new object[] { 1D, "1.0", SearchOperator.LessOrEqual, true },
     };
-
-    [Theory]
-    [MemberData(nameof(DoubleTestCases))]
-    public void ShouldHandleDouble(double objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { Double = objValue };
-
-        SearchRule rule = new(nameof(obj.Double), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(DoubleTestCases))]
-    [MemberData(nameof(NullableDoubleTestCases))]
-    public void ShouldHandleNullableDouble(double? objValue, string? searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { NullableDouble = objValue };
-
-        SearchRule rule = new(nameof(obj.NullableDouble), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     private class TestClass
     {

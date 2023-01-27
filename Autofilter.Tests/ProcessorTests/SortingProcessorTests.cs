@@ -1,5 +1,5 @@
-﻿using Autofilter.Models;
-using Autofilter.Processors;
+﻿using Autofilter.Processors;
+using Autofilter.Rules;
 using AutoFixture;
 using FluentAssertions;
 
@@ -10,115 +10,114 @@ public class SortingProcessorTests
     private readonly Fixture _fixture = new();
 
     [Fact]
-    public void ShouldReturnSameQuery_WhenNoRules()
-    {
-        var query = _fixture.CreateMany<TestClass>().AsQueryable();
-
-        var sut = new SortingProcessor();
-
-        var actualQuery = sut.ApplySorting(query, Array.Empty<SortingRule>());
-
-        actualQuery.Should().BeSameAs(query);
-    }
-
-    [Fact]
     public void ShouldSortByAscending()
     {
         var query = _fixture.CreateMany<TestClass>(1000).AsQueryable();
 
-        SortingRule[] sorting = { new(nameof(TestClass.Prop1)) };
+        SortingRule sorting = new(nameof(TestClass.Prop1));
 
-        var sut = new SortingProcessor();
+        query = (IQueryable<TestClass>)SortingProcessor.ApplySorting(query, sorting);
 
-        var actualQuery = sut.ApplySorting(query, sorting);
-
-        actualQuery.Should().BeInAscendingOrder(x => x.Prop1);
-    }
-
-    [Fact]
-    public void ShouldSortByAscending_ThenByAscending()
-    {
-        SortingRule[] sorting =
-        {
-            new(nameof(TestClass.Prop1)), 
-            new(nameof(TestClass.Prop2))
-        };
-
-        var query = _fixture.CreateMany<TestClass>(1000).AsQueryable();
-
-        var sut = new SortingProcessor();
-
-        var actualQuery = sut.ApplySorting(query, sorting);
-
-        actualQuery.Should().BeInAscendingOrder(x => x.Prop1).And.ThenBeInAscendingOrder(x => x.Prop2);
-    }
-
-    [Fact]
-    public void ShouldSortByAscending_ThenByDescending()
-    {
-        SortingRule[] sorting =
-        {
-            new(nameof(TestClass.Prop1)), 
-            new(nameof(TestClass.Prop2), true)
-        };
-
-        var query = _fixture.CreateMany<TestClass>(1000).AsQueryable();
-
-        var sut = new SortingProcessor();
-
-        var actualQuery = sut.ApplySorting(query, sorting);
-
-        actualQuery.Should().BeInAscendingOrder(x => x.Prop1).And.ThenBeInDescendingOrder(x => x.Prop2);
+        query.Should().BeInAscendingOrder(x => x.Prop1);
     }
 
     [Fact]
     public void ShouldSortByDescending()
     {
-        SortingRule[] sorting = { new(nameof(TestClass.Prop1), true) };
-
         var query = _fixture.CreateMany<TestClass>(1000).AsQueryable();
 
-        var sut = new SortingProcessor();
+        SortingRule sorting = new(nameof(TestClass.Prop1))
+        {
+            IsDescending = true
+        };
 
-        var actualQuery = sut.ApplySorting(query, sorting);
+        query = (IQueryable<TestClass>)SortingProcessor.ApplySorting(query, sorting);
 
-        actualQuery.Should().BeInDescendingOrder(x => x.Prop1);
+        query.Should().BeInDescendingOrder(x => x.Prop1);
+    }
+
+    [Fact]
+    public void ShouldSortByAscending_ThenByAscending()
+    {
+        var query = _fixture.CreateMany<TestClass>(1000).AsQueryable();
+
+        SortingRule sorting = new(nameof(TestClass.Prop1));
+
+        query = (IQueryable<TestClass>)SortingProcessor.ApplySorting(query, sorting);
+
+        sorting = new SortingRule(nameof(TestClass.Prop2))
+        {
+            ThenBy = true
+        };
+
+        query = (IQueryable<TestClass>) SortingProcessor.ApplySorting(query, sorting);
+
+        query.Should().BeInAscendingOrder(x => x.Prop1).And.ThenBeInAscendingOrder(x => x.Prop2);
+    }
+
+    [Fact]
+    public void ShouldSortByAscending_ThenByDescending()
+    {
+        var query = _fixture.CreateMany<TestClass>(1000).AsQueryable();
+
+        SortingRule sorting = new(nameof(TestClass.Prop1));
+
+        query = (IQueryable<TestClass>)SortingProcessor.ApplySorting(query, sorting);
+
+        sorting = new SortingRule(nameof(TestClass.Prop2))
+        {
+            ThenBy = true,
+            IsDescending = true
+        };
+
+        query = (IQueryable<TestClass>) SortingProcessor.ApplySorting(query, sorting);
+
+        query.Should().BeInAscendingOrder(x => x.Prop1).And.ThenBeInDescendingOrder(x => x.Prop2);
     }
 
     [Fact]
     public void ShouldSortByDescending_ThenByAscending()
     {
-        SortingRule[] sorting =
-        {
-            new(nameof(TestClass.Prop1), true), 
-            new(nameof(TestClass.Prop2))
-        };
-
         var query = _fixture.CreateMany<TestClass>(1000).AsQueryable();
 
-        var sut = new SortingProcessor();
+        SortingRule sorting = new(nameof(TestClass.Prop1))
+        {
+            IsDescending = true
+        };
 
-        var actualQuery = sut.ApplySorting(query, sorting);
+        query = (IQueryable<TestClass>)SortingProcessor.ApplySorting(query, sorting);
 
-        actualQuery.Should().BeInDescendingOrder(x => x.Prop1).And.ThenBeInAscendingOrder(x => x.Prop2);
+        sorting = new SortingRule(nameof(TestClass.Prop2))
+        {
+            ThenBy = true
+        };
+
+        query = (IQueryable<TestClass>) SortingProcessor.ApplySorting(query, sorting);
+
+        query.Should().BeInDescendingOrder(x => x.Prop1).And.ThenBeInAscendingOrder(x => x.Prop2);
     }
 
     [Fact]
     public void ShouldSortByDescending_ThenByDescending()
     {
-        SortingRule[] sorting =
-        {
-            new(nameof(TestClass.Prop1), true), 
-            new(nameof(TestClass.Prop2), true)
-        };
-
         var query = _fixture.CreateMany<TestClass>(1000).AsQueryable();
 
-        var sut = new SortingProcessor();
+        SortingRule sorting = new(nameof(TestClass.Prop1))
+        {
+            IsDescending = true
+        };
 
-        var actualQuery = sut.ApplySorting(query, sorting);
+        query = (IQueryable<TestClass>)SortingProcessor.ApplySorting(query, sorting);
 
-        actualQuery.Should().BeInDescendingOrder(x => x.Prop1).And.ThenBeInDescendingOrder(x => x.Prop2);
+        sorting = new SortingRule(nameof(TestClass.Prop2))
+        {
+            ThenBy = true,
+            IsDescending = true
+        };
+
+        query = (IQueryable<TestClass>) SortingProcessor.ApplySorting(query, sorting);
+
+        query.Should().BeInDescendingOrder(x => x.Prop1).And.ThenBeInDescendingOrder(x => x.Prop2);
     }
 
     [Fact]
@@ -126,11 +125,9 @@ public class SortingProcessorTests
     {
         var query = Array.Empty<TestClass>().AsQueryable();
 
-        SortingRule[] sorting = { new("") };
+        SortingRule sorting = new("");
 
-        var sut = new SortingProcessor();
-
-        FluentActions.Invoking(() => sut.ApplySorting(query, sorting))
+        FluentActions.Invoking(() => SortingProcessor.ApplySorting(query, sorting))
             .Should().Throw<Exception>().WithMessage($"Property '' for type '{nameof(TestClass)}' doesn't exist");
     }
 

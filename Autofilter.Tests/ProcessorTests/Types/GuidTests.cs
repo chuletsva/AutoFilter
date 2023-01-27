@@ -1,12 +1,43 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Helpers;
-using Autofilter.Models;
+using Autofilter.Processors;
+using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.PredicateBuilderTests.Types;
+namespace Autofilter.Tests.ProcessorTests.Types;
 
 public class GuidTests
 {
+    [Theory]
+    [MemberData(nameof(GuidTestCases))]
+    public void ShouldHandleGuid(Guid objValue, string searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { Guid = objValue };
+
+        Condition condition = new(nameof(obj.Guid), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
+    [Theory]
+    [MemberData(nameof(GuidTestCases))]
+    [MemberData(nameof(NullableGuidTestCases))]
+    public void ShouldHandleNullableGuid(Guid? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    {
+        TestClass obj = new() { NullableGuid = objValue };
+
+        Condition condition = new(nameof(obj.NullableGuid), searchValue, searchOperator);
+
+        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+
+        Func<TestClass, bool> func = lambda.Compile();
+
+        func(obj).Should().Be(result);
+    }
+
     public static IEnumerable<object[]> GuidTestCases
     {
         get
@@ -47,37 +78,6 @@ public class GuidTests
         new object?[] { Guid.NewGuid(), null, SearchOperator.NotExists, false },
         new object?[] { default(Guid), null, SearchOperator.NotExists, false },
     };
-
-    [Theory]
-    [MemberData(nameof(GuidTestCases))]
-    public void ShouldHandleGuid(Guid objValue, string searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { Guid = objValue };
-
-        SearchRule rule = new(nameof(obj.Guid), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(GuidTestCases))]
-    [MemberData(nameof(NullableGuidTestCases))]
-    public void ShouldHandleNullableGuid(Guid? objValue, string? searchValue, SearchOperator searchOperator, bool result)
-    {
-        TestClass obj = new() { NullableGuid = objValue };
-
-        SearchRule rule = new(nameof(obj.NullableGuid), searchValue, searchOperator);
-
-        Expression<Func<TestClass, bool>> lambda = PredicateBuilder.Build<TestClass>(new[] { rule });
-
-        Func<TestClass, bool> func = lambda.Compile();
-
-        func(obj).Should().Be(result);
-    }
 
     private class TestClass
     {
