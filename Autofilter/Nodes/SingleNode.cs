@@ -76,38 +76,20 @@ internal class SingleNode : INode
                 => Expression.Equal(propExpr, Expression.Constant(null)),
 
             SearchOperator.StartsWith when property.PropertyType == typeof(string)
-                => BuildStringMethodCall(propExpr, "StartsWith", valueExpr),
+                => Expression.Call(propExpr, "StartsWith", null, valueExpr),
 
             SearchOperator.EndsWith when property.PropertyType == typeof(string)
-                => BuildStringMethodCall(propExpr, "EndsWith", valueExpr),
+                => Expression.Call(propExpr, "EndsWith", null, valueExpr),
 
             SearchOperator.Contains when property.PropertyType == typeof(string)
-                => BuildStringMethodCall(propExpr, "Contains", valueExpr),
+                => Expression.Call(propExpr, "Contains", null, valueExpr),
 
             SearchOperator.NotContains when property.PropertyType == typeof(string)
-                => BuildNotContainsCall(propExpr, valueExpr),
+                => Expression.Not(Expression.Call(propExpr, "Contains", null, valueExpr)),
 
             _ => throw new Exception($"Operator '{_rule.SearchOperator}' is not supported for type '{property.PropertyType.Name}'")
         };
 
         return predicateExpr;
-    }
-
-    private static Expression BuildStringMethodCall(
-        Expression property, string methodName, Expression value)
-    {
-        // property != null && property.Method(value)
-        return Expression.AndAlso(
-            Expression.NotEqual(property, Expression.Constant(null)),
-            Expression.Call(property, methodName, null, value));
-    }
-
-    private static Expression BuildNotContainsCall(
-        Expression property, Expression value)
-    {
-        // property == null || !property.Contains(value)
-        return Expression.OrElse(
-            Expression.Equal(property, Expression.Constant(null)),
-            Expression.Not(Expression.Call(property, "Contains", null, value)));
     }
 }

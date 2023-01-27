@@ -11,7 +11,8 @@ internal static class Reflection
     {
         typeof(long), typeof(int), typeof(short),
         typeof(decimal), typeof(double), typeof(float),
-        typeof(byte), typeof(char), typeof(DateTime)
+        typeof(byte), typeof(char), 
+        typeof(DateTime), typeof(DateTimeOffset)
     };
 
     public static bool IsComparable(Type type)

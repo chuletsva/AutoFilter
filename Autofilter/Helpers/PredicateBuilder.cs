@@ -32,32 +32,30 @@ internal static class PredicateBuilder
         IReadOnlyDictionary<int, GroupRule[]>? groupsByLevel,
         ParameterExpression paramExpr)
     {
-        GroupRule[]? currentLevelGroups = default;
+        List<GroupRule> childGroups = new();
 
         if (groupsByLevel is not null)
         {
             int currentLevel = parentGroup.Level - 1;
 
-            while (currentLevel > 0 && !groupsByLevel.TryGetValue(currentLevel, out currentLevelGroups))
+            while (currentLevel > 0 && childGroups.Count is 0)
             {
+                if (groupsByLevel.TryGetValue(currentLevel, out var currentLevelGroups))
+                {
+                    foreach (GroupRule group in currentLevelGroups)
+                    {
+                        if (parentGroup.Start <= group.Start && group.End <= parentGroup.End)
+                        {
+                            childGroups.Add(group);
+                        }
+                    }
+                }
+
                 currentLevel--;
             }
         }
 
         List<INode> nodes = new();
-
-        List<GroupRule> childGroups = new();
-
-        if (currentLevelGroups is { Length: > 0 })
-        {
-            foreach (GroupRule group in currentLevelGroups)
-            {
-                if (parentGroup.Start <= group.Start && group.End <= parentGroup.End)
-                {
-                    childGroups.Add(group);
-                }
-            }
-        }
 
         if (childGroups.Count > 0)
         {
