@@ -8,12 +8,19 @@ internal static class ValueConverter
     {
         if (value is null) return null;
 
-        TypeConverter converter = TypeDescriptor.GetConverter(destinationType);
+        try
+        {
+            TypeConverter converter = TypeDescriptor.GetConverter(destinationType);
 
-        return converter.ConvertFromInvariantString(value);
+            return converter.ConvertFromInvariantString(value);
+        }
+        catch
+        {
+            throw new Exception($"Cannot convert value '{value}' to type {destinationType.Name}");
+        }
     }
 
-    public static object ConvertValueToArrayOfType(string?[] value, Type elementType)
+    public static object ConvertArray(string?[] value, Type elementType)
     {
         var arr = Array.CreateInstance(elementType, value.Length);
 

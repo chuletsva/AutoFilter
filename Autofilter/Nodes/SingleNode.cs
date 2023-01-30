@@ -204,15 +204,15 @@ internal sealed class SingleNode : INode
     {
         try
         {
-            object value = ConvertValueToArrayOfType(_condition.Value, property.PropertyType);
+            object value = ConvertArray(_condition.Value, property.PropertyType);
 
             Expression valueExpr = Expression.Constant(value, value.GetType());
 
             return (value, valueExpr);
         }
-        catch
+        catch (Exception ex)
         {
-            throw new Exception($"Property '{property.Name}' of type '{property.PropertyType.Name}' is not comparable with array of values");
+            throw new Exception($"Property '{property.Name}' of type '{property.PropertyType.Name}' is not compatible with some array values", ex);
         }
     }
 }
