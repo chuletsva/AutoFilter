@@ -2,7 +2,7 @@
 
 public sealed record FilterRule(Condition[] Conditions, Group[]? Groups = default);
 
-public sealed record Condition(string Name, string? Value, SearchOperator SearchOperator, LogicOperator? LogicOperator = default);
+public sealed record Condition(string Name, string?[] Value, SearchOperator SearchOperator, LogicOperator? LogicOperator = default);
 
 public sealed record Group(int Start, int End, int Level);
 
@@ -28,5 +28,8 @@ public enum SearchOperator
     StartsWith,
     EndsWith,
     Contains,
-    NotContains
+    NotContains,
+
+    // 
+    InRange
 }

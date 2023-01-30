@@ -9,7 +9,7 @@ public class GuidTests
 {
     [Theory]
     [MemberData(nameof(GuidTestCases))]
-    public void ShouldHandleGuid(Guid objValue, string searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleGuid(Guid objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { Guid = objValue };
 
@@ -25,7 +25,7 @@ public class GuidTests
     [Theory]
     [MemberData(nameof(GuidTestCases))]
     [MemberData(nameof(NullableGuidTestCases))]
-    public void ShouldHandleNullableGuid(Guid? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleNullableGuid(Guid? objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { NullableGuid = objValue };
 
@@ -44,31 +44,35 @@ public class GuidTests
         {
             Guid guid = Guid.NewGuid();
 
-            yield return new object[] { guid, guid.ToString(), SearchOperator.Equals, true };
-            yield return new object[] { Guid.Empty, Guid.Empty.ToString(), SearchOperator.Equals, true };
-            yield return new object[] { Guid.NewGuid(), Guid.NewGuid().ToString(), SearchOperator.Equals, false };
+            yield return new object[] { guid, new[] { guid.ToString() }, SearchOperator.Equals, true };
+            yield return new object[] { Guid.Empty, new[] { Guid.Empty.ToString() }, SearchOperator.Equals, true };
+            yield return new object[] { Guid.NewGuid(), new[] { Guid.NewGuid().ToString() }, SearchOperator.Equals, false };
 
-            yield return new object[] { guid, guid.ToString(), SearchOperator.NotEquals, false };
-            yield return new object[] { Guid.Empty, Guid.Empty.ToString(), SearchOperator.NotEquals, false };
-            yield return new object[] { Guid.NewGuid(), Guid.NewGuid().ToString(), SearchOperator.NotEquals, true };
+            yield return new object[] { guid, new[] { guid.ToString() }, SearchOperator.NotEquals, false };
+            yield return new object[] { Guid.Empty, new[] { Guid.Empty.ToString() }, SearchOperator.NotEquals, false };
+            yield return new object[] { Guid.NewGuid(), new[] { Guid.NewGuid().ToString() }, SearchOperator.NotEquals, true };
+
+            yield return new object[] { guid, new[] { guid.ToString() }, SearchOperator.InRange, true };
+            yield return new object[] { guid, new[] { Guid.NewGuid().ToString() }, SearchOperator.InRange, false };
+            yield return new object[] { guid, Array.Empty<string?>(), SearchOperator.InRange, false };
         }
     }
 
     public static IEnumerable<object?[]> NullableGuidTestCases => new[]
     {
-        new object?[] { null, null, SearchOperator.Equals, true },
-        new object?[] { null, string.Empty, SearchOperator.Equals, true },
-        new object?[] { null, default(Guid).ToString(), SearchOperator.Equals, false },
-        new object?[] { null, Guid.NewGuid().ToString(), SearchOperator.Equals, false },
-        new object?[] { default(Guid), null, SearchOperator.Equals, false },
-        new object?[] { Guid.NewGuid(), null, SearchOperator.Equals, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Equals, true },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.Equals, true },
+        new object?[] { null, new[] { default(Guid).ToString() }, SearchOperator.Equals, false },
+        new object?[] { null, new[] { Guid.NewGuid().ToString() }, SearchOperator.Equals, false },
+        new object?[] { default(Guid), new string?[] { null }, SearchOperator.Equals, false },
+        new object?[] { Guid.NewGuid(), new string?[] { null }, SearchOperator.Equals, false },
 
-        new object?[] { null, null, SearchOperator.NotEquals, false },
-        new object?[] { null, string.Empty, SearchOperator.NotEquals, false },
-        new object?[] { null, default(Guid).ToString(), SearchOperator.NotEquals, true },
-        new object?[] { null, Guid.NewGuid().ToString(), SearchOperator.NotEquals, true },
-        new object?[] { default(Guid), null, SearchOperator.NotEquals, true },
-        new object?[] { Guid.NewGuid(), null, SearchOperator.NotEquals, true },
+        new object?[] { null, new string?[] { null }, SearchOperator.NotEquals, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.NotEquals, false },
+        new object?[] { null, new[] { default(Guid).ToString() }, SearchOperator.NotEquals, true },
+        new object?[] { null, new[] { Guid.NewGuid().ToString() }, SearchOperator.NotEquals, true },
+        new object?[] { default(Guid), new string?[] { null }, SearchOperator.NotEquals, true },
+        new object?[] { Guid.NewGuid(), new string?[] { null }, SearchOperator.NotEquals, true },
 
         new object?[] { Guid.NewGuid(), null, SearchOperator.Exists, true },
         new object?[] { default(Guid), null, SearchOperator.Exists, true },
@@ -77,6 +81,10 @@ public class GuidTests
         new object?[] { null, null, SearchOperator.NotExists, true },
         new object?[] { Guid.NewGuid(), null, SearchOperator.NotExists, false },
         new object?[] { default(Guid), null, SearchOperator.NotExists, false },
+
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
+        new object?[] { null, new[] { Guid.NewGuid().ToString() }, SearchOperator.InRange, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
     };
 
     private class TestClass

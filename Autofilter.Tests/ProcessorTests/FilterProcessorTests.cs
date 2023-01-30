@@ -14,7 +14,7 @@ public class FilterProcessorTests
     {
         var query = new Fixture().CreateMany<TestClass>().AsQueryable();
 
-        Condition condition = new(nameof(TestClass.Prop), "true", SearchOperator.Equals);
+        Condition condition = new(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals);
 
         FilterRule filter = new(new[] { condition });
 
@@ -46,8 +46,8 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     }
                 )
             }; // 1 and 2
@@ -59,8 +59,8 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
                     }
                 )
             }; // 1 or 2
@@ -74,9 +74,9 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     }
                 )
             }; // 1 and 2 and 3
@@ -88,9 +88,9 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
                     }
                 )
             }; // 1 or 2 or 3
@@ -102,9 +102,9 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
                     }
                 ),
             }; // 1 and 2 or 3
@@ -116,9 +116,9 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     }
                 )
             }; // 1 or 2 and 3
@@ -132,10 +132,10 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     }
                 )
             }; // 1 and 2 and 3 and 4
@@ -147,10 +147,10 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
                     }
                 )
             }; // 1 or 2 or 3 or 4
@@ -162,10 +162,10 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     },
 
                     new[]
@@ -187,10 +187,10 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
                     },
 
                     new []
@@ -214,11 +214,11 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     },
 
                     new[]
@@ -240,11 +240,11 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
                     },
 
                     new []
@@ -278,11 +278,11 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     },
 
                     new []
@@ -318,12 +318,12 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
                     },
 
                     new[]
@@ -351,12 +351,12 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     },
 
                     new[]
@@ -390,12 +390,12 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
                     },
 
                     new[]
@@ -431,14 +431,14 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     },
 
                     new[]
@@ -466,14 +466,14 @@ public class FilterProcessorTests
                 (
                     new[]
                     {
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.Or),
-                        new Condition(nameof(TestClass.Prop), "true", SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.Or),
+                        new Condition(nameof(TestClass.Prop), new[] { "true" }, SearchOperator.Equals, LogicOperator.And),
                     },
 
                     new[]

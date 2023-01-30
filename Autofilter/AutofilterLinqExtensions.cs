@@ -7,15 +7,15 @@ public static class AutofilterLinqExtensions
 {
     public static IQueryable<T> ApplyFilter<T>(this IQueryable<T> queryable, AutoFilter filter) where T : class
     {
-        if (filter.Select is not null)
+        if (filter.Select is { Length: >0 })
         {
             throw new FilterException("Select operation currently is not supported in this method");
         }
 
-        return (IQueryable<T>) ApplyFilterDynamic(queryable, filter);
+        return (IQueryable<T>) ApplyFilterAndSelect(queryable, filter);
     }
 
-    public static IQueryable ApplyFilterDynamic(this IQueryable queryable, AutoFilter filter)
+    public static IQueryable ApplyFilterAndSelect(this IQueryable queryable, AutoFilter filter)
     {
         try
         {
@@ -46,7 +46,7 @@ public static class AutofilterLinqExtensions
 
             if (filter.Select is { Length: >0 })
             {
-                queryable = SelectProcessor.ApplySelect(queryable, filter.Select);
+                queryable = SelectProcessor.ApplySelectDictionary(queryable, filter.Select);
             }
 
             return queryable;
@@ -55,5 +55,20 @@ public static class AutofilterLinqExtensions
         {
             throw new FilterException("Error while applying filter", ex);
         }
+    }
+
+    public static IQueryable<T> ApplyFilters<T>(this IQueryable<T> queryable, params AutoFilter[] filters) where T : class
+    {
+        if (filters.Any(x => x.Select is { Length: >0 }))
+        {
+            throw new FilterException("Select operation currently is not supported in this method");
+        }
+
+        return (IQueryable<T>) ApplyFiltersAndSelect(queryable, filters);
+    }
+
+    public static IQueryable ApplyFiltersAndSelect(this IQueryable queryable, params AutoFilter[] filters)
+    {
+        return filters.Aggregate(queryable, (query, filter) => query.ApplyFilterAndSelect(filter));
     }
 }

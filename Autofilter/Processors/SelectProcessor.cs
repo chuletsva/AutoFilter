@@ -6,7 +6,7 @@ namespace Autofilter.Processors;
 
 internal static class SelectProcessor
 {
-    public static IQueryable ApplySelect(IQueryable queryable, string[] propertyNames)
+    public static IQueryable ApplySelectDictionary(IQueryable queryable, string[] propertyNames)
     {
         var properties = new PropertyInfo[propertyNames.Length];
 
@@ -17,23 +17,23 @@ internal static class SelectProcessor
 
         ParameterExpression paramExpr = Expression.Parameter(queryable.ElementType, "x");
 
-        Type destinationType = typeof(Dictionary<string, object>);
+        Type dictType = typeof(Dictionary<string, object>);
 
-        var addMethod = destinationType.GetMethod("Add") ?? throw new NullReferenceException();
+        var addMethod = dictType.GetMethod("Add") ?? throw new NullReferenceException();
 
         ListInitExpression bodyExpr = Expression.ListInit(
-            Expression.New(destinationType),
+            Expression.New(dictType),
             properties.Select(x => Expression.ElementInit(
                 addMethod,
                 Expression.Constant(x.Name),
                 Expression.Convert(Expression.Property(paramExpr, x), typeof(object)))));
 
-        MethodInfo method = LinqMethods.Select(queryable.ElementType, destinationType);
+        MethodInfo method = QueryableMethods.Select(queryable.ElementType, dictType);
 
         LambdaExpression lambdaExpr = Expression.Lambda(bodyExpr, paramExpr);
 
         var selectQueryable = method.Invoke(null, new object?[] { queryable, lambdaExpr }) ?? throw new NullReferenceException();
 
-        return (IQueryable)selectQueryable;
+        return (IQueryable) selectQueryable;
     }
 }

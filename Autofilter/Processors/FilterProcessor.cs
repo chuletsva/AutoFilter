@@ -11,7 +11,7 @@ internal static class FilterProcessor
     {
         LambdaExpression lambdaExpr = BuildPredicate(queryable.ElementType, filter.Conditions, filter.Groups);
 
-        var method = LinqMethods.Where(queryable.ElementType);
+        var method = QueryableMethods.Where(queryable.ElementType);
 
         var filteredQueryable = method.Invoke(null, new object[] { queryable, lambdaExpr }) ?? throw new NullReferenceException();
 

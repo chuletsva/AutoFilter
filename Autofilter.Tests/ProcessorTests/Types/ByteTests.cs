@@ -9,7 +9,7 @@ public class ByteTests
 {
     [Theory]
     [MemberData(nameof(ByteTestCases))]
-    public void ShouldHandleByte(byte objValue, string searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleByte(byte objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { Byte = objValue };
 
@@ -25,7 +25,7 @@ public class ByteTests
     [Theory]
     [MemberData(nameof(ByteTestCases))]
     [MemberData(nameof(NullableByteTestCases))]
-    public void ShouldHandleNullableByte(byte? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleNullableByte(byte? objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { NullableByte = objValue };
 
@@ -40,94 +40,102 @@ public class ByteTests
 
     public static IEnumerable<object[]> ByteTestCases => new[]
     {
-        new object[] { default(byte), default(byte).ToString(), SearchOperator.Equals, true },
-        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Equals, true },
-        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Equals, true },
-        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Equals, false },
-        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Equals, false },
+        new object[] { (byte)0, new[] { "0" }, SearchOperator.Equals, true },
+        new object[] { byte.MinValue, new[] { byte.MinValue.ToString() }, SearchOperator.Equals, true },
+        new object[] { byte.MaxValue, new[] { byte.MaxValue.ToString() }, SearchOperator.Equals, true },
+        new object[] { byte.MinValue, new[] { byte.MaxValue.ToString() }, SearchOperator.Equals, false },
+        new object[] { byte.MaxValue, new[] { byte.MinValue.ToString() }, SearchOperator.Equals, false },
 
-        new object[] { default(byte), default(byte).ToString(), SearchOperator.NotEquals, false },
-        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.NotEquals, false },
-        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.NotEquals, false },
-        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.NotEquals, true },
-        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.NotEquals, true },
+        new object[] { (byte)0, new[] { "0" }, SearchOperator.NotEquals, false },
+        new object[] { byte.MinValue, new[] { byte.MinValue.ToString() }, SearchOperator.NotEquals, false },
+        new object[] { byte.MaxValue, new[] { byte.MaxValue.ToString() }, SearchOperator.NotEquals, false },
+        new object[] { byte.MinValue, new[] { byte.MaxValue.ToString() }, SearchOperator.NotEquals, true },
+        new object[] { byte.MaxValue, new[] { byte.MinValue.ToString() }, SearchOperator.NotEquals, true },
 
-        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Greater, true },
-        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Greater, false },
-        new object[] { default(byte), default(byte).ToString(), SearchOperator.Greater, false },
-        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Greater, false },
-        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Greater, false },
+        new object[] { byte.MaxValue, new[] { byte.MinValue.ToString() }, SearchOperator.Greater, true },
+        new object[] { byte.MinValue, new[] { byte.MaxValue.ToString() }, SearchOperator.Greater, false },
+        new object[] { (byte)0, new[] { "0" }, SearchOperator.Greater, false },
+        new object[] { byte.MinValue, new[] { byte.MinValue.ToString() }, SearchOperator.Greater, false },
+        new object[] { byte.MaxValue, new[] { byte.MaxValue.ToString() }, SearchOperator.Greater, false },
 
-        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, true },
-        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.GreaterOrEqual, false },
-        new object[] { default(byte), default(byte).ToString(), SearchOperator.GreaterOrEqual, true },
-        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, true },
-        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.GreaterOrEqual, true },
+        new object[] { byte.MaxValue, new[] { byte.MinValue.ToString() }, SearchOperator.GreaterOrEqual, true },
+        new object[] { byte.MinValue, new[] { byte.MaxValue.ToString() }, SearchOperator.GreaterOrEqual, false },
+        new object[] { (byte)0, new[] { "0" }, SearchOperator.GreaterOrEqual, true },
+        new object[] { byte.MinValue, new[] { byte.MinValue.ToString() }, SearchOperator.GreaterOrEqual, true },
+        new object[] { byte.MaxValue, new[] { byte.MaxValue.ToString() }, SearchOperator.GreaterOrEqual, true },
 
-        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.Less, true },
-        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.Less, false },
-        new object[] { default(byte), default(byte).ToString(), SearchOperator.Less, false },
-        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.Less, false },
-        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.Less, false },
+        new object[] { byte.MinValue, new[] { byte.MaxValue.ToString() }, SearchOperator.Less, true },
+        new object[] { byte.MaxValue, new[] { byte.MinValue.ToString() }, SearchOperator.Less, false },
+        new object[] { (byte)0, new[] { "0" }, SearchOperator.Less, false },
+        new object[] { byte.MinValue, new[] { byte.MinValue.ToString() }, SearchOperator.Less, false },
+        new object[] { byte.MaxValue, new[] { byte.MaxValue.ToString() }, SearchOperator.Less, false },
 
-        new object[] { byte.MinValue, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, true },
-        new object[] { byte.MaxValue, byte.MinValue.ToString(), SearchOperator.LessOrEqual, false },
-        new object[] { default(byte), default(byte).ToString(), SearchOperator.LessOrEqual, true },
-        new object[] { byte.MinValue, byte.MinValue.ToString(), SearchOperator.LessOrEqual, true },
-        new object[] { byte.MaxValue, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, true },
+        new object[] { byte.MinValue, new[] { byte.MaxValue.ToString() }, SearchOperator.LessOrEqual, true },
+        new object[] { byte.MaxValue, new[] { byte.MinValue.ToString() }, SearchOperator.LessOrEqual, false },
+        new object[] { (byte)0, new[] { "0" }, SearchOperator.LessOrEqual, true },
+        new object[] { byte.MinValue, new[] { byte.MinValue.ToString() }, SearchOperator.LessOrEqual, true },
+        new object[] { byte.MaxValue, new[] { byte.MaxValue.ToString() }, SearchOperator.LessOrEqual, true },
+
+        new object[] { (byte)0, new[] { "0" }, SearchOperator.InRange, true },
+        new object[] { (byte)0, new[] { "1" }, SearchOperator.InRange, false },
+        new object[] { (byte)0, Array.Empty<string?>(), SearchOperator.InRange, false },
     };
 
     public static IEnumerable<object?[]> NullableByteTestCases => new[]
     {
-        new object?[] { null, null, SearchOperator.Equals, true },
-        new object?[] { null, string.Empty, SearchOperator.Equals, true },
-        new object?[] { null, default(byte).ToString(), SearchOperator.Equals, false },
-        new object?[] { null, byte.MaxValue.ToString(), SearchOperator.Equals, false },
-        new object?[] { default(byte), null, SearchOperator.Equals, false },
-        new object?[] { byte.MaxValue, null, SearchOperator.Equals, false },
+        new object?[] { null, new string?[]{ null }, SearchOperator.Equals, true },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.Equals, true },
+        new object?[] { null, new[] { "0" }, SearchOperator.Equals, false },
+        new object?[] { null, new[] { byte.MaxValue.ToString() }, SearchOperator.Equals, false },
+        new object?[] { (byte)0, new string?[] { null }, SearchOperator.Equals, false },
+        new object?[] { byte.MaxValue, new string?[] { null }, SearchOperator.Equals, false },
 
-        new object?[] { null, null, SearchOperator.NotEquals, false },
-        new object?[] { null, string.Empty, SearchOperator.NotEquals, false },
-        new object?[] { null, default(byte).ToString(), SearchOperator.NotEquals, true },
-        new object?[] { null, byte.MaxValue.ToString(), SearchOperator.NotEquals, true },
-        new object?[] { default(byte), null, SearchOperator.NotEquals, true },
-        new object?[] { byte.MaxValue, null, SearchOperator.NotEquals, true },
+        new object?[] { null, new string?[] { null }, SearchOperator.NotEquals, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.NotEquals, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.NotEquals, true },
+        new object?[] { null, new[] { byte.MaxValue.ToString() }, SearchOperator.NotEquals, true },
+        new object?[] { (byte)0, new string?[] { null }, SearchOperator.NotEquals, true },
+        new object?[] { byte.MaxValue, new string?[] { null }, SearchOperator.NotEquals, true },
 
-        new object?[] { null, null, SearchOperator.Greater, false },
-        new object?[] { null, default(byte).ToString(), SearchOperator.Greater, false },
-        new object?[] { null, string.Empty, SearchOperator.Greater, false },
-        new object?[] { null, byte.MinValue.ToString(), SearchOperator.Greater, false },
-        new object?[] { default(byte), null, SearchOperator.Greater, false },
-        new object?[] { byte.MaxValue, null, SearchOperator.Greater, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Greater, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.Greater, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.Greater, false },
+        new object?[] { null, new[] { byte.MinValue.ToString() }, SearchOperator.Greater, false },
+        new object?[] { (byte)0, new string?[] { null }, SearchOperator.Greater, false },
+        new object?[] { byte.MaxValue, new string?[] { null }, SearchOperator.Greater, false },
 
-        new object?[] { null, null, SearchOperator.GreaterOrEqual, false },
-        new object?[] { null, default(byte).ToString(), SearchOperator.GreaterOrEqual, false },
-        new object?[] { null, string.Empty, SearchOperator.GreaterOrEqual, false },
-        new object?[] { null, byte.MinValue.ToString(), SearchOperator.GreaterOrEqual, false },
-        new object?[] { default(byte), null, SearchOperator.GreaterOrEqual, false },
-        new object?[] { byte.MaxValue, null, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, new[] { byte.MinValue.ToString() }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { (byte)0, new string?[] { null }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { byte.MaxValue, new string?[] { null }, SearchOperator.GreaterOrEqual, false },
 
-        new object?[] { null, null, SearchOperator.Less, false },
-        new object?[] { null, default(byte).ToString(), SearchOperator.Less, false },
-        new object?[] { null, string.Empty, SearchOperator.Less, false },
-        new object?[] { null, byte.MaxValue.ToString(), SearchOperator.Less, false },
-        new object?[] { default(byte), null, SearchOperator.Less, false },
-        new object?[] { byte.MinValue, null, SearchOperator.Less, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Less, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.Less, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.Less, false },
+        new object?[] { null, new[] { byte.MaxValue.ToString() }, SearchOperator.Less, false },
+        new object?[] { (byte)0, new string?[] { null }, SearchOperator.Less, false },
+        new object?[] { byte.MinValue, new string?[] { null }, SearchOperator.Less, false },
 
-        new object?[] { null, null, SearchOperator.LessOrEqual, false },
-        new object?[] { null, default(byte).ToString(), SearchOperator.LessOrEqual, false },
-        new object?[] { null, string.Empty, SearchOperator.LessOrEqual, false },
-        new object?[] { null, byte.MaxValue.ToString(), SearchOperator.LessOrEqual, false },
-        new object?[] { default(byte), null, SearchOperator.LessOrEqual, false },
-        new object?[] { byte.MinValue, null, SearchOperator.LessOrEqual, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.LessOrEqual, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.LessOrEqual, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.LessOrEqual, false },
+        new object?[] { null, new[] { byte.MaxValue.ToString() }, SearchOperator.LessOrEqual, false },
+        new object?[] { (byte)0, new string?[] { null }, SearchOperator.LessOrEqual, false },
+        new object?[] { byte.MinValue, new string?[] { null }, SearchOperator.LessOrEqual, false },
 
         new object?[] { byte.MaxValue, null, SearchOperator.Exists, true },
-        new object?[] { default(byte), null, SearchOperator.Exists, true },
+        new object?[] { (byte)0, null, SearchOperator.Exists, true },
         new object?[] { null, null, SearchOperator.Exists, false },
 
         new object?[] { null, null, SearchOperator.NotExists, true },
         new object?[] { byte.MaxValue, null, SearchOperator.NotExists, false },
-        new object?[] { default(byte), null, SearchOperator.NotExists, false },
+        new object?[] { (byte)0, null, SearchOperator.NotExists, false },
+
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.InRange, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
     };
 
     private class TestClass

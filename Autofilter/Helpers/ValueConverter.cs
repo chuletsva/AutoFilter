@@ -4,29 +4,26 @@ namespace Autofilter.Helpers;
 
 internal static class ValueConverter
 {
-    public static object? ConvertValueToType(string? value, Type type)
+    public static object? ConvertValue(string? value, Type destinationType)
     {
         if (value is null) return null;
 
-        try
-        {
-            TypeConverter converter = TypeDescriptor.GetConverter(type);
+        TypeConverter converter = TypeDescriptor.GetConverter(destinationType);
 
-            return converter.ConvertFromInvariantString(value);
-        }
-        catch
-        {
-            throw new Exception($"Cannot convert {GetInvalidValueAlias(value)} to type '{type.Name}'");
-        }
+        return converter.ConvertFromInvariantString(value);
     }
 
-    public static string GetInvalidValueAlias(object? value)
+    public static object ConvertValueToArrayOfType(string?[] value, Type elementType)
     {
-        return value switch
+        var arr = Array.CreateInstance(elementType, value.Length);
+
+        for (int i = 0; i < value.Length; i++)
         {
-            null => "null",
-            _ when string.IsNullOrWhiteSpace(value.ToString()) => "empty string",
-            _ => $"value '{value}'"
-        };
+            var condValue = ConvertValue(value[i], elementType);
+
+            arr.SetValue(condValue, i);
+        }
+
+        return arr;
     }
 }

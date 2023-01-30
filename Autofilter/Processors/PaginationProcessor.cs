@@ -6,7 +6,7 @@ internal static class PaginationProcessor
 {
     public static IQueryable ApplySkip(IQueryable queryable, int skip)
     {
-        var method = LinqMethods.Skip(queryable.ElementType);
+        var method = QueryableMethods.Skip(queryable.ElementType);
 
         var skipQueryable = method.Invoke(null, new object[] { queryable, skip }) ?? throw new NullReferenceException();
 
@@ -15,7 +15,7 @@ internal static class PaginationProcessor
 
     public static IQueryable ApplyTop(IQueryable queryable, int top)
     {
-        var method = LinqMethods.Take(queryable.ElementType);
+        var method = QueryableMethods.Take(queryable.ElementType);
 
         var topQueryable = method.Invoke(null, new object[] { queryable, top }) ?? throw new NullReferenceException();
 

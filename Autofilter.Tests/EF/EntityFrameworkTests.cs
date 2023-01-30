@@ -33,7 +33,7 @@ public class EntityFrameworkTests : IClassFixture<DatabaseFixture>
         AutoFilter filter = CreateFilter();
 
         var products = await _db.DbContext.Products
-            .ApplyFilterDynamic(filter)
+            .ApplyFilterAndSelect(filter)
             .OfType<object>().ToArrayAsync();
     }
 
@@ -49,35 +49,35 @@ public class EntityFrameworkTests : IClassFixture<DatabaseFixture>
                     (
                         Name: nameof(Product.Name),
                         SearchOperator: SearchOperator.StartsWith,
-                        Value: "Snickers"
+                        Value: new []{ "Snickers" }
                     ),
                     new Condition
                     (
                         LogicOperator: LogicOperator.Or,
                         Name: nameof(Product.Name),
                         SearchOperator: SearchOperator.Contains,
-                        Value: "Mars"
+                        Value: new []{ "Mars" }
                     ),
                     new Condition
                     (
                         LogicOperator: LogicOperator.And,
                         Name: nameof(Product.ExpireDate),
                         SearchOperator: SearchOperator.GreaterOrEqual,
-                        Value: DateTime.UtcNow.ToString("s")
+                        Value: new [] { DateTime.UtcNow.ToString("s") }
                     ),
                     new Condition
                     (
                         LogicOperator: LogicOperator.And,
                         Name: nameof(Product.IsForSale),
                         SearchOperator: SearchOperator.Equals,
-                        Value: "true"
+                        Value: new [] { "true" }
                     ),
                     new Condition
                     (
                         LogicOperator: LogicOperator.Or,
                         Name: nameof(Product.IsInStock),
                         SearchOperator: SearchOperator.Equals,
-                        Value: "true"
+                        Value: new [] { "true" }
                     ),
                 },
 

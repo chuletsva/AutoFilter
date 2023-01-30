@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Autofilter.Helpers;
 
-public static class LinqMethods
+internal static class QueryableMethods
 {
     private static readonly ConcurrentDictionary<(string MethodName, Type? Type1, Type? Type2), MethodInfo> Cache = new();
 

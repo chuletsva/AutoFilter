@@ -61,35 +61,35 @@ public class FilterProcessorBenchmarks
                     (
                         Name: nameof(Product.Name),
                         SearchOperator: SearchOperator.StartsWith,
-                        Value: "Snickers"
+                        Value: new[] { "Snickers" }
                     ),
                     new Condition
                     (
                         LogicOperator: LogicOperator.Or,
                         Name: nameof(Product.Name),
                         SearchOperator: SearchOperator.Contains,
-                        Value: "Mars"
+                        Value: new[] { "Mars" }
                     ),
                     new Condition
                     (
                         LogicOperator: LogicOperator.And,
                         Name: nameof(Product.ExpireDate),
                         SearchOperator: SearchOperator.GreaterOrEqual,
-                        Value: DateTime.UtcNow.ToString("s")
+                        Value: new[] { DateTime.UtcNow.ToString("s") }
                     ),
                     new Condition
                     (
                         LogicOperator: LogicOperator.And,
                         Name: nameof(Product.IsForSale),
                         SearchOperator: SearchOperator.Equals,
-                        Value: "true"
+                        Value: new[] { "true" }
                     ),
                     new Condition
                     (
                         LogicOperator: LogicOperator.Or,
                         Name: nameof(Product.IsInStock),
                         SearchOperator: SearchOperator.Equals,
-                        Value: "true"
+                        Value: new[] { "true" }
                     ),
                 },
 
@@ -168,6 +168,6 @@ public class FilterProcessorBenchmarks
     [Benchmark]
     public Task AutoFilter_Select()
     {
-        return _db.DbContext.Products.AsNoTracking().ApplyFilterDynamic(_filter_with_select).OfType<object>().ToArrayAsync();
+        return _db.DbContext.Products.AsNoTracking().ApplyFilterAndSelect(_filter_with_select).OfType<object>().ToArrayAsync();
     }
 }

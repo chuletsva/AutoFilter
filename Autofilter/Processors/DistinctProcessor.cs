@@ -9,9 +9,9 @@ internal static class DistinctProcessor
 {
     public static IQueryable ApplyDistinct(IQueryable queryable, DistinctRule distinct)
     {
-        if (distinct.PropertyName is null)
+        if (string.IsNullOrWhiteSpace(distinct.PropertyName))
         {
-            var method = LinqMethods.Distinct(queryable.ElementType);
+            var method = QueryableMethods.Distinct(queryable.ElementType);
 
             var distinctQueryable = method.Invoke(null, new object?[] { queryable }) ?? throw new NullReferenceException();
 
@@ -25,7 +25,7 @@ internal static class DistinctProcessor
             MemberExpression propExpr = Expression.Property(paramExpr, property);
             Expression keySelector = Expression.Lambda(propExpr, paramExpr);
 
-            var method = LinqMethods.DistinctBy(queryable.ElementType, property.PropertyType);
+            var method = QueryableMethods.DistinctBy(queryable.ElementType, property.PropertyType);
 
             var distinctQueryable = method.Invoke(null, new object?[] { queryable, keySelector }) ?? throw new NullReferenceException();
 

@@ -19,10 +19,10 @@ internal static class SortingProcessor
 
         var method = (thenBy, isDescending) switch
         {
-            (false, false) => LinqMethods.OrderBy(queryable.ElementType, property.PropertyType),
-            (false, true) => LinqMethods.OrderByDescending(queryable.ElementType, property.PropertyType),
-            (true, false) => LinqMethods.ThenBy(queryable.ElementType, property.PropertyType),
-            (true, true) => LinqMethods.ThenByDescending(queryable.ElementType, property.PropertyType),
+            (false, false) => QueryableMethods.OrderBy(queryable.ElementType, property.PropertyType),
+            (false, true) => QueryableMethods.OrderByDescending(queryable.ElementType, property.PropertyType),
+            (true, false) => QueryableMethods.ThenBy(queryable.ElementType, property.PropertyType),
+            (true, true) => QueryableMethods.ThenByDescending(queryable.ElementType, property.PropertyType),
         };
 
         var sortedQueryable = method.Invoke(null, new object[]{ queryable, keySelector }) ?? throw new NullReferenceException();

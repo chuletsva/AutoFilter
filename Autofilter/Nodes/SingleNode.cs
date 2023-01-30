@@ -11,13 +11,13 @@ internal sealed class SingleNode : INode
     private readonly Condition _condition;
     private readonly ParameterExpression _paramExpr;
 
+    public LogicOperator? Operator => _condition.LogicOperator;
+
     public SingleNode(Condition condition, ParameterExpression paramExpr)
     {
         _condition = condition;
         _paramExpr = paramExpr;
     }
-
-    public LogicOperator? Operator => _condition.LogicOperator;
 
     public Expression BuildExpression()
     {
@@ -25,71 +25,194 @@ internal sealed class SingleNode : INode
 
         MemberExpression propExpr = Expression.Property(_paramExpr, property);
 
-        object? value = ConvertValueToType(_condition.Value, property.PropertyType);
+        Expression predicateExpr;
 
-        Expression valueExpr;
+        switch (_condition.SearchOperator)
+        {
+            case SearchOperator.Equals:
+            {
+                var (value, valueExpr) = BuildSingleValueExpression(property);
+
+                if (property.PropertyType == typeof(bool))
+                {
+                    predicateExpr = value switch
+                    {
+                        true => propExpr,
+                        false => Expression.Not(propExpr),
+                        _ => throw new ArgumentOutOfRangeException(nameof(value))
+                    };
+                }
+                else
+                {
+                    predicateExpr = Expression.Equal(propExpr, valueExpr);
+                }
+
+                break;
+            }
+            case SearchOperator.NotEquals:
+            {
+                var (value, valueExpr) = BuildSingleValueExpression(property);
+
+                if (property.PropertyType == typeof(bool))
+                {
+                    predicateExpr = value switch
+                    {
+                        true => Expression.Not(propExpr),
+                        false => propExpr,
+                        _ => throw new ArgumentOutOfRangeException(nameof(value))
+                    };
+                }
+                else
+                {
+                    predicateExpr = Expression.NotEqual(propExpr, valueExpr);
+                }
+
+                break;
+            }
+
+            case SearchOperator.Greater when ReflectionHelper.IsComparable(property.PropertyType):
+            {
+                var (_, valueExpr) = BuildSingleValueExpression(property);
+
+                predicateExpr = Expression.GreaterThan(propExpr, valueExpr);
+
+                break;
+            }
+
+            case SearchOperator.GreaterOrEqual when ReflectionHelper.IsComparable(property.PropertyType):
+            {
+                var (_, valueExpr) = BuildSingleValueExpression(property);
+
+                predicateExpr = Expression.GreaterThanOrEqual(propExpr, valueExpr);
+
+                break;
+            }
+
+            case SearchOperator.Less when ReflectionHelper.IsComparable(property.PropertyType):
+            {
+                var (_, valueExpr) = BuildSingleValueExpression(property);
+
+                predicateExpr = Expression.LessThan(propExpr, valueExpr);
+
+                break;
+            }
+
+            case SearchOperator.LessOrEqual when ReflectionHelper.IsComparable(property.PropertyType):
+            {
+                var (_, valueExpr) = BuildSingleValueExpression(property);
+
+                predicateExpr = Expression.LessThanOrEqual(propExpr, valueExpr);
+
+                break;
+            }
+
+            case SearchOperator.Exists when ReflectionHelper.CanBeNull(property.PropertyType):
+            {
+                predicateExpr = Expression.NotEqual(propExpr, Expression.Constant(null));
+
+                break;
+            }
+
+            case SearchOperator.NotExists when ReflectionHelper.CanBeNull(property.PropertyType):
+            {
+                predicateExpr = Expression.Equal(propExpr, Expression.Constant(null));
+
+                break;
+            }
+
+            case SearchOperator.StartsWith when property.PropertyType == typeof(string):
+            {
+                var (_, valueExpr) = BuildSingleValueExpression(property);
+
+                predicateExpr = Expression.Call(propExpr, "StartsWith", null, valueExpr);
+
+                break;
+            }
+
+            case SearchOperator.EndsWith when property.PropertyType == typeof(string):
+            {
+                var (_, valueExpr) = BuildSingleValueExpression(property);
+
+                predicateExpr = Expression.Call(propExpr, "EndsWith", null, valueExpr);
+
+                break;
+            }
+
+            case SearchOperator.Contains when property.PropertyType == typeof(string):
+            {
+                var (_, valueExpr) = BuildSingleValueExpression(property);
+
+                predicateExpr = Expression.Call(propExpr, "Contains", null, valueExpr);
+
+                break;
+            }
+
+            case SearchOperator.NotContains when property.PropertyType == typeof(string):
+            {
+                var (_, valueExpr) = BuildSingleValueExpression(property);
+
+                predicateExpr = Expression.Not(Expression.Call(propExpr, "Contains", null, valueExpr));
+
+                break;
+            }
+
+            case SearchOperator.InRange:
+            {
+                var (_, valueExpr) = BuildArrayExpression(property);
+
+                predicateExpr = Expression.Call(null, EnumerableMethods.Contains(property.PropertyType), valueExpr, propExpr);
+
+                break;
+            }
+
+            default:
+                throw new Exception($"Operator '{_condition.SearchOperator}' is not supported for type '{property.PropertyType.Name}'");
+        }
+
+        return predicateExpr;
+    }
+
+    private (object? Value, Expression ValueExpr) BuildSingleValueExpression(PropertyInfo property)
+    {
+        string? originalValue = _condition.Value[0];
+
         try
         {
-            valueExpr = Expression.Constant(value, property.PropertyType);
+            object? value = ConvertValue(originalValue, property.PropertyType);
+
+            Expression valueExpr = Expression.Constant(value, property.PropertyType);
+
+            return (value, valueExpr);
         }
         catch
         {
-            throw new Exception($"Property '{_condition.Name}' of type '{property.PropertyType.Name}' is not comparable with {GetInvalidValueAlias(value)}");
+            throw new Exception($"Property '{property.Name}' of type '{property.PropertyType.Name}' is not compatible with {getInvalidValueAlias(originalValue)}");
         }
 
-        Expression predicateExpr = _condition.SearchOperator switch
+        static string getInvalidValueAlias(object? value)
         {
-            SearchOperator.Equals when property.PropertyType == typeof(bool) => value switch
+            return value switch
             {
-                true => propExpr,
-                false => Expression.Not(propExpr),
-                _ => throw new ArgumentOutOfRangeException(nameof(value))
-            },
+                null => "null",
+                _ when string.IsNullOrWhiteSpace(value.ToString()) => "empty string",
+                _ => $"value '{value}'"
+            };
+        }
+    }
 
-            SearchOperator.Equals => Expression.Equal(propExpr, valueExpr),
+    private (object Value, Expression ValueExpr) BuildArrayExpression(PropertyInfo property)
+    {
+        try
+        {
+            object value = ConvertValueToArrayOfType(_condition.Value, property.PropertyType);
 
-            SearchOperator.NotEquals when property.PropertyType == typeof(bool) => value switch
-            {
-                true => Expression.Not(propExpr),
-                false => propExpr,
-                _ => throw new ArgumentOutOfRangeException(nameof(value))
-            },
+            Expression valueExpr = Expression.Constant(value, value.GetType());
 
-            SearchOperator.NotEquals => Expression.NotEqual(propExpr, valueExpr),
-
-            SearchOperator.Greater when ReflectionHelper.IsComparable(property.PropertyType) 
-                => Expression.GreaterThan(propExpr, valueExpr),
-
-            SearchOperator.GreaterOrEqual when ReflectionHelper.IsComparable(property.PropertyType) 
-                => Expression.GreaterThanOrEqual(propExpr, valueExpr),
-
-            SearchOperator.Less when ReflectionHelper.IsComparable(property.PropertyType)
-                => Expression.LessThan(propExpr, valueExpr),
-
-            SearchOperator.LessOrEqual when ReflectionHelper.IsComparable(property.PropertyType)
-                => Expression.LessThanOrEqual(propExpr, valueExpr),
-
-            SearchOperator.Exists when ReflectionHelper.CanBeNull(property.PropertyType)
-                => Expression.NotEqual(propExpr, Expression.Constant(null)),
-
-            SearchOperator.NotExists when ReflectionHelper.CanBeNull(property.PropertyType)
-                => Expression.Equal(propExpr, Expression.Constant(null)),
-
-            SearchOperator.StartsWith when property.PropertyType == typeof(string)
-                => Expression.Call(propExpr, "StartsWith", null, valueExpr),
-
-            SearchOperator.EndsWith when property.PropertyType == typeof(string)
-                => Expression.Call(propExpr, "EndsWith", null, valueExpr),
-
-            SearchOperator.Contains when property.PropertyType == typeof(string)
-                => Expression.Call(propExpr, "Contains", null, valueExpr),
-
-            SearchOperator.NotContains when property.PropertyType == typeof(string)
-                => Expression.Not(Expression.Call(propExpr, "Contains", null, valueExpr)),
-
-            _ => throw new Exception($"Operator '{_condition.SearchOperator}' is not supported for type '{property.PropertyType.Name}'")
-        };
-
-        return predicateExpr;
+            return (value, valueExpr);
+        }
+        catch
+        {
+            throw new Exception($"Property '{property.Name}' of type '{property.PropertyType.Name}' is not comparable with array of values");
+        }
     }
 }

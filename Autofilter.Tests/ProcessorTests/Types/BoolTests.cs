@@ -9,7 +9,7 @@ public class BoolTests
 {
     [Theory]
     [MemberData(nameof(BoolTestCases))]
-    public void ShouldHandleBool(bool objValue, string searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleBool(bool objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { Bool = objValue };
 
@@ -25,7 +25,7 @@ public class BoolTests
     [Theory]
     [MemberData(nameof(BoolTestCases))]
     [MemberData(nameof(NullableBoolTestCases))]
-    public void ShouldHandleNullableBool(bool? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleNullableBool(bool? objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { NullableBool = objValue };
 
@@ -39,54 +39,51 @@ public class BoolTests
     }
 
     [Theory]
+    [InlineData("")]
     [InlineData(null)]
     public void ShouldThrow_WhenNotComparableValue(string? searchValue)
     {
-        Condition condition = new(nameof(TestClass.Bool), searchValue, SearchOperator.Equals);
+        Condition condition = new(nameof(TestClass.Bool), new[] { searchValue }, SearchOperator.Equals);
 
         FluentActions.Invoking(() => FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition }))
             .Should().Throw<Exception>().Which.Message
-            .Should().StartWith($"Property '{nameof(TestClass.Bool)}' of type '{nameof(Boolean)}' is not comparable with");
-    }
-
-    [Theory]
-    [InlineData("")]
-    public void ShouldThrow_WhenNotConvertableValue(string searchValue)
-    {
-        Condition condition = new(nameof(TestClass.Bool), searchValue, SearchOperator.Equals);
-
-        FluentActions.Invoking(() => FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition }))
-            .Should().Throw<Exception>().Which.Message.Should().StartWith("Cannot convert");
+            .Should().StartWith($"Property '{nameof(TestClass.Bool)}' of type '{nameof(Boolean)}' is not compatible with");
     }
 
     public static IEnumerable<object[]> BoolTestCases => new[]
     {
-        new object[] { true, "true", SearchOperator.Equals, true },
-        new object[] { false, "false", SearchOperator.Equals, true },
-        new object[] { true, "false", SearchOperator.Equals, false },
-        new object[] { false, "true", SearchOperator.Equals, false },
+        new object[] { true, new[] { "true" }, SearchOperator.Equals, true },
+        new object[] { false, new[]{ "false" }, SearchOperator.Equals, true },
+        new object[] { true, new[] { "false" }, SearchOperator.Equals, false },
+        new object[] { false, new[] { "true" }, SearchOperator.Equals, false },
 
-        new object[] { true, "true", SearchOperator.NotEquals, false },
-        new object[] { false, "false", SearchOperator.NotEquals, false },
-        new object[] { true, "false", SearchOperator.NotEquals, true },
-        new object[] { false, "true", SearchOperator.NotEquals, true },
+        new object[] { true, new[] { "true" }, SearchOperator.NotEquals, false },
+        new object[] { false, new[] { "false" }, SearchOperator.NotEquals, false },
+        new object[] { true, new[] { "false" }, SearchOperator.NotEquals, true },
+        new object[] { false, new[] { "true" }, SearchOperator.NotEquals, true },
+
+        new object[] { true, new[] { "true" }, SearchOperator.InRange, true },
+        new object[] { false, new[] { "false" }, SearchOperator.InRange, true },
+        new object[] { true, new[] { "false" }, SearchOperator.InRange, false },
+        new object[] { false, new[] { "true" }, SearchOperator.InRange, false },
+        new object[] { true, Array.Empty<string?>(), SearchOperator.InRange, false },
     };
 
     public static IEnumerable<object?[]> NullableBoolTestCases => new[]
     {
-        new object?[] { null, null, SearchOperator.Equals, true },
-        new object?[] { null, string.Empty, SearchOperator.Equals, true },
-        new object?[] { null, "true", SearchOperator.Equals, false },
-        new object?[] { null, "false", SearchOperator.Equals, false },
-        new object?[] { true, null, SearchOperator.Equals, false },
-        new object?[] { false, null, SearchOperator.Equals, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Equals, true },
+        new object?[] { null, new[]{ string.Empty }, SearchOperator.Equals, true },
+        new object?[] { null, new[] { "true" }, SearchOperator.Equals, false },
+        new object?[] { null, new[] { "false" }, SearchOperator.Equals, false },
+        new object?[] { true, new string?[] { null }, SearchOperator.Equals, false },
+        new object?[] { false, new string?[] { null }, SearchOperator.Equals, false },
 
-        new object?[] { null, null, SearchOperator.NotEquals, false },
-        new object?[] { null, string.Empty, SearchOperator.NotEquals, false },
-        new object?[] { null, "true", SearchOperator.NotEquals, true },
-        new object?[] { null, "false", SearchOperator.NotEquals, true },
-        new object?[] { true, null, SearchOperator.NotEquals, true },
-        new object?[] { false, null, SearchOperator.NotEquals, true },
+        new object?[] { null, new string?[] { null }, SearchOperator.NotEquals, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.NotEquals, false },
+        new object?[] { null, new[] { "true" }, SearchOperator.NotEquals, true },
+        new object?[] { null, new[] { "false" }, SearchOperator.NotEquals, true },
+        new object?[] { true, new string?[] { null }, SearchOperator.NotEquals, true },
+        new object?[] { false, new string?[] { null }, SearchOperator.NotEquals, true },
 
         new object?[] { true, null, SearchOperator.Exists, true },
         new object?[] { false, null, SearchOperator.Exists, true },
@@ -95,6 +92,10 @@ public class BoolTests
         new object?[] { null, null, SearchOperator.NotExists, true },
         new object?[] { true, null, SearchOperator.NotExists, false },
         new object?[] { false, null, SearchOperator.NotExists, false },
+
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
+        new object?[] { null, new[] { "true" }, SearchOperator.InRange, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
     };
 
     private class TestClass

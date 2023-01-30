@@ -9,7 +9,7 @@ public class ShortTests
 {
     [Theory]
     [MemberData(nameof(ShortTestCases))]
-    public void ShouldHandleShort(short objValue, string searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleShort(short objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { Short = objValue };
 
@@ -25,7 +25,7 @@ public class ShortTests
     [Theory]
     [MemberData(nameof(ShortTestCases))]
     [MemberData(nameof(NullableShortTestCases))]
-    public void ShouldHandleNullableShort(short? objValue, string? searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleNullableShort(short? objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { NullableShort = objValue };
 
@@ -40,94 +40,102 @@ public class ShortTests
 
     public static IEnumerable<object[]> ShortTestCases => new[]
     {
-        new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.Equals, false },
-        new object[] { short.MaxValue, short.MinValue.ToString(), SearchOperator.Equals, false },
-        new object[] { default(short), default(short).ToString(), SearchOperator.Equals, true },
-        new object[] { short.MinValue, short.MinValue.ToString(), SearchOperator.Equals, true },
-        new object[] { short.MaxValue, short.MaxValue.ToString(), SearchOperator.Equals, true },
+        new object[] { short.MinValue, new[] { short.MaxValue.ToString() }, SearchOperator.Equals, false },
+        new object[] { short.MaxValue, new[] { short.MinValue.ToString() }, SearchOperator.Equals, false },
+        new object[] { (short)0, new[] { "0" }, SearchOperator.Equals, true },
+        new object[] { short.MinValue, new[] { short.MinValue.ToString() }, SearchOperator.Equals, true },
+        new object[] { short.MaxValue, new[] { short.MaxValue.ToString() }, SearchOperator.Equals, true },
 
-        new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.NotEquals, true },
-        new object[] { short.MaxValue, short.MinValue.ToString(), SearchOperator.NotEquals, true },
-        new object[] { default(short), default(short).ToString(), SearchOperator.NotEquals, false },
-        new object[] { short.MinValue, short.MinValue.ToString(), SearchOperator.NotEquals, false },
-        new object[] { short.MaxValue, short.MaxValue.ToString(), SearchOperator.NotEquals, false },
+        new object[] { short.MinValue, new[] { short.MaxValue.ToString() }, SearchOperator.NotEquals, true },
+        new object[] { short.MaxValue, new[] { short.MinValue.ToString() }, SearchOperator.NotEquals, true },
+        new object[] { (short)0, new[] { "0" }, SearchOperator.NotEquals, false },
+        new object[] { short.MinValue, new[] { short.MinValue.ToString() }, SearchOperator.NotEquals, false },
+        new object[] { short.MaxValue, new[] { short.MaxValue.ToString() }, SearchOperator.NotEquals, false },
 
-        new object[] { short.MaxValue, short.MinValue.ToString(), SearchOperator.Greater, true },
-        new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.Greater, false },
-        new object[] { default(short), default(short).ToString(), SearchOperator.Greater, false },
-        new object[] { short.MinValue, short.MinValue.ToString(), SearchOperator.Greater, false },
-        new object[] { short.MaxValue, short.MaxValue.ToString(), SearchOperator.Greater, false },
+        new object[] { short.MaxValue, new[] { short.MinValue.ToString() }, SearchOperator.Greater, true },
+        new object[] { short.MinValue, new[] { short.MaxValue.ToString() }, SearchOperator.Greater, false },
+        new object[] { (short)0, new[] { "0" }, SearchOperator.Greater, false },
+        new object[] { short.MinValue, new[] { short.MinValue.ToString() }, SearchOperator.Greater, false },
+        new object[] { short.MaxValue, new[] { short.MaxValue.ToString() }, SearchOperator.Greater, false },
 
-        new object[] { short.MaxValue, short.MinValue.ToString(), SearchOperator.GreaterOrEqual, true },
-        new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.GreaterOrEqual, false },
-        new object[] { default(short), default(short).ToString(), SearchOperator.GreaterOrEqual, true },
-        new object[] { short.MinValue, short.MinValue.ToString(), SearchOperator.GreaterOrEqual, true },
-        new object[] { short.MaxValue, short.MaxValue.ToString(), SearchOperator.GreaterOrEqual, true },
+        new object[] { short.MaxValue, new[] { short.MinValue.ToString() }, SearchOperator.GreaterOrEqual, true },
+        new object[] { short.MinValue, new[] { short.MaxValue.ToString() }, SearchOperator.GreaterOrEqual, false },
+        new object[] { (short)0, new[] { "0" }, SearchOperator.GreaterOrEqual, true },
+        new object[] { short.MinValue, new[] { short.MinValue.ToString() }, SearchOperator.GreaterOrEqual, true },
+        new object[] { short.MaxValue, new[] { short.MaxValue.ToString() }, SearchOperator.GreaterOrEqual, true },
 
-        new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.Less, true },
-        new object[] { short.MaxValue, short.MinValue.ToString(), SearchOperator.Less, false },
-        new object[] { default(short), default(short).ToString(), SearchOperator.Less, false },
-        new object[] { short.MinValue, short.MinValue.ToString(), SearchOperator.Less, false },
-        new object[] { short.MaxValue, short.MaxValue.ToString(), SearchOperator.Less, false },
+        new object[] { short.MinValue, new[] { short.MaxValue.ToString() }, SearchOperator.Less, true },
+        new object[] { short.MaxValue, new[] { short.MinValue.ToString() }, SearchOperator.Less, false },
+        new object[] { (short)0, new[] { "0" }, SearchOperator.Less, false },
+        new object[] { short.MinValue, new[] { short.MinValue.ToString() }, SearchOperator.Less, false },
+        new object[] { short.MaxValue, new[] { short.MaxValue.ToString() }, SearchOperator.Less, false },
 
-        new object[] { short.MinValue, short.MaxValue.ToString(), SearchOperator.LessOrEqual, true },
-        new object[] { short.MaxValue, short.MinValue.ToString(), SearchOperator.LessOrEqual, false },
-        new object[] { default(short), default(short).ToString(), SearchOperator.LessOrEqual, true },
-        new object[] { short.MinValue, short.MinValue.ToString(), SearchOperator.LessOrEqual, true },
-        new object[] { short.MaxValue, short.MaxValue.ToString(), SearchOperator.LessOrEqual, true },
+        new object[] { short.MinValue, new[] { short.MaxValue.ToString() }, SearchOperator.LessOrEqual, true },
+        new object[] { short.MaxValue, new[] { short.MinValue.ToString() }, SearchOperator.LessOrEqual, false },
+        new object[] { (short)0, new[] { "0" }, SearchOperator.LessOrEqual, true },
+        new object[] { short.MinValue, new[] { short.MinValue.ToString() }, SearchOperator.LessOrEqual, true },
+        new object[] { short.MaxValue, new[] { short.MaxValue.ToString() }, SearchOperator.LessOrEqual, true },
+
+        new object[] { (short)0, new[] { "0" }, SearchOperator.InRange, true },
+        new object[] { (short)0, new[] { "1" }, SearchOperator.InRange, false },
+        new object[] { (short)0, Array.Empty<string?>(), SearchOperator.InRange, false },
     };
 
     public static IEnumerable<object?[]> NullableShortTestCases => new[]
     {
-        new object?[] { null, null, SearchOperator.Equals, true },
-        new object?[] { null, string.Empty, SearchOperator.Equals, true },
-        new object?[] { null, default(short).ToString(), SearchOperator.Equals, false },
-        new object?[] { null, short.MaxValue.ToString(), SearchOperator.Equals, false },
-        new object?[] { default(short), null, SearchOperator.Equals, false },
-        new object?[] { short.MaxValue, null, SearchOperator.Equals, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Equals, true },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.Equals, true },
+        new object?[] { null, new[] { "0" }, SearchOperator.Equals, false },
+        new object?[] { null, new[] { short.MaxValue.ToString() }, SearchOperator.Equals, false },
+        new object?[] { (short)0, new string?[] { null }, SearchOperator.Equals, false },
+        new object?[] { short.MaxValue, new string?[] { null }, SearchOperator.Equals, false },
 
-        new object?[] { null, null, SearchOperator.NotEquals, false },
-        new object?[] { null, string.Empty, SearchOperator.NotEquals, false },
-        new object?[] { null, default(short).ToString(), SearchOperator.NotEquals, true },
-        new object?[] { null, short.MaxValue.ToString(), SearchOperator.NotEquals, true },
-        new object?[] { default(short), null, SearchOperator.NotEquals, true },
-        new object?[] { short.MaxValue, null, SearchOperator.NotEquals, true },
+        new object?[] { null, new string?[] { null }, SearchOperator.NotEquals, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.NotEquals, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.NotEquals, true },
+        new object?[] { null, new[] { short.MaxValue.ToString() }, SearchOperator.NotEquals, true },
+        new object?[] { (short)0, new string?[] { null }, SearchOperator.NotEquals, true },
+        new object?[] { short.MaxValue, new string?[] { null }, SearchOperator.NotEquals, true },
 
-        new object?[] { null, null, SearchOperator.Greater, false },
-        new object?[] { null, default(short).ToString(), SearchOperator.Greater, false },
-        new object?[] { null, string.Empty, SearchOperator.Greater, false },
-        new object?[] { null, short.MinValue.ToString(), SearchOperator.Greater, false },
-        new object?[] { default(short), null, SearchOperator.Greater, false },
-        new object?[] { short.MaxValue, null, SearchOperator.Greater, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Greater, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.Greater, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.Greater, false },
+        new object?[] { null, new[] { short.MinValue.ToString() }, SearchOperator.Greater, false },
+        new object?[] { (short)0, new string?[] { null }, SearchOperator.Greater, false },
+        new object?[] { short.MaxValue, new string?[] { null }, SearchOperator.Greater, false },
 
-        new object?[] { null, null, SearchOperator.GreaterOrEqual, false },
-        new object?[] { null, default(short).ToString(), SearchOperator.GreaterOrEqual, false },
-        new object?[] { null, string.Empty, SearchOperator.GreaterOrEqual, false },
-        new object?[] { null, short.MinValue.ToString(), SearchOperator.GreaterOrEqual, false },
-        new object?[] { default(short), null, SearchOperator.GreaterOrEqual, false },
-        new object?[] { short.MaxValue, null, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { null, new[] { short.MinValue.ToString() }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { (short)0, new string?[] { null }, SearchOperator.GreaterOrEqual, false },
+        new object?[] { short.MaxValue, new string?[] { null }, SearchOperator.GreaterOrEqual, false },
 
-        new object?[] { null, null, SearchOperator.Less, false },
-        new object?[] { null, default(short).ToString(), SearchOperator.Less, false },
-        new object?[] { null, string.Empty, SearchOperator.Less, false },
-        new object?[] { null, short.MaxValue.ToString(), SearchOperator.Less, false },
-        new object?[] { default(short), null, SearchOperator.Less, false },
-        new object?[] { short.MinValue, null, SearchOperator.Less, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Less, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.Less, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.Less, false },
+        new object?[] { null, new[] { short.MaxValue.ToString() }, SearchOperator.Less, false },
+        new object?[] { (short)0, new string?[] { null }, SearchOperator.Less, false },
+        new object?[] { short.MinValue, new string?[] { null }, SearchOperator.Less, false },
 
-        new object?[] { null, null, SearchOperator.LessOrEqual, false },
-        new object?[] { null, default(short).ToString(), SearchOperator.LessOrEqual, false },
-        new object?[] { null, string.Empty, SearchOperator.LessOrEqual, false },
-        new object?[] { null, short.MaxValue.ToString(), SearchOperator.LessOrEqual, false },
-        new object?[] { default(short), null, SearchOperator.LessOrEqual, false },
-        new object?[] { short.MinValue, null, SearchOperator.LessOrEqual, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.LessOrEqual, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.LessOrEqual, false },
+        new object?[] { null, new[] { string.Empty }, SearchOperator.LessOrEqual, false },
+        new object?[] { null, new[] { short.MaxValue.ToString() }, SearchOperator.LessOrEqual, false },
+        new object?[] { (short)0, new string?[] { null }, SearchOperator.LessOrEqual, false },
+        new object?[] { short.MinValue, new string?[] { null }, SearchOperator.LessOrEqual, false },
 
         new object?[] { short.MaxValue, null, SearchOperator.Exists, true },
-        new object?[] { default(short), null, SearchOperator.Exists, true },
+        new object?[] { (short)0, null, SearchOperator.Exists, true },
         new object?[] { null, null, SearchOperator.Exists, false },
 
         new object?[] { null, null, SearchOperator.NotExists, true },
         new object?[] { short.MaxValue, null, SearchOperator.NotExists, false },
-        new object?[] { default(short), null, SearchOperator.NotExists, false },
+        new object?[] { (short)0, null, SearchOperator.NotExists, false },
+
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.InRange, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
     };
 
     private class TestClass
