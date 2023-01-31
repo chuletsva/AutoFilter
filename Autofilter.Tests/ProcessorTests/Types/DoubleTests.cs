@@ -107,9 +107,9 @@ public class DoubleTests
         new object[] { 1.0D, new[]{ "1.1" }, SearchOperator.LessOrEqual, true },
         new object[] { 1D, new[] { "1.0" }, SearchOperator.LessOrEqual, true },
 
-        new object[] { 0D, new[] { "0" }, SearchOperator.InRange, true },
-        new object[] { 0D, new[] { "1" }, SearchOperator.InRange, false },
-        new object[] { 0D, Array.Empty<string?>(), SearchOperator.InRange, false },
+        new object[] { 0D, new[] { "0" }, SearchOperator.Any, true },
+        new object[] { 0D, new[] { "1" }, SearchOperator.Any, false },
+        new object[] { 0D, Array.Empty<string?>(), SearchOperator.Any, false },
     };
 
     public static IEnumerable<object?[]> NullableDoubleTestCases => new[]
@@ -188,9 +188,9 @@ public class DoubleTests
         new object?[] { double.MaxValue, null, SearchOperator.NotExists, false },
         new object?[] { 0D, null, SearchOperator.NotExists, false },
 
-        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
-        new object?[] { null, new[] { "0" }, SearchOperator.InRange, false },
-        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.Any, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.Any, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Any, true }
     };
 
     private class TestClass

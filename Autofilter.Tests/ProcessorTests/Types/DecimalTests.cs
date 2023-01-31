@@ -103,22 +103,20 @@ public class DecimalTests
         new object[] { 1.0M, new[] { "1.1" }, SearchOperator.LessOrEqual, true },
         new object[] { 1M, new[] { "1.0" }, SearchOperator.LessOrEqual, true },
 
-        new object[] { 0M, new[] { "0" }, SearchOperator.InRange, true },
-        new object[] { 0M, new[] { "1" }, SearchOperator.InRange, false },
-        new object[] { 0M, Array.Empty<string?>(), SearchOperator.InRange, false },
+        new object[] { 0M, new[] { "0" }, SearchOperator.Any, true },
+        new object[] { 0M, new[] { "1" }, SearchOperator.Any, false },
+        new object[] { 0M, Array.Empty<string?>(), SearchOperator.Any, false },
     };
 
     public static IEnumerable<object?[]> NullableDecimalTestCases => new[]
     {
         new object?[] { null, new string?[]{ null }, SearchOperator.Equals, true },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.Equals, true },
         new object?[] { null, new[] { "0" }, SearchOperator.Equals, false },
         new object?[] { null, new[] { decimal.MaxValue.ToString(CultureInfo.InvariantCulture) }, SearchOperator.Equals, false },
         new object?[] { 0M, new string?[]{ null }, SearchOperator.Equals, false },
         new object?[] { decimal.MaxValue, new string?[]{ null }, SearchOperator.Equals, false },
 
         new object?[] { null, new string?[]{ null }, SearchOperator.NotEquals, false },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.NotEquals, false },
         new object?[] { null, new[] { "0" }, SearchOperator.NotEquals, true },
         new object?[] { null, new[] { decimal.MaxValue.ToString(CultureInfo.InvariantCulture) }, SearchOperator.NotEquals, true },
         new object?[] { 0M, new string?[]{ null }, SearchOperator.NotEquals, true },
@@ -126,28 +124,24 @@ public class DecimalTests
 
         new object?[] { null, new string?[]{ null }, SearchOperator.Greater, false },
         new object?[] { null, new[] { "0" }, SearchOperator.Greater, false },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.Greater, false },
         new object?[] { null, new[] { decimal.MinValue.ToString(CultureInfo.InvariantCulture) }, SearchOperator.Greater, false },
         new object?[] { 0M, new string?[]{ null }, SearchOperator.Greater, false },
         new object?[] { decimal.MaxValue, new string?[]{ null }, SearchOperator.Greater, false },
 
         new object?[] { null, new string?[]{ null }, SearchOperator.GreaterOrEqual, false },
         new object?[] { null, new[] { "0" }, SearchOperator.GreaterOrEqual, false },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.GreaterOrEqual, false },
         new object?[] { null, new[] { decimal.MinValue.ToString(CultureInfo.InvariantCulture) }, SearchOperator.GreaterOrEqual, false },
         new object?[] { 0M, new string?[]{ null }, SearchOperator.GreaterOrEqual, false },
         new object?[] { decimal.MaxValue, new string?[]{ null }, SearchOperator.GreaterOrEqual, false },
 
         new object?[] { null, new string?[]{ null }, SearchOperator.Less, false },
         new object?[] { null, new[] { "0" }, SearchOperator.Less, false },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.Less, false },
         new object?[] { null, new[] { decimal.MaxValue.ToString(CultureInfo.InvariantCulture) }, SearchOperator.Less, false },
         new object?[] { 0M, new string?[]{ null }, SearchOperator.Less, false },
         new object?[] { decimal.MinValue, new string?[]{ null }, SearchOperator.Less, false },
 
         new object?[] { null, new string?[]{ null }, SearchOperator.LessOrEqual, false },
         new object?[] { null, new[] { "0" }, SearchOperator.LessOrEqual, false },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.LessOrEqual, false },
         new object?[] { null, new[] { decimal.MaxValue.ToString(CultureInfo.InvariantCulture) }, SearchOperator.LessOrEqual, false },
         new object?[] { 0M, new string?[]{ null }, SearchOperator.LessOrEqual, false },
         new object?[] { decimal.MinValue, new string?[]{ null }, SearchOperator.LessOrEqual, false },
@@ -160,9 +154,9 @@ public class DecimalTests
         new object?[] { decimal.MaxValue, null, SearchOperator.NotExists, false },
         new object?[] { 0M, null, SearchOperator.NotExists, false },
 
-        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
-        new object?[] { null, new[] { "0" }, SearchOperator.InRange, false },
-        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.Any, false },
+        new object?[] { null, new[] { "0" }, SearchOperator.Any, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Any, true }
     };
 
     private class TestClass

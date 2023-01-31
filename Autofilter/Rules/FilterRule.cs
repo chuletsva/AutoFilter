@@ -6,30 +6,32 @@ public sealed record Condition(string Name, string?[] Value, SearchOperator Sear
 
 public sealed record Group(int Start, int End, int Level);
 
-public enum LogicOperator { And = 1, Or }
+public enum LogicOperator 
+{ 
+    And = 1, 
+    Or = 2
+}
 
 public enum SearchOperator
 {
     // All
     Equals = 1,
-    NotEquals,
+    NotEquals = 2,
+    Any = 3,
 
-    // Long, Int, Short, Decimal, Double, Float, DateTime, Char, Byte, Nullable
-    Greater,
-    GreaterOrEqual,
-    Less,
-    LessOrEqual,
+    // Long, Int, Short, Decimal, Double, Float, DateTime, DateTimeOffset, Char, Byte, Nullable
+    Greater = 4,
+    GreaterOrEqual = 5,
+    Less = 6,
+    LessOrEqual = 7,
 
     // Nullable, String
-    Exists,
-    NotExists,
+    Exists = 8,
+    NotExists = 9,
 
     // String
-    StartsWith,
-    EndsWith,
-    Contains,
-    NotContains,
-
-    // 
-    InRange
+    StartsWith = 10,
+    EndsWith = 11,
+    Contains = 12,
+    NotContains = 13
 }

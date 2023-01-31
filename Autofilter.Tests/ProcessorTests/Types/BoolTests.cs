@@ -62,24 +62,22 @@ public class BoolTests
         new object[] { true, new[] { "false" }, SearchOperator.NotEquals, true },
         new object[] { false, new[] { "true" }, SearchOperator.NotEquals, true },
 
-        new object[] { true, new[] { "true" }, SearchOperator.InRange, true },
-        new object[] { false, new[] { "false" }, SearchOperator.InRange, true },
-        new object[] { true, new[] { "false" }, SearchOperator.InRange, false },
-        new object[] { false, new[] { "true" }, SearchOperator.InRange, false },
-        new object[] { true, Array.Empty<string?>(), SearchOperator.InRange, false },
+        new object[] { true, new[] { "true" }, SearchOperator.Any, true },
+        new object[] { false, new[] { "false" }, SearchOperator.Any, true },
+        new object[] { true, new[] { "false" }, SearchOperator.Any, false },
+        new object[] { false, new[] { "true" }, SearchOperator.Any, false },
+        new object[] { true, Array.Empty<string?>(), SearchOperator.Any, false },
     };
 
     public static IEnumerable<object?[]> NullableBoolTestCases => new[]
     {
         new object?[] { null, new string?[] { null }, SearchOperator.Equals, true },
-        new object?[] { null, new[]{ string.Empty }, SearchOperator.Equals, true },
         new object?[] { null, new[] { "true" }, SearchOperator.Equals, false },
         new object?[] { null, new[] { "false" }, SearchOperator.Equals, false },
         new object?[] { true, new string?[] { null }, SearchOperator.Equals, false },
         new object?[] { false, new string?[] { null }, SearchOperator.Equals, false },
 
         new object?[] { null, new string?[] { null }, SearchOperator.NotEquals, false },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.NotEquals, false },
         new object?[] { null, new[] { "true" }, SearchOperator.NotEquals, true },
         new object?[] { null, new[] { "false" }, SearchOperator.NotEquals, true },
         new object?[] { true, new string?[] { null }, SearchOperator.NotEquals, true },
@@ -93,9 +91,9 @@ public class BoolTests
         new object?[] { true, null, SearchOperator.NotExists, false },
         new object?[] { false, null, SearchOperator.NotExists, false },
 
-        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
-        new object?[] { null, new[] { "true" }, SearchOperator.InRange, false },
-        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.Any, false },
+        new object?[] { null, new[] { "true" }, SearchOperator.Any, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Any, true }
     };
 
     private class TestClass

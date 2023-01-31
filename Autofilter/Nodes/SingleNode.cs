@@ -156,7 +156,7 @@ internal sealed class SingleNode : INode
                 break;
             }
 
-            case SearchOperator.InRange:
+            case SearchOperator.Any:
             {
                 var (_, valueExpr) = BuildArrayExpression(property);
 

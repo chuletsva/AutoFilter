@@ -1,40 +1,11 @@
 ﻿using Autofilter.Rules;
-using Autofilter.Tests.EF.Common;
+using Autofilter.Tests.Common;
+using Autofilter.Tests.Common.EF;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Exporters;
-using BenchmarkDotNet.Loggers;
 using Microsoft.EntityFrameworkCore;
-using Xunit.Abstractions;
 
-namespace Autofilter.Tests.EF;
-
-public class BenchmarkRunner
-{
-    private readonly ITestOutputHelper mLogger;
-
-    public BenchmarkRunner(ITestOutputHelper logger)
-    {
-        mLogger = logger;
-    }
-
-    [Fact]
-    public void RunFilterProcessorBenchmarks()
-    {
-        RunBenchmark<FilterProcessorBenchmarks>();
-    }
-
-    private void RunBenchmark<TBenchmark>()
-    {
-        var summary = BenchmarkDotNet.Running.BenchmarkRunner.Run<TBenchmark>();
-
-        var logger = new AccumulationLogger();
-
-        MarkdownExporter.Console.ExportToLog(summary, logger);
-
-        mLogger.WriteLine(logger.GetLog());
-    }
-}
+namespace Autofilter.Tests.Benchmarks;
 
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [CategoriesColumn]
@@ -42,8 +13,8 @@ public class BenchmarkRunner
 [MaxColumn]
 public class FilterProcessorBenchmarks
 {
-    private AutoFilter? _filter;
-    private AutoFilter? _filter_with_select;
+    private AutoFilter _filter;
+    private AutoFilter _filter_with_select;
     private DatabaseFixture _db;
 
     [GlobalSetup]
@@ -140,34 +111,38 @@ public class FilterProcessorBenchmarks
     }
 
     [Benchmark(Baseline = true)]
+    [BenchmarkCategory("ApplyFilter")]
     public Task Plain()
     {
-        return _db.DbContext.Products.AsNoTracking().Where(x =>
-            ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= DateTime.UtcNow) &&
-            (x.IsForSale || x.IsInStock)).ToArrayAsync();
+        return _db.DbContext.Products.AsNoTracking()
+            .Where(x => (x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= DateTime.UtcNow && (x.IsForSale || x.IsInStock))
+            .ToArrayAsync();
     }
 
     [Benchmark]
+    [BenchmarkCategory("ApplyFilter")]
     public Task AutoFilter()
     {
-        return _db.DbContext.Products.AsNoTracking().ApplyFilter(_filter).ToArrayAsync();
+        return _db.DbContext.Products.AsNoTracking()
+            .ApplyFilter(_filter).ToArrayAsync();
     }
 
     [Benchmark(Baseline = true)]
+    [BenchmarkCategory("ApplyFilterAndSelect")]
     public Task Plain_Select()
     {
-        return _db.DbContext.Products.AsNoTracking().Where(x =>
-            ((x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= DateTime.UtcNow) &&
-            (x.IsForSale || x.IsInStock)).Select(x => new
-        {
-            Id = x.Id,
-            Name = x.Name,
-        }).ToArrayAsync();
+        return _db.DbContext.Products.AsNoTracking()
+            .Where(x => (x.Name.StartsWith("Snickers") || x.Name.Contains("Mars")) && x.ExpireDate >= DateTime.UtcNow && (x.IsForSale || x.IsInStock))
+            .Select(x => new { x.Id, x.Name })
+            .OfType<object>().ToArrayAsync();
     }
 
     [Benchmark]
+    [BenchmarkCategory("ApplyFilterAndSelect")]
     public Task AutoFilter_Select()
     {
-        return _db.DbContext.Products.AsNoTracking().ApplyFilterAndSelect(_filter_with_select).OfType<object>().ToArrayAsync();
+        return _db.DbContext.Products.AsNoTracking()
+            .ApplyFilterAndSelect(_filter_with_select)
+            .OfType<object>().ToArrayAsync();
     }
 }

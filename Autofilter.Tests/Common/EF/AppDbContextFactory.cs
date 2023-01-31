@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Autofilter.Tests.EF.Common;
+namespace Autofilter.Tests.Common.EF;
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {

@@ -71,12 +71,12 @@ public class StringTests
         new object?[] { "abc", new[] { "d" }, SearchOperator.NotContains, true },
         new object?[] { "abc", new[] { "b" }, SearchOperator.NotContains, false },
 
-        new object[] { "0", new[] { "0" }, SearchOperator.InRange, true },
-        new object[] { "0", new[] { "1" }, SearchOperator.InRange, false },
-        new object[] { "0", Array.Empty<string?>(), SearchOperator.InRange, false },
-        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
-        new object?[] { null, new[] { "0" }, SearchOperator.InRange, false },
-        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
+        new object[] { "a", new[] { "a" }, SearchOperator.Any, true },
+        new object[] { "a", new[] { "b" }, SearchOperator.Any, false },
+        new object[] { "a", Array.Empty<string?>(), SearchOperator.Any, false },
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.Any, false },
+        new object?[] { null, new[] { "a" }, SearchOperator.Any, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Any, true }
     };
 
     private class TestClass

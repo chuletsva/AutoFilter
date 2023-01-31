@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Autofilter.Tests.EF.Common;
+namespace Autofilter.Tests.Common.EF;
 
 public class AppDbContext : DbContext
 {

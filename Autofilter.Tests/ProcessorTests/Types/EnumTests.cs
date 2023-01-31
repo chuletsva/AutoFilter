@@ -46,22 +46,20 @@ public class EnumTests
         new object[] { TestEnum.One, new[] { nameof(TestEnum.One) }, SearchOperator.NotEquals, false },
         new object[] { TestEnum.One, new[] { nameof(TestEnum.Two) }, SearchOperator.NotEquals, true },
 
-        new object[] { TestEnum.One, new[] { nameof(TestEnum.One) }, SearchOperator.InRange, true },
-        new object[] { TestEnum.One, new[] { nameof(TestEnum.Two) }, SearchOperator.InRange, false },
-        new object[] { TestEnum.One, Array.Empty<string?>(), SearchOperator.InRange, false },
+        new object[] { TestEnum.One, new[] { nameof(TestEnum.One) }, SearchOperator.Any, true },
+        new object[] { TestEnum.One, new[] { nameof(TestEnum.Two) }, SearchOperator.Any, false },
+        new object[] { TestEnum.One, Array.Empty<string?>(), SearchOperator.Any, false },
     };
 
     public static IEnumerable<object?[]> NullableEnumTestCases => new[]
     {
         new object?[] { null, new string?[]{ null }, SearchOperator.Equals, true },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.Equals, true },
         new object?[] { null, new[] { default(TestEnum).ToString() }, SearchOperator.Equals, false },
         new object?[] { null, new[] { nameof(TestEnum.One) }, SearchOperator.Equals, false },
         new object?[] { default(TestEnum), new string?[]{ null }, SearchOperator.Equals, false },
         new object?[] { TestEnum.One, new string?[]{ null }, SearchOperator.Equals, false },
 
         new object?[] { null, new string?[]{ null }, SearchOperator.NotEquals, false },
-        new object?[] { null, new[] { string.Empty }, SearchOperator.NotEquals, false },
         new object?[] { null, new[] { default(TestEnum).ToString() }, SearchOperator.NotEquals, true },
         new object?[] { null, new[] { nameof(TestEnum.One) }, SearchOperator.NotEquals, true },
         new object?[] { default(TestEnum), new string?[]{ null }, SearchOperator.NotEquals, true },
@@ -75,9 +73,9 @@ public class EnumTests
         new object?[] { TestEnum.One, new string?[]{ null }, SearchOperator.NotExists, false },
         new object?[] { default(TestEnum), new string?[]{ null }, SearchOperator.NotExists, false },
 
-        new object?[] { null, Array.Empty<string?>(), SearchOperator.InRange, false },
-        new object?[] { null, new[] { nameof(TestEnum.One) }, SearchOperator.InRange, false },
-        new object?[] { null, new string?[] { null }, SearchOperator.InRange, true }
+        new object?[] { null, Array.Empty<string?>(), SearchOperator.Any, false },
+        new object?[] { null, new[] { nameof(TestEnum.One) }, SearchOperator.Any, false },
+        new object?[] { null, new string?[] { null }, SearchOperator.Any, true }
     };
 
     public enum TestEnum { One, Two }

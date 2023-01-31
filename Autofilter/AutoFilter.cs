@@ -4,8 +4,8 @@ namespace Autofilter;
 
 public sealed record AutoFilter(
     FilterRule? Filter = default,
-    SortingRule? Sorting = default,
     DistinctRule? Distinct = default,
-    string[]? Select = default,
+    SortingRule? Sorting = default,
     int? Skip = default,
-    int? Top = default);
+    int? Top = default,
+    string[]? Select = default);

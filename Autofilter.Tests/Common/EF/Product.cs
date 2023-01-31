@@ -1,4 +1,4 @@
-﻿namespace Autofilter.Tests.EF.Common;
+﻿namespace Autofilter.Tests.Common.EF;
 
 public class Product
 {
