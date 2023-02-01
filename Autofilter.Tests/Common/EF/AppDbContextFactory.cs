@@ -5,11 +5,11 @@ namespace Autofilter.Tests.Common.EF;
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
-    public const string ConnectionString = "Host=localhost;Port=5432;Database=autofilter;Username=postgres;Password=postgres;TrustServerCertificate=true";
-
     public AppDbContext CreateDbContext(string[]? args = default)
     {
-        var options = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(ConnectionString);
+        const string connectionString = "Host=localhost;Port=5432;Database=autofilter;Username=postgres;Password=postgres;TrustServerCertificate=true";
+
+        var options = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connectionString);
 
         return new AppDbContext(options.Options);
     }

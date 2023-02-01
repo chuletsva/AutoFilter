@@ -18,7 +18,7 @@ public class EntityFrameworkTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task ApplyFilter()
     {
-        AutoFilter filter = CreateAutoFilter();
+        AutoFilter filter = CreateDefaultFilter();
 
         var products = await _db.DbContext.Products.ApplyFilter(filter).ToArrayAsync();
 
@@ -28,7 +28,7 @@ public class EntityFrameworkTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task ApplyFilterAndSelect()
     {
-        AutoFilter filter = CreateAutoFilter() with
+        AutoFilter filter = CreateDefaultFilter() with
         { 
             Select = new []
             {
@@ -143,7 +143,7 @@ public class EntityFrameworkTests : IClassFixture<DatabaseFixture>
         autofilterEntities.Should().BeEquivalentTo(plainExprEntities, x => x.WithStrictOrdering());
     }
 
-    private static AutoFilter CreateAutoFilter()
+    private static AutoFilter CreateDefaultFilter()
     {
         return new AutoFilter
         (
@@ -210,7 +210,7 @@ public class EntityFrameworkTests : IClassFixture<DatabaseFixture>
                 }
             ),
 
-            Sorting: new SortingRule("ExpireDate")
+            Sorting: new SortingRule(nameof(Product.ExpireDate))
         );
     }
 }

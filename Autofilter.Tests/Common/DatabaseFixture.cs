@@ -10,8 +10,6 @@ public class DatabaseFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
         DbContext = new AppDbContextFactory().CreateDbContext();
 
         await DbContext.Database.MigrateAsync();

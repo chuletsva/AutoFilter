@@ -20,8 +20,6 @@ public class AutoFilterBenchmarks
     [GlobalSetup]
     public async Task Setup()
     {
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
         _filter = new AutoFilter
         (
             Filter: new FilterRule

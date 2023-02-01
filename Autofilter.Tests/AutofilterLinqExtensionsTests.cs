@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace Autofilter.Tests;
 
-public class AutofilterLinqExtensionsTests
+public class AutoFilterLinqExtensionsTests
 {
     [Fact]
     public void ApplyFilter()
@@ -76,9 +76,7 @@ public class AutofilterLinqExtensionsTests
     private class TestClass
     {
         public Guid Id { get; init; } = Guid.NewGuid();
-
         public bool Prop1 { get; init; }
-
         public bool Prop2 { get; init; }
     }
 }
