@@ -1,4 +1,3 @@
-[![Nuget](https://img.shields.io/nuget/v/ART4S.Autofilter?label=net%20standard)](https://www.nuget.org/packages/ART4S.Autofilter/)
 # Autofilter
 
 Autofilter simplifies data filtering using Expression Trees. 
