@@ -29,7 +29,8 @@ internal static class FilterProcessor
 
         ParameterExpression paramExpr = Expression.Parameter(elementType, "x");
 
-        var levels = groups?.GroupBy(x => x.Level).ToDictionary(x => x.Key, x => x.OrderBy(g => g.Start).ToArray());
+        var levels = groups?.GroupBy(x => x.Level)
+            .ToDictionary(x => x.Key, x => x.OrderBy(g => g.Start).ToArray());
 
         Expression bodyExpr = BuildGroupNode(rootGroup, conditions, levels, paramExpr).BuildExpression();
 

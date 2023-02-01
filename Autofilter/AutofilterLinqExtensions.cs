@@ -3,13 +3,13 @@ using Autofilter.Processors;
 
 namespace Autofilter;
 
-public static class AutofilterLinqExtensions
+public static class AutoFilterLinqExtensions
 {
     public static IQueryable<T> ApplyFilter<T>(this IQueryable<T> queryable, AutoFilter filter) where T : class
     {
         if (filter.Select is { Length: >0 })
         {
-            throw new FilterException("Select operation currently is not supported in this method");
+            throw new AutoFilterException("Select operation currently is not supported in this method");
         }
 
         return (IQueryable<T>) ApplyFilterAndSelect(queryable, filter);
@@ -24,9 +24,9 @@ public static class AutofilterLinqExtensions
                 queryable = FilterProcessor.ApplyFilter(queryable, filter.Filter);
             }
 
-            if (filter.Distinct is not null)
+            if (filter.DistinctBy is not null)
             {
-                queryable = DistinctProcessor.ApplyDistinct(queryable, filter.Distinct);
+                queryable = DistinctProcessor.ApplyDistinct(queryable, filter.DistinctBy);
             }
 
             if (filter.Sorting is not null)
@@ -53,7 +53,7 @@ public static class AutofilterLinqExtensions
         }
         catch (Exception ex)
         {
-            throw new FilterException("Error while applying filter", ex);
+            throw new AutoFilterException("Error while applying filter", ex);
         }
     }
 
@@ -61,7 +61,7 @@ public static class AutofilterLinqExtensions
     {
         if (filters.Any(x => x.Select is { Length: >0 }))
         {
-            throw new FilterException("Select operation currently is not supported in this method");
+            throw new AutoFilterException("Select operation currently is not supported in this method");
         }
 
         return (IQueryable<T>) ApplyFiltersAndSelect(queryable, filters);

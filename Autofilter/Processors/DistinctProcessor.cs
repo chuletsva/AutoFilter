@@ -1,15 +1,14 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Autofilter.Helpers;
-using Autofilter.Rules;
 
 namespace Autofilter.Processors;
 
 internal static class DistinctProcessor
 {
-    public static IQueryable ApplyDistinct(IQueryable queryable, DistinctRule distinct)
+    public static IQueryable ApplyDistinct(IQueryable queryable, string propertyName)
     {
-        if (string.IsNullOrWhiteSpace(distinct.PropertyName))
+        if (string.IsNullOrWhiteSpace(propertyName))
         {
             var method = QueryableMethods.Distinct(queryable.ElementType);
 
@@ -19,7 +18,7 @@ internal static class DistinctProcessor
         }
         else
         {
-            PropertyInfo property = ReflectionHelper.GetProperty(queryable.ElementType, distinct.PropertyName);
+            PropertyInfo property = ReflectionHelper.GetProperty(queryable.ElementType, propertyName);
 
             ParameterExpression paramExpr = Expression.Parameter(queryable.ElementType, "x");
             MemberExpression propExpr = Expression.Property(paramExpr, property);

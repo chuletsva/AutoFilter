@@ -8,12 +8,7 @@ internal static class SelectProcessor
 {
     public static IQueryable ApplySelectDictionary(IQueryable queryable, string[] propertyNames)
     {
-        var properties = new PropertyInfo[propertyNames.Length];
-
-        for (int i = 0; i < propertyNames.Length; i++)
-        {
-            properties[i] = ReflectionHelper.GetProperty(queryable.ElementType, propertyNames[i]);
-        }
+        var properties = ReflectionHelper.GetProperties(queryable.ElementType, propertyNames).ToArray();
 
         ParameterExpression paramExpr = Expression.Parameter(queryable.ElementType, "x");
 

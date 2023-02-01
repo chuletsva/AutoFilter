@@ -186,7 +186,7 @@ internal sealed class SingleNode : INode
         }
         catch
         {
-            throw new Exception($"Property '{property.Name}' of type '{property.PropertyType.Name}' is not compatible with {getInvalidValueAlias(originalValue)}");
+            throw new Exception($"Property '{property.Name}' from type '{property.DeclaringType?.Name}' is not compatible with {getInvalidValueAlias(originalValue)}");
         }
 
         static string getInvalidValueAlias(object? value)
