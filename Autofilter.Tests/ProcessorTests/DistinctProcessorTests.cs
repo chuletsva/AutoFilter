@@ -1,5 +1,4 @@
 ﻿using Autofilter.Processors;
-using Autofilter.Rules;
 using FluentAssertions;
 
 namespace Autofilter.Tests.ProcessorTests;
@@ -7,21 +6,19 @@ namespace Autofilter.Tests.ProcessorTests;
 public class DistinctProcessorTests
 {
     [Fact]
-    public void ShouldReturnDistinctValues()
+    public void ShouldReturnUniqueValues()
     {
         var obj = new TestClass();
 
         var queryable = new[] { obj, obj }.AsQueryable();
 
-        DistinctRule distinct = new();
-
-        queryable = (IQueryable<TestClass>)DistinctProcessor.ApplyDistinct(queryable, distinct);
+        queryable = (IQueryable<TestClass>)DistinctProcessor.ApplyDistinct(queryable, "");
 
         queryable.Should().HaveCount(1);
     }
 
     [Fact]
-    public void ShouldReturnDistinctValuesByProperty()
+    public void ShouldReturnUniqueValuesByProperty()
     {
         var queryable = new TestClass[]
         {
@@ -30,9 +27,7 @@ public class DistinctProcessorTests
             new() { Prop = false }
         }.AsQueryable();
 
-        DistinctRule distinct = new(nameof(TestClass.Prop));
-
-        queryable = (IQueryable<TestClass>)DistinctProcessor.ApplyDistinct(queryable, distinct);
+        queryable = (IQueryable<TestClass>)DistinctProcessor.ApplyDistinct(queryable, nameof(TestClass.Prop));
 
         queryable.Should().HaveCount(2);
     }

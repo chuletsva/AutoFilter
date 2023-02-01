@@ -5,11 +5,11 @@ using Autofilter.Rules;
 
 namespace Autofilter.Tests.ProcessorTests.Types;
 
-public class DateTimeOffsetOffsetTests
+public class DateTimeOffsetTests
 {
     [Theory]
     [MemberData(nameof(DateTimeOffsetOffsetTestCases))]
-    public void ShouldHandleDateTimeOffsetOffset(DateTimeOffset objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleDateTimeOffset(DateTimeOffset objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         objValue = new DateTimeOffset(
             objValue.Year, objValue.Month, objValue.Day, 
@@ -29,7 +29,7 @@ public class DateTimeOffsetOffsetTests
     [Theory]
     [MemberData(nameof(DateTimeOffsetOffsetTestCases))]
     [MemberData(nameof(NullableDateTimeOffsetOffsetTestCases))]
-    public void ShouldHandleNullableDateTimeOffsetOffset(DateTimeOffset? objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
+    public void ShouldHandleNullableDateTimeOffset(DateTimeOffset? objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         if (objValue is not null)
         {

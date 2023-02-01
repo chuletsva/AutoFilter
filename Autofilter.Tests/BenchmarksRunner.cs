@@ -16,9 +16,9 @@ public class BenchmarksRunner
     }
 
     [Fact]
-    public void RunFilterProcessorBenchmarks()
+    public void RunAutoFilterBenchmarks()
     {
-        RunBenchmark<FilterProcessorBenchmarks>();
+        RunBenchmark<AutoFilterBenchmarks>();
     }
 
     private void RunBenchmark<TBenchmark>()

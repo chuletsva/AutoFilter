@@ -128,7 +128,7 @@ public class SortingProcessorTests
         SortingRule sorting = new("");
 
         FluentActions.Invoking(() => SortingProcessor.ApplySorting(query, sorting))
-            .Should().Throw<Exception>().WithMessage($"Property '' for type '{nameof(TestClass)}' doesn't exist");
+            .Should().Throw<Exception>().WithMessage("Property '' not found");
     }
 
     private class TestClass

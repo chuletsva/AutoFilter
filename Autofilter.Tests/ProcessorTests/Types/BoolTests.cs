@@ -47,7 +47,7 @@ public class BoolTests
 
         FluentActions.Invoking(() => FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition }))
             .Should().Throw<Exception>().Which.Message
-            .Should().StartWith($"Property '{nameof(TestClass.Bool)}' of type '{nameof(Boolean)}' is not compatible with");
+            .Should().StartWith($"Property '{nameof(TestClass.Bool)}' from type '{nameof(TestClass)}'");
     }
 
     public static IEnumerable<object[]> BoolTestCases => new[]

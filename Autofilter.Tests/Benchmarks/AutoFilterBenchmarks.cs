@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Autofilter.Tests.Benchmarks;
 
-[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
-[CategoriesColumn]
 [MinColumn]
 [MaxColumn]
-public class FilterProcessorBenchmarks
+[CategoriesColumn]
+[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
+public class AutoFilterBenchmarks
 {
     private AutoFilter _filter;
     private AutoFilter _filter_with_select;
