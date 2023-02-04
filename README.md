@@ -1,4 +1,4 @@
-# Autofilter
+# AutoFilter
 
 Autofilter simplifies data filtering using Expression Trees. 
 Reduces the need for writing filtering logic on backend side.
