@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Processors;
+using Autofilter.Helpers;
 using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.ProcessorTests.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class EnumTests
 {
@@ -15,7 +15,7 @@ public class EnumTests
 
         Condition condition = new(nameof(obj.Enum), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 
@@ -28,10 +28,10 @@ public class EnumTests
     public void ShouldHandleNullableEnum(TestEnum? objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         TestClass obj = new() { NullableEnum = objValue };
-            
+
         Condition condition = new(nameof(obj.NullableEnum), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 

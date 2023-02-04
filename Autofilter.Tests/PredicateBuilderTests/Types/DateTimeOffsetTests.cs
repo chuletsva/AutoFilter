@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using System.Linq.Expressions;
-using Autofilter.Processors;
+using Autofilter.Helpers;
 using Autofilter.Rules;
 
-namespace Autofilter.Tests.ProcessorTests.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class DateTimeOffsetTests
 {
@@ -12,14 +12,14 @@ public class DateTimeOffsetTests
     public void ShouldHandleDateTimeOffset(DateTimeOffset objValue, string?[] searchValue, SearchOperator searchOperator, bool result)
     {
         objValue = new DateTimeOffset(
-            objValue.Year, objValue.Month, objValue.Day, 
+            objValue.Year, objValue.Month, objValue.Day,
             objValue.Hour, objValue.Minute, objValue.Second, objValue.Offset);
 
         TestClass obj = new() { DateTimeOffset = objValue };
 
         Condition condition = new(nameof(obj.DateTimeOffset), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 
@@ -34,7 +34,7 @@ public class DateTimeOffsetTests
         if (objValue is not null)
         {
             objValue = new DateTimeOffset(
-                objValue.Value.Year, objValue.Value.Month, objValue.Value.Day, 
+                objValue.Value.Year, objValue.Value.Month, objValue.Value.Day,
                 objValue.Value.Hour, objValue.Value.Minute, objValue.Value.Second, objValue.Value.Offset);
         }
 
@@ -42,7 +42,7 @@ public class DateTimeOffsetTests
 
         Condition condition = new(nameof(obj.NullableDateTimeOffset), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 

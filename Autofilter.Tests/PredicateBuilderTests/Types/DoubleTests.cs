@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
-using Autofilter.Processors;
+using Autofilter.Helpers;
 using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.ProcessorTests.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class DoubleTests
 {
@@ -16,7 +16,7 @@ public class DoubleTests
 
         Condition condition = new(nameof(obj.Double), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 
@@ -32,7 +32,7 @@ public class DoubleTests
 
         Condition condition = new(nameof(obj.NullableDouble), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 

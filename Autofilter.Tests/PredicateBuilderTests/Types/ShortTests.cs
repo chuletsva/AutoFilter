@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Processors;
+using Autofilter.Helpers;
 using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.ProcessorTests.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class ShortTests
 {
@@ -15,7 +15,7 @@ public class ShortTests
 
         Condition condition = new(nameof(obj.Short), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 
@@ -31,7 +31,7 @@ public class ShortTests
 
         Condition condition = new(nameof(obj.NullableShort), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 

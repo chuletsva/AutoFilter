@@ -1,13 +1,14 @@
 ﻿using System.Linq.Expressions;
+using Autofilter.Helpers;
 using Autofilter.Processors;
 using Autofilter.Rules;
 using Autofilter.Tests.Common;
 using AutoFixture;
 using FluentAssertions;
 
-namespace Autofilter.Tests.ProcessorTests;
+namespace Autofilter.Tests.PredicateBuilderTests;
 
-public class FilterProcessorTests
+public class PredicateBuilderTests
 {
     [Fact]
     public void ShouldFilter()
@@ -26,7 +27,7 @@ public class FilterProcessorTests
     public void ShouldGenerateValidExpression(string expectedExpression, FilterRule filter)
     {
         var lambda = (Expression<Func<TestClass, bool>>)
-            FilterProcessor.BuildPredicate(typeof(TestClass), filter.Conditions, filter.Groups);
+            PredicateBuilder.BuildPredicate(typeof(TestClass), filter.Conditions, filter.Groups);
 
         string resultExpression = ExpressionPrettifier.PrettifyLambda(lambda);
 

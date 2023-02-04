@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
-using Autofilter.Processors;
+using Autofilter.Helpers;
 using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.ProcessorTests.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class DateTimeTests
 {
@@ -17,7 +17,7 @@ public class DateTimeTests
 
         Condition condition = new(nameof(obj.DateTime), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 
@@ -31,7 +31,7 @@ public class DateTimeTests
     {
         if (objValue is not null)
         {
-            objValue = new DateTime(objValue.Value.Year, objValue.Value.Month, objValue.Value.Day, 
+            objValue = new DateTime(objValue.Value.Year, objValue.Value.Month, objValue.Value.Day,
                 objValue.Value.Hour, objValue.Value.Minute, objValue.Value.Second, objValue.Value.Kind);
         }
 
@@ -39,7 +39,7 @@ public class DateTimeTests
 
         Condition condition = new(nameof(obj.NullableDateTime), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 

@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
-using Autofilter.Processors;
+using Autofilter.Helpers;
 using Autofilter.Rules;
 using FluentAssertions;
 
-namespace Autofilter.Tests.ProcessorTests.Types;
+namespace Autofilter.Tests.PredicateBuilderTests.Types;
 
 public class DecimalTests
 {
@@ -16,7 +16,7 @@ public class DecimalTests
 
         Condition condition = new(nameof(obj.Decimal), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 
@@ -32,14 +32,14 @@ public class DecimalTests
 
         Condition condition = new(nameof(obj.NullableDecimal), searchValue, searchOperator);
 
-        var lambda = (Expression<Func<TestClass, bool>>)FilterProcessor.BuildPredicate(typeof(TestClass), new[] { condition });
+        var lambda = (Expression<Func<TestClass, bool>>)PredicateBuilder.BuildPredicate(typeof(TestClass), new[] { condition });
 
         Func<TestClass, bool> func = lambda.Compile();
 
         func(obj).Should().Be(result);
     }
 
-    public static IEnumerable<object[]> DecimalTestCases => new[]  
+    public static IEnumerable<object[]> DecimalTestCases => new[]
     {
         new object[] { 0M, new[] { "0" }, SearchOperator.Equals, true },
         new object[] { decimal.Zero, new[] { decimal.Zero.ToString(CultureInfo.InvariantCulture) }, SearchOperator.Equals, true },
