@@ -1,4 +1,5 @@
 # AutoFilter
+![Nuget](https://img.shields.io/nuget/v/ART4S.Autofilter)
 
 AutoFilter simplifies data filtering using Expression Trees. 
 Reduces the need for writing filtering logic on backend side.
